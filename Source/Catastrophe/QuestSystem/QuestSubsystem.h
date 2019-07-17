@@ -54,6 +54,7 @@ public:
 	 * Call to get the quest class
 	 * @param The name of the quest
 	 * @return The UQuest class object
+	 * @note If theres multiple quests under the same name, the first one being found will be returned
 	 */
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	UQuest* GetQuestByName(FString _name) const;
@@ -65,6 +66,13 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	UQuest* GetQuestByID(int32 _id) const;
+
+	/**
+	 * Call to get all the quest thats active in an array
+	 * @return The UQuest array
+	 */
+	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
+	TArray<UQuest*> GetActiveQuests();
 
 	/** Getter */
 	FORCEINLINE TArray<UQuest*> GetAllQuests() const { return Quests; }

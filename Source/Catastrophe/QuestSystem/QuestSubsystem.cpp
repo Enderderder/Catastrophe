@@ -138,6 +138,19 @@ UQuest* UQuestSubsystem::GetQuestByID(int32 _id) const
 	return nullptr;
 }
 
+TArray<UQuest*> UQuestSubsystem::GetActiveQuests()
+{
+	TArray<UQuest*> resultQuests;
+	for (UQuest* quest : Quests)
+	{
+		if (quest->GetState() == EQuestState::Active)
+		{
+			resultQuests.Add(quest);
+		}
+	}
+	return resultQuests;
+}
+
 UQuestSubsystem* UQuestSubsystem::GetInst(const UObject* _worldContextObject)
 {
 	if (UGameInstance* gameInst 
