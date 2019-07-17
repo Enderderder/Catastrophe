@@ -69,10 +69,24 @@ public:
 
 	/**
 	 * Call to get all the quest thats active in an array
-	 * @return The UQuest array
+	 * @return the result UQuest array
 	 */
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
-	TArray<UQuest*> GetActiveQuests();
+	TArray<UQuest*> GetAllActiveQuest();
+
+	/**
+	 * Call to get all the quest thats completed in an array
+	 * @return the result UQuest array
+	 */
+	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
+	TArray<UQuest*> GetAllCompletedQuest();
+
+	/**
+	 * Call to get all the quest thats avaliable to take in an array
+	 * @return the result UQuest array
+	 */
+	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
+	TArray<UQuest*> GetAllAvaliableQuest();
 
 	/** Getter */
 	FORCEINLINE TArray<UQuest*> GetAllQuests() const { return Quests; }
