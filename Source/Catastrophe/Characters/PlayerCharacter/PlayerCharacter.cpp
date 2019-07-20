@@ -27,7 +27,7 @@
 #include "Gameplay/PlayerUtilities/Tomato.h"
 #include "TomatoSack.h"
 
-#include "Engine.h"
+#include "DebugUtility/CatastropheDebug.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -366,8 +366,7 @@ void APlayerCharacter::InteractionTick(float _deltaTime)
 
 		// Debug message
 		const FString msg = "Interaction hold: " + FString::SanitizeFloat(InteractionTimeHold);
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, msg);
+		CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Green, msg);
 	}
 }
 

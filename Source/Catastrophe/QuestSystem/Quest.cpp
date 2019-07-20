@@ -6,7 +6,7 @@
 #include "QuestSubsystem.h"
 #include "QuestObjectiveComponent.h"
 
-#include "Engine.h"
+#include "DebugUtility/CatastropheDebug.h"
 
 UQuest::UQuest()
 {
@@ -31,11 +31,8 @@ void UQuest::AppendParentQuest(UQuest* _parentQuest)
 
 void UQuest::UnlockQuest()
 {
-	if (GEngine)
-	{
-		const FString msg = "Quest unlocked: " + QuestInfo.QuestName;
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, msg);
-	}
+	const FString msg = "Quest unlocked: " + QuestInfo.QuestName;
+	CatastropheDebug::OnScreenDebugMsg(-1, 5.0f, FColor::White, msg);
 }
 
 void UQuest::ActivateQuest()
@@ -53,11 +50,8 @@ void UQuest::ActivateQuest()
 
 void UQuest::CompleteQuest()
 {
-	if (GEngine)
-	{
-		const FString msg = "Quest: " + QuestInfo.QuestName + " complete";
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, msg);
-	}
+	const FString msg = "Quest: " + QuestInfo.QuestName + " complete";
+	CatastropheDebug::OnScreenDebugMsg(-1, 5.0f, FColor::White, msg);
 
 	for (UQuest* quest : ChildQuests)
 	{
@@ -130,14 +124,12 @@ void UQuest::RegisterObjective(class UQuestObjectiveComponent* _objective)
 	{
 		if (_objective->GetOrder() == QuestObjectives[i]->GetOrder())
 		{
-			if (GEngine)
-			{
-				FString msg = 
-					"Objective: " + _objective->GetDescription() + 
-					" has overlapped order of " + FString::FromInt(_objective->GetOrder()) + 
-					" with objective: " + QuestObjectives[i]->GetDescription();
-				GEngine->AddOnScreenDebugMessage(-1, 50.0f, FColor::Red, msg);
-			}
+			const FString msg =
+				"Objective: " + _objective->GetDescription() +
+				" has overlapped order of " + FString::FromInt(_objective->GetOrder()) +
+				" with objective: " + QuestObjectives[i]->GetDescription();
+			CatastropheDebug::OnScreenDebugMsg(-1, 5.0f, FColor::White, msg);
+
 			return;
 		}
 	}
