@@ -9,6 +9,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/PostProcessComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -74,9 +75,6 @@ APlayerCharacter::APlayerCharacter()
 	TomatoSack->SetSackSize(1);
 	TomatoSack->SetTomatoAmount(0);
 
-	FishToCarry = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FishToCarry"));
-	FishToCarry->SetupAttachment(GetMesh(), TEXT("BackCarrySocket"));
-
 	WorldUiAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("InteractableWidgetAnchor"));
 	WorldUiAnchor->SetupAttachment(RootComponent);
 
@@ -86,6 +84,14 @@ APlayerCharacter::APlayerCharacter()
 
 	// Create stimuli
 	PerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("PerceptionStimuliSource"));
+	
+	// Hiding postprocess
+	HidingPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("HidingPostProcess"));
+	HidingPostProcess->SetupAttachment(RootComponent);
+
+	// Sprinting postprocess
+	SprintingPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("SprintingPostProcess"));
+	SprintingPostProcess->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -225,6 +231,7 @@ void APlayerCharacter::SprintBegin()
 		&& !bHHUSecondaryActive) // Cant sprint while aiming lol
 	{
 		bSprinting = true;
+		SprintingPostProcess->bEnabled = true;
 
 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed * SpringSpeedMultiplier;
@@ -237,6 +244,7 @@ void APlayerCharacter::SprintEnd()
 	{
 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
+		SprintingPostProcess->bEnabled = false;
 	}
 	bSprinting = false;
 }
@@ -246,8 +254,9 @@ void APlayerCharacter::CrouchBegin()
 	if (bAllowMovementInput)
 	{
 		Crouch();
-		HHUSecondaryActionEnd();
+		HidingPostProcess->bEnabled = true;
 
+		HHUSecondaryActionEnd();
 		if (bSprinting) 
 			SprintEnd();
 	}
@@ -256,6 +265,7 @@ void APlayerCharacter::CrouchBegin()
 void APlayerCharacter::CrouchEnd()
 {
 	UnCrouch();
+	HidingPostProcess->bEnabled = false;
 }
 
 void APlayerCharacter::CheckTomatoInHand()
@@ -525,12 +535,6 @@ void APlayerCharacter::RestoreTomato(int32 _count)
 int APlayerCharacter::GetTomatoCount()
 {
 	return TomatoSack->GetTomatoAmount();
-}
-
-void APlayerCharacter::GrabbingFish()
-{
-	// Set the visibility of the fish to visible
-	FishToCarry->SetVisibility(true);
 }
 
 void APlayerCharacter::SetInteractionTarget(class UInteractableComponent* _interactTargetComponent)

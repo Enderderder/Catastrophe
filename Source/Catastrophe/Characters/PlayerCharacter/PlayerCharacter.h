@@ -86,10 +86,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
 
-	// Deprecated TODO: Remove reference of this component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GoalFish", meta = (AllowPrivateAccess = "true"))
-	class USkeletalMeshComponent* FishToCarry;
-
 	// The anchor of the interactable UI
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* WorldUiAnchor;
@@ -100,6 +96,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAIPerceptionStimuliSourceComponent* PerceptionStimuliSourceComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PostProcess", meta = (AllowPrivateAccess = "true"))
+	class UPostProcessComponent* HidingPostProcess;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PostProcess", meta = (AllowPrivateAccess = "true"))
+	class UPostProcessComponent* SprintingPostProcess;
 
 protected:
 
@@ -293,10 +295,6 @@ public:
 	/** Return the current count of tomatoes player is holding */
 	UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
 	int GetTomatoCount();
-	
-	// DEPRECATED TODO: Remove this function
-	UFUNCTION(BlueprintCallable, Category = "Fish")
-	void GrabbingFish();
 
 	/** Set the target to interact for the player */
 	UFUNCTION()
