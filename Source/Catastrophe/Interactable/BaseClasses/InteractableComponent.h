@@ -41,6 +41,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
 	float UIShowingDistance = 500.0f;
 
+	/**  */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
+	FString InteractionActionText = "Press";
+
+	/**  */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
+	FString InteractionDescriptionText = "Interact";
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
 	bool bShowingUI = false;
 

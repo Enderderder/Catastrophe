@@ -18,7 +18,7 @@ void UPlayerWidget::ToggleInventory_Implementation(bool _bEnable)
 	/// Let blueprint do the thing
 }
 
-void UPlayerWidget::ShowInteractionUIWithText_Implementation(const FString& _text = "Interact")
+void UPlayerWidget::ShowInteractionUIWithText_Implementation(const FString& _descriptionText, const FString& _actionText)
 {
 	/// Let blueprint do the thing
 }
