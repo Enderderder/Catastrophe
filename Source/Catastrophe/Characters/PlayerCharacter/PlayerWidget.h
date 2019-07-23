@@ -48,12 +48,12 @@ public:
 	/**
 	 * Called to show the interaction UI with custom text/action description
 	 * @author Richard Wulansari
-	 * @param _bEnable On/Off
-	 * @param _text Custom text that will change the UI text
+	 * @param _descriptionText Custom text that will show the result of the interaction (eg. Climb, Knock, Jump In)
+	 * @param _actionText Custom text that will show the player action in order to perform the interaction (eg. Press, Hold)
 	 */
 	UFUNCTION(BlueprintNativeEvent, Category = "PlayerWidget")
-	void ShowInteractionUIWithText(const FString& _text);
-	virtual void ShowInteractionUIWithText_Implementation(const FString& _text);
+	void ShowInteractionUIWithText(const FString& _descriptionText, const FString& _actionText);
+	virtual void ShowInteractionUIWithText_Implementation(const FString& _descriptionText, const FString& _actionText);
 
 	/**
 	 * Called to hide the interaction UI

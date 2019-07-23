@@ -348,6 +348,7 @@ public:
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
 	FORCEINLINE bool IsPlayerSprinting() const { return bSprinting; }
 	bool IsPlayerCrouched() const;
+	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
 	/** Getter End */
 
 };

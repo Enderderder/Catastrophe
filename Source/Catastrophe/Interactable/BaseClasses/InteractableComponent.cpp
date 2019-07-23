@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
+#include "Characters/PlayerCharacter/PlayerWidget.h"
 
 
 // Sets default values for this component's properties
@@ -78,7 +79,7 @@ void UInteractableComponent::OnTriggerWithPlayer(class UPrimitiveComponent* Over
 			if (bCanInteract)
 			{
 				PlayerRef->SetInteractionTarget(this);
-				//PlayerRef->ToggleInteractUI(true); // Enable later for testing player ui
+				PlayerRef->GetPlayerWidget()->ShowInteractionUIWithText(InteractionDescriptionText, InteractionActionText);
 			}
 			TriggerCounter++;
 		}
@@ -100,7 +101,7 @@ void UInteractableComponent::OnTriggerEndWithPlayer(class UPrimitiveComponent* O
 		{
 			PlayerRef->ResetInteractionAction();
 			PlayerRef->RemoveInteractionTarget(this);
-			//PlayerRef->ToggleInteractUI(false);
+			PlayerRef->GetPlayerWidget()->HideInteractionUI();
 		}
 	}
 }
