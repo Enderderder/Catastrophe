@@ -75,15 +75,15 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* AimDownSightFocusPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UTomatoSack* TomatoSack;
 
 	// Deprecated TODO: Remove reference of this component
 	/** Spawn location for the throwable */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* TomatoSpawnPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
 
 	// The anchor of the interactable UI
@@ -269,7 +269,7 @@ protected:
 	void CheckTomatoInHand();
 
 	/** Called for shooting tomato */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
+	UFUNCTION(BlueprintCallable, Category = "HHU_Tomato")
 	void ShootTomato();
 
 	/** Called when ZoomInTimeline ticks */

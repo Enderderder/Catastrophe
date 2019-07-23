@@ -6,7 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "TomatoSack.generated.h"
 
-
+/**
+ * 
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CATASTROPHE_API UTomatoSack : public UActorComponent
 {
