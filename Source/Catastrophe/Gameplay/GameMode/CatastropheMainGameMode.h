@@ -7,7 +7,7 @@
 #include "CatastropheMainGameMode.generated.h"
 
 /**
- * 
+ * This is the main gameplay gamemode of the game
  */
 UCLASS()
 class CATASTROPHE_API ACatastropheMainGameMode : public AGameModeBase
