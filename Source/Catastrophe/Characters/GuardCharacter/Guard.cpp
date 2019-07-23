@@ -22,7 +22,7 @@
 
 #include "RespawnSystem/RespawnSubsystem.h"
 
-#include "Engine.h"
+#include "DebugUtility/CatastropheDebug.h"
 
 // Sets default values
 AGuard::AGuard()
