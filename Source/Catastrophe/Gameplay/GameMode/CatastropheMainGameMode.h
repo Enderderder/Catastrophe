@@ -17,9 +17,7 @@ class CATASTROPHE_API ACatastropheMainGameMode : public AGameModeBase
 protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | General")
-	int32 ChasingGuardCount = 0;
-
-
+	TArray<AActor*> ChasingGuards;
 
 public:
 
@@ -32,15 +30,19 @@ public:
 
 	/**
 	 * Increase the counter of the number of guard thats chasing the player
+	 * @author Richard Wulansari
+	 * @param _guard The guard reference
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | General")
-	void AddChasingGuard();
+	void AddChasingGuard(AActor* _guard);
 
 	/**
 	 * Decrease the counter of the number of guard thats chasing the player
+	 * @author Richard Wulansari
+	 * @param _guard The guard reference
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | General")
-	void RemoveOneChasingGuard();
+	void RemoveOneChasingGuard(AActor* _guard);
 
 
 	/**

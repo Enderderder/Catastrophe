@@ -25,28 +25,39 @@ void ACatastropheMainGameMode::Tick(float DeltaSeconds)
 
 }
 
-void ACatastropheMainGameMode::AddChasingGuard()
+void ACatastropheMainGameMode::AddChasingGuard(AActor* _guard)
 {
 	CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Red, TEXT("Chase!!!!"));
 
-	if (ChasingGuardCount == 0)
+	// Only add guard reference if it doesn't already exists
+	if (!ChasingGuards.Contains(_guard))
 	{
-		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-		if (playerCharacter) playerCharacter->ToggleSpottedAlert(true);
-	}
+		// Show the spotted effect if this is the first guard chasing
+		if (ChasingGuards.Num() == 0)
+		{
+			APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+			if (playerCharacter) playerCharacter->ToggleSpottedAlert(true);
+		}
 
-	ChasingGuardCount++;
+		ChasingGuards.Add(_guard);
+	}
 }
 
-void ACatastropheMainGameMode::RemoveOneChasingGuard()
+void ACatastropheMainGameMode::RemoveOneChasingGuard(AActor* _guard)
 {
 	CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Red, TEXT("Stop!!!!"));
 
-	ChasingGuardCount = FMath::Max(0, ChasingGuardCount--);
-	if (ChasingGuardCount == 0)
+	// Remove the guard reference only if it already exists
+	if (ChasingGuards.Contains(_guard))
 	{
-		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-		if (playerCharacter) playerCharacter->ToggleSpottedAlert(false);
+		ChasingGuards.Remove(_guard);
+
+		// If no more guard chasing, remove the spotted effect on the player
+		if (ChasingGuards.Num() == 0)
+		{
+			APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+			if (playerCharacter) playerCharacter->ToggleSpottedAlert(false);
+		}
 	}
 }
 

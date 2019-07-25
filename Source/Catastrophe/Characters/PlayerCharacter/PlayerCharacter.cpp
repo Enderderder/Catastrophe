@@ -619,11 +619,11 @@ void APlayerCharacter::ToggleSpottedAlert(bool _bEnable)
 	// TODO: Need fix the activation and deactivation of the paricle
 	if (_bEnable)
 	{
-		//SpottedAlertParticle->Activate();
+		SpottedAlertParticle->ActivateSystem();
 	}
 	else
 	{
-		//SpottedAlertParticle->Deactivate();
+		SpottedAlertParticle->DeactivateSystem();
 	}
 	//SpottedAlertParticle->Activate();
 	//SpottedAlertParticle->SetVisibility(_bEnable);

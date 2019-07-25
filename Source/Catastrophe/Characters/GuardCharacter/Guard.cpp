@@ -204,7 +204,7 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 		ToggleAlertIndicator(false);
 		CatchHitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		if (ACatastropheMainGameMode* gamemode = ACatastropheMainGameMode::GetGameModeInst(this))
-			gamemode->RemoveOneChasingGuard();
+			gamemode->RemoveOneChasingGuard(this);
 		break;
 	case EGuardState::SEARCHING:
 		ToggleQuestionIndicator(false);
@@ -262,7 +262,7 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 		HeadLight->SetLightColor(SpottedHeadLightColor);
 		CatchHitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		if (ACatastropheMainGameMode* gamemode = ACatastropheMainGameMode::GetGameModeInst(this))
-			gamemode->AddChasingGuard();
+			gamemode->AddChasingGuard(this);
 		break;
 
 	case EGuardState::SEARCHING:
