@@ -346,7 +346,10 @@ public:
 	void ToggleInteractUI(bool _bEnable);
 
 	/**
-	 * 
+	 * Toggle the activation state of the spotted alert
+	 * This will turn the SpottedParticle on and off
+	 * @author Richard Wulansari
+	 * @oaram _bEnable The on/off switch of the spotted particle system component
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void ToggleSpottedAlert(bool _bEnable);

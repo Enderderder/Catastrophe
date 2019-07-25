@@ -616,7 +616,6 @@ void APlayerCharacter::ToggleInteractUI(bool _bEnable)
 
 void APlayerCharacter::ToggleSpottedAlert(bool _bEnable)
 {
-	// TODO: Need fix the activation and deactivation of the paricle
 	if (_bEnable)
 	{
 		SpottedAlertParticle->ActivateSystem();
@@ -625,9 +624,6 @@ void APlayerCharacter::ToggleSpottedAlert(bool _bEnable)
 	{
 		SpottedAlertParticle->DeactivateSystem();
 	}
-	//SpottedAlertParticle->Activate();
-	//SpottedAlertParticle->SetVisibility(_bEnable);
-	//SpottedAlertParticle->SetActive(_bEnable, false);
 }
 
 bool APlayerCharacter::IsPlayerCrouched() const
