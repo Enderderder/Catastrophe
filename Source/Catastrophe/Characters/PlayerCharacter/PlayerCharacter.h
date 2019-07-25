@@ -103,6 +103,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PostProcess", meta = (AllowPrivateAccess = "true"))
 	class UPostProcessComponent* SprintingPostProcess;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PostProcess", meta = (AllowPrivateAccess = "true"))
+	class UParticleSystemComponent* SpottedAlertParticle;
+
 protected:
 
 	/** Player animation instance */
@@ -334,13 +337,19 @@ public:
 	 * 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Player | General")
-	void TogglePlayerHUD(bool _b);
+	void TogglePlayerHUD(bool _bEnable);
 
 	/**
 	 * 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void ToggleInteractUI(bool _b);
+	void ToggleInteractUI(bool _bEnable);
+
+	/**
+	 * 
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void ToggleSpottedAlert(bool _bEnable);
 
 	/** Getter */
 	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { 

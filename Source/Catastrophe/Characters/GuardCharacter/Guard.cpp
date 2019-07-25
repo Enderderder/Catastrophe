@@ -20,6 +20,7 @@
 #include "GuardAnimInstance.h"
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
 
+#include "Gameplay/GameMode/CatastropheMainGameMode.h"
 #include "RespawnSystem/RespawnSubsystem.h"
 
 #include "DebugUtility/CatastropheDebug.h"
@@ -202,6 +203,8 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 	case EGuardState::CHASING:
 		ToggleAlertIndicator(false);
 		CatchHitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		if (ACatastropheMainGameMode* gamemode = ACatastropheMainGameMode::GetGameModeInst(this))
+			gamemode->RemoveOneChasingGuard();
 		break;
 	case EGuardState::SEARCHING:
 		ToggleQuestionIndicator(false);
@@ -258,6 +261,8 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 		ToggleAlertIndicator(true);
 		HeadLight->SetLightColor(SpottedHeadLightColor);
 		CatchHitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		if (ACatastropheMainGameMode* gamemode = ACatastropheMainGameMode::GetGameModeInst(this))
+			gamemode->AddChasingGuard();
 		break;
 
 	case EGuardState::SEARCHING:
