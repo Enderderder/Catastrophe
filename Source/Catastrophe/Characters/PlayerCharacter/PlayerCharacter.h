@@ -75,20 +75,16 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* AimDownSightFocusPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UTomatoSack* TomatoSack;
 
 	// Deprecated TODO: Remove reference of this component
 	/** Spawn location for the throwable */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* TomatoSpawnPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
-
-	// Deprecated TODO: Remove reference of this component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GoalFish", meta = (AllowPrivateAccess = "true"))
-	class USkeletalMeshComponent* FishToCarry;
 
 	// The anchor of the interactable UI
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
@@ -100,6 +96,15 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAIPerceptionStimuliSourceComponent* PerceptionStimuliSourceComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PostProcess", meta = (AllowPrivateAccess = "true"))
+	class UPostProcessComponent* HidingPostProcess;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PostProcess", meta = (AllowPrivateAccess = "true"))
+	class UPostProcessComponent* SprintingPostProcess;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PostProcess", meta = (AllowPrivateAccess = "true"))
+	class UParticleSystemComponent* SpottedAlertParticle;
 
 protected:
 
@@ -267,7 +272,7 @@ protected:
 	void CheckTomatoInHand();
 
 	/** Called for shooting tomato */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
+	UFUNCTION(BlueprintCallable, Category = "HHU_Tomato")
 	void ShootTomato();
 
 	/** Called when ZoomInTimeline ticks */
@@ -293,10 +298,6 @@ public:
 	/** Return the current count of tomatoes player is holding */
 	UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
 	int GetTomatoCount();
-	
-	// DEPRECATED TODO: Remove this function
-	UFUNCTION(BlueprintCallable, Category = "Fish")
-	void GrabbingFish();
 
 	/** Set the target to interact for the player */
 	UFUNCTION()
@@ -336,13 +337,22 @@ public:
 	 * 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Player | General")
-	void TogglePlayerHUD(bool _b);
+	void TogglePlayerHUD(bool _bEnable);
 
 	/**
 	 * 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void ToggleInteractUI(bool _b);
+	void ToggleInteractUI(bool _bEnable);
+
+	/**
+	 * Toggle the activation state of the spotted alert
+	 * This will turn the SpottedParticle on and off
+	 * @author Richard Wulansari
+	 * @oaram _bEnable The on/off switch of the spotted particle system component
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void ToggleSpottedAlert(bool _bEnable);
 
 	/** Getter */
 	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { 
@@ -350,6 +360,7 @@ public:
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
 	FORCEINLINE bool IsPlayerSprinting() const { return bSprinting; }
 	bool IsPlayerCrouched() const;
+	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
 	/** Getter End */
 
 };

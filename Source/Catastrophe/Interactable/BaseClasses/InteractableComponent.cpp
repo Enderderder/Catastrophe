@@ -9,13 +9,14 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
+#include "Characters/PlayerCharacter/PlayerWidget.h"
 
 
 // Sets default values for this component's properties
 UInteractableComponent::UInteractableComponent()
 {
 	// This component will not tick
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -23,44 +24,44 @@ void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Checks if we should show the interactable UI
-	APawn* playerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-	if (playerPawn && InteractableUI)
-	{
+// 	APawn* playerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+// 	if (playerPawn && InteractableUI)
+// 	{
 		// Distance check
-		float distanceToPlayer;
-		distanceToPlayer = FVector::Dist(
-			InteractableUI->GetComponentLocation(), playerPawn->GetActorLocation());
-		if (distanceToPlayer <= UIShowingDistance
-			&& bCanInteract)
-		{
-			bWantToShowUI = true;
-		}
-		else
-		{
-			bWantToShowUI = false;
-		}
+// 		float distanceToPlayer;
+// 		distanceToPlayer = FVector::Dist(
+// 			InteractableUI->GetComponentLocation(), playerPawn->GetActorLocation());
+// 		if (distanceToPlayer <= UIShowingDistance
+// 			&& bCanInteract)
+// 		{
+// 			bWantToShowUI = true;
+// 		}
+// 		else
+// 		{
+// 			bWantToShowUI = false;
+// 		}
 
 		// Toggle the UI if needed
-		if (!bShowingUI && bWantToShowUI) // Not showing but need to show
-		{
-			bShowingUI = true;
-			InteractableUI->SetVisibility(true);
-		}
-		else if (bShowingUI && !bWantToShowUI) // Showing but need to hide
-		{
-			bShowingUI = false;
-			InteractableUI->SetVisibility(false);
-		}
+// 		if (!bShowingUI && bWantToShowUI) // Not showing but need to show
+// 		{
+// 			bShowingUI = true;
+// 			InteractableUI->SetVisibility(true);
+// 		}
+// 		else if (bShowingUI && !bWantToShowUI) // Showing but need to hide
+// 		{
+// 			bShowingUI = false;
+// 			InteractableUI->SetVisibility(false);
+// 		}
 
 		// Rotate the ui towards camera when it is showing
-		if (bShowingUI)
-		{
-			FVector cameraLoc = UGameplayStatics::GetPlayerCameraManager(
-				this, 0)->GetCameraLocation();
-			FRotator uiRot = (cameraLoc - InteractableUI->GetComponentLocation()).Rotation();
-			InteractableUI->SetWorldRotation(uiRot);
-		}
-	}
+// 		if (bShowingUI)
+// 		{
+// 			FVector cameraLoc = UGameplayStatics::GetPlayerCameraManager(
+// 				this, 0)->GetCameraLocation();
+// 			FRotator uiRot = (cameraLoc - InteractableUI->GetComponentLocation()).Rotation();
+// 			InteractableUI->SetWorldRotation(uiRot);
+// 		}
+//	}
 }
 
 void UInteractableComponent::OnTriggerWithPlayer(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -78,7 +79,7 @@ void UInteractableComponent::OnTriggerWithPlayer(class UPrimitiveComponent* Over
 			if (bCanInteract)
 			{
 				PlayerRef->SetInteractionTarget(this);
-				//PlayerRef->ToggleInteractUI(true); // Enable later for testing player ui
+				PlayerRef->GetPlayerWidget()->ShowInteractionUIWithText(InteractionDescriptionText, InteractionActionText);
 			}
 			TriggerCounter++;
 		}
@@ -100,7 +101,7 @@ void UInteractableComponent::OnTriggerEndWithPlayer(class UPrimitiveComponent* O
 		{
 			PlayerRef->ResetInteractionAction();
 			PlayerRef->RemoveInteractionTarget(this);
-			//PlayerRef->ToggleInteractUI(false);
+			PlayerRef->GetPlayerWidget()->HideInteractionUI();
 		}
 	}
 }
@@ -132,23 +133,14 @@ void UInteractableComponent::InteractHold(class APlayerCharacter* _playerCharact
 	}
 }
 
-void UInteractableComponent::RegisterTriggerVolume(class UPrimitiveComponent* _component)
+void UInteractableComponent::RegisterTriggerVolume(class UPrimitiveComponent* _registeringComponent)
 {
 	// Force the component to generate overlap events
-	_component->SetGenerateOverlapEvents(true);
+	_registeringComponent->SetGenerateOverlapEvents(true);
 
 	// Binds the function to the component event
-	_component->OnComponentBeginOverlap.AddDynamic(
+	_registeringComponent->OnComponentBeginOverlap.AddDynamic(
 		this, &UInteractableComponent::OnTriggerWithPlayer);
-	_component->OnComponentEndOverlap.AddDynamic(
+	_registeringComponent->OnComponentEndOverlap.AddDynamic(
 		this, &UInteractableComponent::OnTriggerEndWithPlayer);
-}
-
-void UInteractableComponent::RegisterUiComponent(class USceneComponent* _uiComponent)
-{
-	if (_uiComponent)
-	{
-		InteractableUI = _uiComponent;
-		InteractableUI->SetVisibility(false);
-	}
 }

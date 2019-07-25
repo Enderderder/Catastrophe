@@ -26,23 +26,29 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FInteractSingature OnInteract;
 
+	/** Indicate that if this object can be interacted */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interaction")
 	bool bCanInteract = true;
 
+	/** Internal calculation use, indicates the player interaction holding time on this object */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	float HoldingTime = 0.0f;
 
+	/** The require holding time of the interaction button in order to interact with this object */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
 	float RequiredHoldTime = 0.0f;
 
+	/** True if this object can only trigger once, will automatically disable interaction after the initial trigger */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
 	bool bOneTimeUse = false;
 
+	/** Text that describe the action in order to complete this interaction */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
-	float UIShowingDistance = 500.0f;
+	FString InteractionActionText = "Press";
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
-	bool bShowingUI = false;
+	/**  */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
+	FString InteractionDescriptionText = "Interact";
 
 protected:
 
@@ -54,14 +60,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	class APlayerCharacter* PlayerRef;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Interaction")
-	class USceneComponent* InteractableUI;
-
-private:
-
-	UPROPERTY()
-	bool bWantToShowUI = false;
 
 protected:
 
@@ -85,16 +83,11 @@ public:
 
 	/**
 	 * Register a component that has some trigger volume
+	 * @author Richard Wulansari
+	 * @param _registeringComponent The component that is receiving the overlap events
 	 * @note This function is prefer to be called in constructor
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void RegisterTriggerVolume(class UPrimitiveComponent* _component);
-
-	/**
-	 * Register a ui component to be shown while player is able to interact with
-	 * @note This function is prefer to be called in constructor
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void RegisterUiComponent(class USceneComponent* _uiComponent);
+	void RegisterTriggerVolume(class UPrimitiveComponent* _registeringComponent);
 
 };

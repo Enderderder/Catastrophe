@@ -63,8 +63,6 @@ void AHidingUrn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// TODO: Rotate the interaction text
-
 }
 
 void AHidingUrn::OnPlayerInteract(class APlayerCharacter* _playerCharacter)

@@ -138,6 +138,45 @@ UQuest* UQuestSubsystem::GetQuestByID(int32 _id) const
 	return nullptr;
 }
 
+TArray<UQuest*> UQuestSubsystem::GetAllActiveQuest()
+{
+	TArray<UQuest*> resultQuests;
+	for (UQuest* quest : Quests)
+	{
+		if (quest->GetState() == EQuestState::Active)
+		{
+			resultQuests.Add(quest);
+		}
+	}
+	return resultQuests;
+}
+
+TArray<UQuest*> UQuestSubsystem::GetAllCompletedQuest()
+{
+	TArray<UQuest*> resultQuests;
+	for (UQuest* quest : Quests)
+	{
+		if (quest->GetState() == EQuestState::Completed)
+		{
+			resultQuests.Add(quest);
+		}
+	}
+	return resultQuests;
+}
+
+TArray<UQuest*> UQuestSubsystem::GetAllAvaliableQuest()
+{
+	TArray<UQuest*> resultQuests;
+	for (UQuest* quest : Quests)
+	{
+		if (quest->GetState() == EQuestState::Avaliable)
+		{
+			resultQuests.Add(quest);
+		}
+	}
+	return resultQuests;
+}
+
 UQuestSubsystem* UQuestSubsystem::GetInst(const UObject* _worldContextObject)
 {
 	if (UGameInstance* gameInst 

@@ -7,6 +7,7 @@
 #include "InteractActor.generated.h"
 
 /**
+ * DEPRECATED: TODO: This class is no longer usefull, remove reference and delete this class
  * Interact Actor are actors that have a mesh, a trigger box, also have implementable function for player to interact with.
  * They are responsible for open up the interact ability to the player as the player triggers within certain range.
  */

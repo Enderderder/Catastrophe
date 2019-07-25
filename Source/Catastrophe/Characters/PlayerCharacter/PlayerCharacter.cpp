@@ -9,6 +9,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/PostProcessComponent.h"
+#include "Classes/Particles/ParticleSystemComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -27,7 +29,7 @@
 #include "Gameplay/PlayerUtilities/Tomato.h"
 #include "TomatoSack.h"
 
-#include "Engine.h"
+#include "DebugUtility/CatastropheDebug.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -74,9 +76,6 @@ APlayerCharacter::APlayerCharacter()
 	TomatoSack->SetSackSize(1);
 	TomatoSack->SetTomatoAmount(0);
 
-	FishToCarry = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FishToCarry"));
-	FishToCarry->SetupAttachment(GetMesh(), TEXT("BackCarrySocket"));
-
 	WorldUiAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("InteractableWidgetAnchor"));
 	WorldUiAnchor->SetupAttachment(RootComponent);
 
@@ -86,6 +85,18 @@ APlayerCharacter::APlayerCharacter()
 
 	// Create stimuli
 	PerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("PerceptionStimuliSource"));
+	
+	// Hiding postprocess
+	HidingPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("HidingPostProcess"));
+	HidingPostProcess->SetupAttachment(RootComponent);
+
+	// Sprinting postprocess
+	SprintingPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("SprintingPostProcess"));
+	SprintingPostProcess->SetupAttachment(RootComponent);
+
+	SpottedAlertParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SpottedAlertParticle"));
+	SpottedAlertParticle->SetupAttachment(GetMesh());
+	SpottedAlertParticle->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -225,6 +236,7 @@ void APlayerCharacter::SprintBegin()
 		&& !bHHUSecondaryActive) // Cant sprint while aiming lol
 	{
 		bSprinting = true;
+		SprintingPostProcess->bEnabled = true;
 
 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed * SpringSpeedMultiplier;
@@ -237,6 +249,7 @@ void APlayerCharacter::SprintEnd()
 	{
 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
+		SprintingPostProcess->bEnabled = false;
 	}
 	bSprinting = false;
 }
@@ -246,8 +259,9 @@ void APlayerCharacter::CrouchBegin()
 	if (bAllowMovementInput)
 	{
 		Crouch();
-		HHUSecondaryActionEnd();
+		HidingPostProcess->bEnabled = true;
 
+		HHUSecondaryActionEnd();
 		if (bSprinting) 
 			SprintEnd();
 	}
@@ -256,6 +270,7 @@ void APlayerCharacter::CrouchBegin()
 void APlayerCharacter::CrouchEnd()
 {
 	UnCrouch();
+	HidingPostProcess->bEnabled = false;
 }
 
 void APlayerCharacter::CheckTomatoInHand()
@@ -366,8 +381,7 @@ void APlayerCharacter::InteractionTick(float _deltaTime)
 
 		// Debug message
 		const FString msg = "Interaction hold: " + FString::SanitizeFloat(InteractionTimeHold);
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, msg);
+		CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Green, msg);
 	}
 }
 
@@ -528,12 +542,6 @@ int APlayerCharacter::GetTomatoCount()
 	return TomatoSack->GetTomatoAmount();
 }
 
-void APlayerCharacter::GrabbingFish()
-{
-	// Set the visibility of the fish to visible
-	FishToCarry->SetVisibility(true);
-}
-
 void APlayerCharacter::SetInteractionTarget(class UInteractableComponent* _interactTargetComponent)
 {
 	if (_interactTargetComponent || !_interactTargetComponent->IsPendingKill())
@@ -585,11 +593,11 @@ void APlayerCharacter::ForceSprintEnd()
 	GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
 }
 
-void APlayerCharacter::TogglePlayerHUD(bool _b)
+void APlayerCharacter::TogglePlayerHUD(bool _bEnable)
 {
 	if (PlayerWidget)
 	{
-		if (_b)
+		if (_bEnable)
 		{
 			PlayerWidget->RemoveFromParent();
 			PlayerWidget->AddToViewport(0);
@@ -601,9 +609,21 @@ void APlayerCharacter::TogglePlayerHUD(bool _b)
 	}
 }
 
-void APlayerCharacter::ToggleInteractUI(bool _b)
+void APlayerCharacter::ToggleInteractUI(bool _bEnable)
 {
-	InteractableUiComponent->SetVisibility(_b);
+	InteractableUiComponent->SetVisibility(_bEnable);
+}
+
+void APlayerCharacter::ToggleSpottedAlert(bool _bEnable)
+{
+	if (_bEnable)
+	{
+		SpottedAlertParticle->ActivateSystem();
+	}
+	else
+	{
+		SpottedAlertParticle->DeactivateSystem();
+	}
 }
 
 bool APlayerCharacter::IsPlayerCrouched() const
