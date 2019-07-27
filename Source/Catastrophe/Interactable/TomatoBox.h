@@ -25,9 +25,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UInteractableComponent* InteractableComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UWidgetComponent* InteractionWidget;
-
 public:
 	// Sets default values for this actor's properties
 	ATomatoBox();
