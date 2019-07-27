@@ -10,6 +10,7 @@
 #include "Components/TimelineComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/PostProcessComponent.h"
+#include "Classes/Particles/ParticleSystemComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -92,6 +93,10 @@ APlayerCharacter::APlayerCharacter()
 	// Sprinting postprocess
 	SprintingPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("SprintingPostProcess"));
 	SprintingPostProcess->SetupAttachment(RootComponent);
+
+	SpottedAlertParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SpottedAlertParticle"));
+	SpottedAlertParticle->SetupAttachment(GetMesh());
+	SpottedAlertParticle->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -588,11 +593,11 @@ void APlayerCharacter::ForceSprintEnd()
 	GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
 }
 
-void APlayerCharacter::TogglePlayerHUD(bool _b)
+void APlayerCharacter::TogglePlayerHUD(bool _bEnable)
 {
 	if (PlayerWidget)
 	{
-		if (_b)
+		if (_bEnable)
 		{
 			PlayerWidget->RemoveFromParent();
 			PlayerWidget->AddToViewport(0);
@@ -604,9 +609,21 @@ void APlayerCharacter::TogglePlayerHUD(bool _b)
 	}
 }
 
-void APlayerCharacter::ToggleInteractUI(bool _b)
+void APlayerCharacter::ToggleInteractUI(bool _bEnable)
 {
-	InteractableUiComponent->SetVisibility(_b);
+	InteractableUiComponent->SetVisibility(_bEnable);
+}
+
+void APlayerCharacter::ToggleSpottedAlert(bool _bEnable)
+{
+	if (_bEnable)
+	{
+		SpottedAlertParticle->ActivateSystem();
+	}
+	else
+	{
+		SpottedAlertParticle->DeactivateSystem();
+	}
 }
 
 bool APlayerCharacter::IsPlayerCrouched() const

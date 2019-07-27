@@ -28,9 +28,6 @@ ATomatoBox::ATomatoBox()
 	InteractableComponent->bOneTimeUse = false;
 	InteractableComponent->RegisterTriggerVolume(TriggerVolume);
 	InteractableComponent->OnInteract.AddDynamic(this, &ATomatoBox::PickUpTomato);
-
-	InteractionWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionWidget"));
-
 }
 
 void ATomatoBox::BeginPlay()
