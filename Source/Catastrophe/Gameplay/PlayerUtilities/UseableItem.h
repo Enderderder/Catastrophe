@@ -11,7 +11,7 @@ class CATASTROPHE_API AUseableItem : public AActor
 {
 	GENERATED_BODY()
 	
-private:
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* ItemMesh;
 

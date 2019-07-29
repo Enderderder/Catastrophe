@@ -14,8 +14,6 @@ UTomatoSack::UTomatoSack()
 void UTomatoSack::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
 	
 }
 

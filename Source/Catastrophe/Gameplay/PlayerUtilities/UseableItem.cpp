@@ -12,8 +12,6 @@ AUseableItem::AUseableItem()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	ItemMesh->SetGenerateOverlapEvents(true);
-	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
 }
 
 // Called when the game starts or when spawned

@@ -13,11 +13,16 @@ ATomato::ATomato()
  	// Set this actor to not call Tick() every frame.
 	PrimaryActorTick.bCanEverTick = false;
 
-	TomatoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
-	TomatoMesh->SetGenerateOverlapEvents(true);
-	TomatoMesh->SetCollisionProfileName(TEXT("Throwable"));
-	TomatoMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoOverlap);
-	RootComponent = TomatoMesh;
+	//TomatoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
+	//TomatoMesh->SetGenerateOverlapEvents(true);
+	//TomatoMesh->SetCollisionProfileName(TEXT("Throwable"));
+	//TomatoMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoOverlap);
+	//RootComponent = TomatoMesh;
+
+	ItemMesh->SetGenerateOverlapEvents(true);
+	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
+	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoOverlap);
+	RootComponent = ItemMesh;
 }
 
 // Called when the game starts or when spawned
@@ -54,5 +59,6 @@ void ATomato::DestroyTomato(class AActor* _otherActor)
 
 void ATomato::LaunchTomato(FVector _launchDirection, float _launchForce)
 {
-	TomatoMesh->AddForce(_launchDirection * _launchForce);
+	//TomatoMesh->AddForce(_launchDirection * _launchForce);
+	ItemMesh->AddForce(_launchDirection * _launchForce);
 }

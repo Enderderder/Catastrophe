@@ -8,14 +8,14 @@
 #include "Tomato.generated.h"
 
 UCLASS()
-class CATASTROPHE_API ATomato : public AActor
+class CATASTROPHE_API ATomato : public AUseableItem
 {
 	GENERATED_BODY()
 	
 private:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* TomatoMesh;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	//class UStaticMeshComponent* TomatoMesh;
 
 public:	
 	// Sets default values for this actor's properties
@@ -43,7 +43,7 @@ public:
 	void LaunchTomato(FVector _launchDirection, float _launchForce);
 
 	/** Getter */
-	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return TomatoMesh; }
+	//FORCEINLINE class UStaticMeshComponent* GetMesh() const { return TomatoMesh; }
 	/** Getter End */
 
 };

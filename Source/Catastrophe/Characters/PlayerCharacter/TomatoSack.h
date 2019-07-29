@@ -32,11 +32,11 @@ protected:
 
 public:	
 
-	/** Addes one tomato into the sack, does not over flow */
+	/** Adds one tomato into the sack, does not over flow */
 	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	void AddTomato();
 
-	/** Addes certain amount of tomato into the sack, does not overflow */
+	/** Adds certain amount of tomato into the sack, does not overflow */
 	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	void AddTomatoes(uint8 _Amount);
 
