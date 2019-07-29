@@ -23,7 +23,7 @@ public:
 	 * @author Richard Wulansari
 	 * @param _bEnable On/Off
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "PlayerWidget")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
 	void ToggleCrosshair(bool _bEnable);
 	virtual void ToggleCrosshair_Implementation(bool _bEnable);
 
@@ -32,7 +32,7 @@ public:
 	 * @author Richard Wulansari
 	 * @param _bEnable On/Off
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "PlayerWidget")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
 	void ToggleStamina(bool _bEnable);
 	virtual void ToggleStamina_Implementation(bool _bEnable);
 
@@ -41,7 +41,7 @@ public:
 	 * @author Richard Wulansari
 	 * @param _bEnable On/Off
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "PlayerWidget")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
 	void ToggleInventory(bool _bEnable);
 	virtual void ToggleInventory_Implementation(bool _bEnable);
 
@@ -51,7 +51,7 @@ public:
 	 * @param _descriptionText Custom text that will show the result of the interaction (eg. Climb, Knock, Jump In)
 	 * @param _actionText Custom text that will show the player action in order to perform the interaction (eg. Press, Hold)
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "PlayerWidget")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
 	void ShowInteractionUIWithText(const FString& _descriptionText, const FString& _actionText);
 	virtual void ShowInteractionUIWithText_Implementation(const FString& _descriptionText, const FString& _actionText);
 
@@ -59,7 +59,7 @@ public:
 	 * Called to hide the interaction UI
 	 * @author Richard Wulansari
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "PlayerWidget")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
 	void HideInteractionUI();
 	virtual void HideInteractionUI_Implementation();
 };
