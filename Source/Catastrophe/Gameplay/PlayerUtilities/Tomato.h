@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "UseableItem.h"
 #include "Tomato.generated.h"
 
 UCLASS()
@@ -37,7 +38,7 @@ protected:
 
 public:	
 
-	/** Lauch tomato in certain direction */
+	/** Launch tomato in certain direction */
 	UFUNCTION(BlueprintCallable, Category = "Tomato")
 	void LaunchTomato(FVector _launchDirection, float _launchForce);
 

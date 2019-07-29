@@ -13,12 +13,11 @@ ATomato::ATomato()
  	// Set this actor to not call Tick() every frame.
 	PrimaryActorTick.bCanEverTick = false;
 
-	TomatoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	TomatoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
 	TomatoMesh->SetGenerateOverlapEvents(true);
 	TomatoMesh->SetCollisionProfileName(TEXT("Throwable"));
 	TomatoMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoOverlap);
 	RootComponent = TomatoMesh;
-
 }
 
 // Called when the game starts or when spawned
