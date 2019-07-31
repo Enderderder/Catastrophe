@@ -22,8 +22,17 @@ private:
 	UPROPERTY()
 	bool bWantsToSprint = false;
 
+	/** The walk speed of the player, value will be the same as the CharacterMovementComponent */
+	UPROPERTY()
+	float WalkSpeed;
+
 	/**  */
+	UPROPERTY()
 	class UCharacterMovementComponent* CharacterMovementComponent;
+
+	/**  */
+	UPROPERTY()
+	class ACharacter* CharacterOwner;
 
 
 public:	
@@ -83,6 +92,14 @@ public:
 
 	/** Getter End */
 
+private:
+
+	/**
+	 * Check if the character is able to sprint
+	 * @author Richard Wulansari
+	 * @return If this component is able to sprint
+	 */
+	bool IsAbleToSprint() const;
 
 	/**
 	 * Checks all the necessary data of this component
@@ -90,4 +107,5 @@ public:
 	 * @return The result of the validation, false means theres some data as null
 	 */
 	bool HasValidData() const;
+
 };

@@ -25,10 +25,14 @@ void UCharacterSprintMovementComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// Store the character movement component reference for later use
-	ACharacter* ownerCharacter = Cast<ACharacter>(GetOwner());
-	if (ownerCharacter)
+	CharacterOwner = Cast<ACharacter>(GetOwner());
+	if (CharacterOwner)
 	{
-		CharacterMovementComponent = ownerCharacter->GetCharacterMovement();
+		CharacterMovementComponent = CharacterOwner->GetCharacterMovement();
+		if (CharacterMovementComponent)
+		{
+			WalkSpeed = CharacterMovementComponent->MaxWalkSpeed;
+		}
 	}
 }
 
@@ -38,14 +42,40 @@ void UCharacterSprintMovementComponent::TickComponent(float DeltaTime, ELevelTic
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	// Validate data within this class
 	if (!HasValidData()) return;
 
 	if (bSprinting)
 	{
+		if (!bWantsToSprint
+			|| !IsAbleToSprint()
+			|| !bAllowsToSprint)
+		{
+			CharacterMovementComponent->MaxWalkSpeed = WalkSpeed;
 
+
+			/// TODO: Stop sprint
+		}
 	}
 	else
 	{
+		// If the player both want to sprint and able to sprint
+		if (bWantsToSprint
+			&& IsAbleToSprint()
+			&& bAllowsToSprint)
+		{
+			if (bUseConstantSprintSpeed)
+			{
+				CharacterMovementComponent->MaxWalkSpeed = ConstantSprintSpeed;
+			}
+			else
+			{
+				//CharacterMovementComponent->MaxWalkSpeed = ConstantSprintSpeed;
+			}
+
+
+			
+		}
 
 	}
 
@@ -65,6 +95,17 @@ void UCharacterSprintMovementComponent::UnSprint()
 
 bool UCharacterSprintMovementComponent::HasValidData() const
 {
+	const bool hasValidData = 
+		CharacterMovementComponent && IsValid(CharacterOwner);
 
+	return hasValidData;
+}
+
+bool UCharacterSprintMovementComponent::IsAbleToSprint() const
+{
+	const bool bAbleToSprint = 
+		CharacterMovementComponent->MovementMode == MOVE_Walking;
+
+	return bAbleToSprint;
 }
 
