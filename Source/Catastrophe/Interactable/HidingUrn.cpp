@@ -90,7 +90,7 @@ void AHidingUrn::JumpIn(class APlayerCharacter* _playerCharacter)
 	GetWorld()->GetTimerManager().SetTimer(UrnMinHideTimerHandle, this, &AHidingUrn::AllowManualJumpOut, MinHideTime, false);
 
 	// Gets and store the temporary information of the player
-	TempPlayerInfo.PlayerMaxWalkSpeed = _playerCharacter->GetCharacterMovement()->MaxWalkSpeed;
+	TempPlayerInfo.PlayerMaxWalkSpeed = _playerCharacter->GetPlayerDefaultValues().WalkSpeed;
 	TempPlayerInfo.PlayerLocation = _playerCharacter->GetActorLocation();
 
 	// Move the player away somewhere and make him invisible
