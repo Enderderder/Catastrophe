@@ -3,28 +3,22 @@
 
 #include "ItemSack.h"
 
-// Sets default values for this component's properties
-UItemSack::UItemSack()
+// Sets default values
+AItemSack::AItemSack()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
 
 }
 
-// Called when the game starts
-void UItemSack::BeginPlay()
+// Called when the game starts or when spawned
+void AItemSack::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-void UItemSack::SetItemType(TSubclassOf<class AUseableItem> _NewItemType)
-{
-	SackItemType = _NewItemType;
-}
-
-void UItemSack::AddItem()
+void AItemSack::AddItem()
 {
 	if (ItemAmount < MaxItemAmount)
 	{
@@ -32,22 +26,22 @@ void UItemSack::AddItem()
 	}
 }
 
-void UItemSack::AddItems(uint8 _Amount)
+void AItemSack::AddItems(uint8 _Amount)
 {
 	ItemAmount = (uint8)FMath::Min((int32)(ItemAmount + _Amount), (int32)MaxItemAmount);
 }
 
-void UItemSack::FillItemSack()
+void AItemSack::FillItemSack()
 {
 	ItemAmount = MaxItemAmount;
 }
 
-bool UItemSack::IsItemSackFull() const
+bool AItemSack::IsItemSackFull() const
 {
 	return (ItemAmount == MaxItemAmount);
 }
 
-void UItemSack::RemoveItem()
+void AItemSack::RemoveItem()
 {
 	if (ItemAmount > 0)
 	{
@@ -55,42 +49,42 @@ void UItemSack::RemoveItem()
 	}
 }
 
-void UItemSack::RemoveItems(uint8 _Amount)
+void AItemSack::RemoveItems(uint8 _Amount)
 {
-	ItemAmount = (uint8)FMath::Max((int32)(ItemAmount + _Amount), 0);
+	ItemAmount = (uint8)FMath::Max((int32)(ItemAmount - _Amount), 0);
 }
 
-void UItemSack::EmptySack()
+void AItemSack::EmptyItemSack()
 {
 	ItemAmount = 0;
 }
 
-bool UItemSack::IsSackEmpty() const
+bool AItemSack::IsItemSackEmpty() const
 {
 	return (ItemAmount <= 0);
 }
 
-void UItemSack::SetItemAmount(uint8 _Amount)
+void AItemSack::SetItemAmount(uint8 _Amount)
 {
 	ItemAmount = _Amount;
 }
 
-uint8 UItemSack::GetItemAmount() const
+uint8 AItemSack::GetItemAmount() const
 {
 	return (ItemAmount);
 }
 
-void UItemSack::SetSackSize(uint8 _Size)
+void AItemSack::SetSackSize(uint8 _Size)
 {
 	MaxItemAmount = _Size;
 }
 
-uint8 UItemSack::GetSackSize() const
+uint8 AItemSack::GetSackSize() const
 {
-	return(MaxItemAmount);
+	return (MaxItemAmount);
 }
 
-bool UItemSack::IsAbleToUse()
+bool AItemSack::IsAbleToUse()
 {
 	return (ItemAmount > 0);
 }

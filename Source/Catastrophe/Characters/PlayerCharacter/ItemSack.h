@@ -3,77 +3,122 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "GameFramework/Actor.h"
 #include "ItemSack.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CATASTROPHE_API UItemSack : public UActorComponent
+UCLASS()
+class CATASTROPHE_API AItemSack : public AActor
 {
 	GENERATED_BODY()
-
+	
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	uint8 ItemAmount;
-
 	UPROPERTY(EditDefaultsOnly)
 	uint8 MaxItemAmount;
 
-	TSubclassOf<class AUseableItem> SackItemType;
-
 public:	
-	// Sets default values for this component's properties
-	UItemSack();
+	// Sets default values for this actor's properties
+	AItemSack();
 
 protected:
-	// Called when the game starts
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	/* Change the item type */
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
-	void SetItemType(TSubclassOf<class AUseableItem> _NewItemType);
-
-	/* Adds one item into the sack, does not overflow */
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to add on item to the sack
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	void AddItem();
 
-	/* Adds a certain amount of items into the sack, does not overflow */
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to add a certain amount of items to the sack
+	 * @author James Johnstone
+	 * @param _Amount The Number of items that are to be added to the sack
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	void AddItems(uint8 _Amount);
 
-	/* Fills the item sack so it is full */
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to fill the item sack up to full
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	void FillItemSack();
 
-	/* Checks if the item sack is full */
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to check if the item sack is full
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	bool IsItemSackFull() const;
 
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to remove an item from the sack
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	void RemoveItem();
 
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to remove a certain amount of items from the sack
+	 * @author James Johnstone
+	 * @param _Amount The amount of items that are to be removed from the sack
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	void RemoveItems(uint8 _Amount);
 
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
-	void EmptySack();
+	/**
+	 * Called to remove all items from the sack
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
+	void EmptyItemSack();
 
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
-	bool IsSackEmpty() const;
+	/**
+	 * Called to check if the sack is empty
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
+	bool IsItemSackEmpty() const;
 
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to set the amount of items that is in the sack
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	void SetItemAmount(uint8 _Amount);
 
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to get the amount of items that are currently in the sack
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	uint8 GetItemAmount() const;
 
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to set the max size of the sack
+	 * @author James Johnstone
+	 * @param _Size The new max size of the sack
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	void SetSackSize(uint8 _Size);
 
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to get the max size of the sack
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	uint8 GetSackSize() const;
 
-	UFUNCTION(BlueprintCallable, Category = "ItemSack")
+	/**
+	 * Called to check if an item is able to be used
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	bool IsAbleToUse();
+
+	void UseItem();
 };

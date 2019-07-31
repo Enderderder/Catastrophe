@@ -19,9 +19,10 @@ ATomato::ATomato()
 	//TomatoMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoOverlap);
 	//RootComponent = TomatoMesh;
 
+	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
 	ItemMesh->SetGenerateOverlapEvents(true);
 	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
-	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoOverlap);
+	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnCollision);
 	RootComponent = ItemMesh;
 }
 
@@ -32,7 +33,7 @@ void ATomato::BeginPlay()
 	
 }
 
-void ATomato::OnTomatoOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ATomato::OnItemCollisionBeginOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// If the tomato hits the head of a guard
 	if (OtherActor->IsA<AGuard>())

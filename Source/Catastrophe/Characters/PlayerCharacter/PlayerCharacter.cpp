@@ -316,7 +316,7 @@ void APlayerCharacter::MoveRight(float Value)
 
 void APlayerCharacter::ShootTomato()
 {
-	// Validate the obejct pointer
+	// Validate the object pointer
 	// Check if the player is ADSing
 	// Check if there is enough tomato to shoot
 	if (TomatoClass 
