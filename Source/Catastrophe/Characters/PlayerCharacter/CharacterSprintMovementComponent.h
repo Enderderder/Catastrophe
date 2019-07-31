@@ -6,7 +6,12 @@
 #include "Components/ActorComponent.h"
 #include "CharacterSprintMovementComponent.generated.h"
 
+/** Delegate declaration */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSprintComponentDelegate);
 
+/**
+ * 
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CATASTROPHE_API UCharacterSprintMovementComponent : public UActorComponent
 {
@@ -54,6 +59,14 @@ public:
 	/**  */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Sprint")
 	float SprintSpeedMultiplier = 1.5f;
+
+	/**  */
+	UPROPERTY(BlueprintAssignable)
+	FSprintComponentDelegate OnSprintBegin;
+
+	/**  */
+	UPROPERTY(BlueprintAssignable)
+	FSprintComponentDelegate OnSprintEnd;
 
 protected:
 

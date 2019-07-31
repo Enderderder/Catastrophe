@@ -23,8 +23,9 @@
 
 #include "PlayerWidget.h"
 #include "PlayerAnimInstance.h"
-#include "Interactable/InteractActor.h"
-#include "Interactable/BaseClasses/InteractableObject.h"
+#include "CharacterSprintMovementComponent.h"
+#include "Interactable/InteractActor.h" /// TODO: Remove this
+#include "Interactable/BaseClasses/InteractableObject.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
 #include "TomatoSack.h"
@@ -36,6 +37,14 @@ APlayerCharacter::APlayerCharacter()
 {
 	// Set this character to call Tick() every frame. 
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Set up the sprint movement component
+	SprintMovementComponent = CreateDefaultSubobject<UCharacterSprintMovementComponent>(TEXT("SprintMovementComponent"));
+	SprintMovementComponent->bUseConstantSprintSpeed = false;
+	SprintMovementComponent->OnSprintBegin.RemoveDynamic(this, &APlayerCharacter::OnSprintBegin);
+	SprintMovementComponent->OnSprintBegin.AddDynamic(this, &APlayerCharacter::OnSprintBegin);
+	SprintMovementComponent->OnSprintEnd.RemoveDynamic(this, &APlayerCharacter::OnSprintEnd);
+	SprintMovementComponent->OnSprintEnd.AddDynamic(this, &APlayerCharacter::OnSprintEnd);
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -160,7 +169,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		CurrentStamina = FMath::Max(0.0f, CurrentStamina - (StaminaDrainPerSec * DeltaTime));
 		if (CurrentStamina <= 0.0f) 
-			SprintEnd();
+			UnSprint();
 	}
 	else //if (GetVelocity().Size() <= 1.0f)
 	{
@@ -192,8 +201,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
 
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerCharacter::SprintBegin);
-	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::SprintEnd);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerCharacter::Sprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::UnSprint);
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::CrouchBegin);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::CrouchEnd);
@@ -229,29 +238,45 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-void APlayerCharacter::SprintBegin()
+void APlayerCharacter::Sprint()
 {
-	if (bAllowMovementInput 
+	if (bAllowMovementInput
 		&& CurrentStamina >= TotalStamina // Only sprint player has stamina
 		&& !bHHUSecondaryActive) // Cant sprint while aiming lol
 	{
-		bSprinting = true;
-		SprintingPostProcess->bEnabled = true;
-
-		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
-		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed * SpringSpeedMultiplier;
+		SprintMovementComponent->Sprint();
 	}
+// 	{
+// 		bSprinting = true;
+// 		SprintingPostProcess->bEnabled = true;
+// 
+// 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
+// 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed * SpringSpeedMultiplier;
+// 	}
 }
 
-void APlayerCharacter::SprintEnd()
+void APlayerCharacter::UnSprint()
 {
-	if (bSprinting)
-	{
-		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
-		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
-		SprintingPostProcess->bEnabled = false;
-	}
-	bSprinting = false;
+	SprintMovementComponent->UnSprint();
+// 	if (bSprinting)
+// 	{
+// 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
+// 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
+// 		SprintingPostProcess->bEnabled = false;
+// 	}
+// 	bSprinting = false;
+}
+
+void APlayerCharacter::OnSprintBegin()
+{
+	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
+	SprintingPostProcess->bEnabled = true;
+}
+
+void APlayerCharacter::OnSprintEnd()
+{
+	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
+	SprintingPostProcess->bEnabled = false;
 }
 
 void APlayerCharacter::CrouchBegin()
@@ -262,8 +287,8 @@ void APlayerCharacter::CrouchBegin()
 		HidingPostProcess->bEnabled = true;
 
 		HHUSecondaryActionEnd();
-		if (bSprinting) 
-			SprintEnd();
+		if (SprintMovementComponent->IsSprinting())
+			SprintMovementComponent->UnSprint();
 	}
 }
 
@@ -571,7 +596,8 @@ void APlayerCharacter::SetStamina(float _value)
 void APlayerCharacter::BlockMovementAction(bool _bBlockMovementInput)
 {
 	// Reset the sprint and crouch state
-	ForceSprintEnd();
+	UnSprint();
+	//ForceSprintEnd();
 	CrouchEnd();	
 
 	// If choose to block input as well

@@ -47,14 +47,16 @@ void UCharacterSprintMovementComponent::TickComponent(float DeltaTime, ELevelTic
 
 	if (bSprinting)
 	{
+		// If player either dont want to sprint anymore or dont meet the requirement to sprint
 		if (!bWantsToSprint
 			|| !IsAbleToSprint()
 			|| !bAllowsToSprint)
 		{
+			bSprinting = false;
+
 			CharacterMovementComponent->MaxWalkSpeed = WalkSpeed;
 
-
-			/// TODO: Stop sprint
+			OnSprintEnd.Broadcast();
 		}
 	}
 	else
@@ -64,23 +66,20 @@ void UCharacterSprintMovementComponent::TickComponent(float DeltaTime, ELevelTic
 			&& IsAbleToSprint()
 			&& bAllowsToSprint)
 		{
+			bSprinting = true;
+
 			if (bUseConstantSprintSpeed)
 			{
 				CharacterMovementComponent->MaxWalkSpeed = ConstantSprintSpeed;
 			}
 			else
 			{
-				//CharacterMovementComponent->MaxWalkSpeed = ConstantSprintSpeed;
-			}
+				CharacterMovementComponent->MaxWalkSpeed = WalkSpeed * SprintSpeedMultiplier;
+			}	
 
-
-			
+			OnSprintBegin.Broadcast();
 		}
-
 	}
-
-
-
 }
 
 void UCharacterSprintMovementComponent::Sprint()
