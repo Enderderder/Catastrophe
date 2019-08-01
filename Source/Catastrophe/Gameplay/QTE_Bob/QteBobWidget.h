@@ -19,6 +19,10 @@ public:
 	/** Default class constructor */
 	UQteBobWidget(const FObjectInitializer& ObjectInitializer);
 	
+
+	UPROPERTY(BlueprintReadWrite, Category = "QTE_Bob")
+	class AQteBobLogicHolder* QteEventLogicHolder;
+
 	/** The range of the success area range for the QTE, goes from 0 - 100 (percent) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite , Category = "QTE_Bob")
 	float SuccessRange = 30.0f;

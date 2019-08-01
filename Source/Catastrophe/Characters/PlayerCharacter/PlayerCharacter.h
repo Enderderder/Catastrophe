@@ -56,6 +56,10 @@ class CATASTROPHE_API APlayerCharacter : public ACharacter
 
 private:
 
+	/**  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCharacterSprintMovementComponent* SprintMovementComponent;
+
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -234,10 +238,22 @@ protected:
 	void LookUpAtRate(float Rate);
 
 	/** Called for character sprinting begin */
-	void SprintBegin();
+	void Sprint();
 
 	/** Called for character sprinting end */
-	void SprintEnd();
+	void UnSprint();
+
+	/**
+	 * 
+	 */
+	UFUNCTION()
+	void OnSprintBegin();
+
+	/**
+	 * 
+	 */
+	UFUNCTION()
+	void OnSprintEnd();
 
 	/** Called for character crouching begin */
 	void CrouchBegin();
@@ -329,9 +345,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void UnblockMovementInput();
 
-	/** Force player to exit spinting action */
+	/**
+	 * Force player to exit spinting action regards to how the sprint component is doing
+	 * @author Richard Wulansari
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	void ForceSprintEnd();
+	void ForceUnSprint();
 
 	/**
 	 * 
@@ -355,10 +374,10 @@ public:
 	void ToggleSpottedAlert(bool _bEnable);
 
 	/** Getter */
+	FORCEINLINE FPlayerDefaultValue GetPlayerDefaultValues() const { return PlayerDefaultValues; }
 	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { 
 		return PerceptionStimuliSourceComponent; }
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
-	FORCEINLINE bool IsPlayerSprinting() const { return bSprinting; }
 	bool IsPlayerCrouched() const;
 	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
 	/** Getter End */
