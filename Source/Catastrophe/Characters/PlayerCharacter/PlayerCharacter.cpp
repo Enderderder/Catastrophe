@@ -597,7 +597,7 @@ void APlayerCharacter::BlockMovementAction(bool _bBlockMovementInput)
 	// Reset the sprint and crouch state
 	UnSprint();
 	//ForceSprintEnd();
-	CrouchEnd();	
+	CrouchEnd();
 
 	// If choose to block input as well
 	if (_bBlockMovementInput)
