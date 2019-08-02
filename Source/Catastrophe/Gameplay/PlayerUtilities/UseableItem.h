@@ -27,6 +27,14 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void UseAbility();
 
+	UFUNCTION()
+	void OnItemCollisionBeginOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnItemCollision(class AActor* _OtherActor, class UPrimitiveComponent* OtherComp);
+	virtual void OnItemCollision_Implementation(class AActor* _OtherActor, class UPrimitiveComponent* OtherComp);
+
+
 public:
 	/** Getter */
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return ItemMesh; }

@@ -23,16 +23,14 @@ void UInventoryComponent::BeginPlay()
 	
 }
 
-void UInventoryComponent::AddItemType(TSubclassOf<class AUseableItem> _NewItem)
+void UInventoryComponent::AddItemType(class AItemSack* _NewItem)
 {
-	AItemSack newItemSack;
-	newItemSack
-
+	SlotsList.Add(_NewItem);
 }
 
-void UInventoryComponent::ReplaceItemTypeWith(int _Position, TSubclassOf<class AUseableItem> _NewItem)
+void UInventoryComponent::ReplaceItemTypeWith(int _Position, class AItemSack* _NewItem)
 {
-	
+	SlotsList[_Position] = _NewItem;
 }
 
 void UInventoryComponent::ChoosePreviousItem()
@@ -61,8 +59,11 @@ void UInventoryComponent::ChooseNextItem()
 
 void UInventoryComponent::UseItem()
 {
-	if (SlotsList[CurrentSelection] != nullptr)
+	if (SlotsList.Num() > CurrentSelection)
 	{
-		SlotsList[CurrentSelection]->UseItem();
+		if (SlotsList[CurrentSelection] != NULL)
+		{
+			SlotsList[CurrentSelection]->UseItem();
+		}
 	}
 }

@@ -15,6 +15,8 @@ private:
 	// The currently selected item
 	UPROPERTY()
 	int8 CurrentSelection;
+
+	UPROPERTY()
 	TArray<class AItemSack*> SlotsList;
 
 public:
@@ -27,9 +29,9 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	void ReplaceItemTypeWith(int _Position, TSubclassOf<class AUseableItem> _NewItem);
+	void ReplaceItemTypeWith(int _Position, class AItemSack* _NewItem);
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	void AddItemType(TSubclassOf<class AUseableItem> _NewItem);
+	void AddItemType(class AItemSack* _NewItem);
 
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
 	void ChoosePreviousItem();

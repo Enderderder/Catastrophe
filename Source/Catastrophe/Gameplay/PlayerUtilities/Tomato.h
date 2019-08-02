@@ -21,7 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	/** Called when the mesh component overlapped */
-	virtual void OnItemCollisionBeginOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
+	virtual void OnItemCollision_Implementation(class AActor* _OtherActor, class UPrimitiveComponent* OtherComp) override;
 
 	/** Called to destroy the tomato */
 	UFUNCTION()

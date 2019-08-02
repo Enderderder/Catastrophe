@@ -14,8 +14,8 @@ AUseableItem::AUseableItem()
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	ItemMesh->SetGenerateOverlapEvents(true);
 	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
-	ItemMesh->OnComponentBeginOverlap.RemoveDynamic(this, &AUseableItem::OnCollision);
-	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &AUseableItem::OnCollision);
+	ItemMesh->OnComponentBeginOverlap.RemoveDynamic(this, &AUseableItem::OnItemCollisionBeginOverlap);
+	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &AUseableItem::OnItemCollisionBeginOverlap);
 	RootComponent = ItemMesh;
 }
 
@@ -31,7 +31,12 @@ void AUseableItem::UseAbility()
 
 }
 
-void AUseableItem::OnCollision(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AUseableItem::OnItemCollisionBeginOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	OnItemCollision(OtherActor, OtherComp);
+}
+
+void AUseableItem::OnItemCollision_Implementation(class AActor* _OtherActor, class UPrimitiveComponent* OtherComp)
 {
 
 }

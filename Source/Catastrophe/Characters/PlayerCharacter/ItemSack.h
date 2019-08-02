@@ -120,5 +120,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
 	bool IsAbleToUse();
 
-	void UseItem();
+	/** 
+	 * Called when the item is to be used
+	 * @author James Johnstone
+	*/
+	virtual void UseItem();
 };

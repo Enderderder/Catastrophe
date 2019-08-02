@@ -22,7 +22,7 @@ ATomato::ATomato()
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
 	ItemMesh->SetGenerateOverlapEvents(true);
 	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
-	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnCollision);
+	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnItemCollisionBeginOverlap);
 	RootComponent = ItemMesh;
 }
 
@@ -33,21 +33,21 @@ void ATomato::BeginPlay()
 	
 }
 
-void ATomato::OnItemCollisionBeginOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ATomato::OnItemCollision_Implementation(class AActor* _OtherActor, class UPrimitiveComponent* _OtherComp)
 {
 	// If the tomato hits the head of a guard
-	if (OtherActor->IsA<AGuard>())
+	if (_OtherActor->IsA<AGuard>())
 	{
-		if (OtherComp->ComponentHasTag(TEXT("Head")))
+		if (_OtherComp->ComponentHasTag(TEXT("Head")))
 		{
-			AGuard* guard = Cast<AGuard>(OtherActor);
+			AGuard* guard = Cast<AGuard>(_OtherActor);
 			guard->SetGuardState(EGuardState::STUNED);
-			DestroyTomato(OtherActor);
+			DestroyTomato(_OtherActor);
 		}
 	}
 	else
 	{
-		DestroyTomato(OtherActor);
+		DestroyTomato(_OtherActor);
 	}
 	// TODO: Spawn decal
 }

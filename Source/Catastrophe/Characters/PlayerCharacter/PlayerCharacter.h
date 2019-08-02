@@ -79,13 +79,15 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* AimDownSightFocusPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
-	class UTomatoSack* TomatoSack;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
+	//class UTomatoSack* TomatoSack;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_UseableItem", meta = (AllowPrivateAccess = "true"))
+	class UInventoryComponent* InventoryComponent;
 
-	// Deprecated TODO: Remove reference of this component
-	/** Spawn location for the throwable */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* TomatoSpawnPoint;
+	//// Deprecated TODO: Remove reference of this component
+	///** Spawn location for the throwable */
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
+	//class USceneComponent* TomatoSpawnPoint;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
@@ -213,6 +215,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Fish Bones")
 	int32 FishBonesAmount;
 
+	// Deprecated TODO: Remove reference of this component
+	/** Spawn location for the throwable */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* TomatoSpawnPoint;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -288,8 +295,8 @@ protected:
 	void CheckTomatoInHand();
 
 	/** Called for shooting tomato */
-	UFUNCTION(BlueprintCallable, Category = "HHU_Tomato")
-	void ShootTomato();
+	//UFUNCTION(BlueprintCallable, Category = "HHU_Tomato")
+	//void ShootTomato();
 
 	/** Called when ZoomInTimeline ticks */
 	UFUNCTION()
@@ -312,8 +319,8 @@ public:
 	void RestoreTomato(int32 _count);
 
 	/** Return the current count of tomatoes player is holding */
-	UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
-	int GetTomatoCount();
+	//UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
+	//int GetTomatoCount();
 
 	/** Set the target to interact for the player */
 	UFUNCTION()
