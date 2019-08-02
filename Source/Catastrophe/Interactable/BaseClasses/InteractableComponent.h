@@ -35,29 +35,32 @@ public:
 	float HoldingTime = 0.0f;
 
 	/** The require holding time of the interaction button in order to interact with this object */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
 	float RequiredHoldTime = 0.0f;
 
 	/** True if this object can only trigger once, will automatically disable interaction after the initial trigger */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
 	bool bOneTimeUse = false;
 
 	/** Text that describe the action in order to complete this interaction */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	FString InteractionActionText = "Press";
 
-	/**  */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
+	/** Text that describe the result of the interaction */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	FString InteractionDescriptionText = "Interact";
+
+	/** If true, the interaction event will be automatically triggered */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
+	bool bAutoInteract = false;
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interaction")
-	bool bAutoInteract = false;
-
+	/** Multi-trigger volume support which keep tracking how many trigger is overlapping the player */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	int32 TriggerCounter = 0;
 
+	/** Reference to the player character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	class APlayerCharacter* PlayerRef;
 
@@ -78,6 +81,7 @@ public:
 	/** Called when player interact */
 	void Interact(class APlayerCharacter* _playerCharacter, float _holdTime);
 
+	/// Currently not in use
 	/** Called when the player hold the interaction */
 	void InteractHold(class APlayerCharacter* _playerCharacter, float _holdTime);
 
