@@ -6,6 +6,43 @@
 #include "GameFramework/Actor.h"
 #include "QteBobLogicHolder.generated.h"
 
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQteEventCompleteSignature, )
+
+/**
+ * Enum state of the qte event
+ */
+UENUM(BlueprintType)
+enum class EQteEventState : uint8
+{
+	None,
+	Pending,
+	Success,
+	FailedByTimeOut,
+	FailedByMissHit
+};
+
+/**
+ * Contains information of the QTE event
+ */
+USTRUCT(BlueprintType)
+struct FQteEventData
+{
+	GENERATED_BODY()
+	
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EQteEventState EventState;
+	
+
+
+	
+	FQteEventData() : 
+		EventState(EQteEventState::None)
+	{}
+};
+
+
 UCLASS()
 class CATASTROPHE_API AQteBobLogicHolder : public AActor
 {

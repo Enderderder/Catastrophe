@@ -61,6 +61,11 @@ void ACatastropheMainGameMode::RemoveOneChasingGuard(AActor* _guard)
 	}
 }
 
+void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* _guard)
+{
+
+}
+
 ACatastropheMainGameMode* ACatastropheMainGameMode::GetGameModeInst(const UObject* _worldContextObject)
 {
 	if (AGameModeBase* gamemode = UGameplayStatics::GetGameMode(_worldContextObject))

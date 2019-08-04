@@ -44,6 +44,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | General")
 	void RemoveOneChasingGuard(AActor* _guard);
 
+	/**
+	 * Initiate the qte event which will involve the guard and the player character
+	 * @author Richard Wulansari
+	 * @param _guard The guard reference
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Gameplay | QTE_Bob")
+	void InitiateQteBobEvent(class AGuard* _guard);
+	virtual void InitiateQteBobEvent_Implementation(class AGuard* _guard);
+
+
+
 
 	/**
 	 * Gets the gamemode with static function call
