@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "QteBobLogicHolder.generated.h"
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQteEventCompleteSignature, )
-
 /**
  * Enum state of the qte event
  */
@@ -42,7 +40,12 @@ public:
 	{}
 };
 
+/** Delegate signature for Qte event */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQteEventCompleteSignature, EQteEventState, _eventState);
 
+/**
+ * 
+ */
 UCLASS()
 class CATASTROPHE_API AQteBobLogicHolder : public AActor
 {
@@ -51,6 +54,11 @@ class CATASTROPHE_API AQteBobLogicHolder : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AQteBobLogicHolder();
+
+	/** Event broadcast when an qte event completed */
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "General | QTE_Bob")
+	FOnQteEventCompleteSignature OnQteEventComplete;
+
 
 protected:
 	// Called when the game starts or when spawned
