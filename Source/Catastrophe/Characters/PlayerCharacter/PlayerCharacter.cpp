@@ -168,13 +168,13 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// If player is sprinting, drain it XD
-	if (bSprinting)
+	if (SprintMovementComponent->IsSprinting())
 	{
 		CurrentStamina = FMath::Max(0.0f, CurrentStamina - (StaminaDrainPerSec * DeltaTime));
 		if (CurrentStamina <= 0.0f) 
 			UnSprint();
 	}
-	else //if (GetVelocity().Size() <= 1.0f)
+	else
 	{
 		CurrentStamina = FMath::Min(TotalStamina, CurrentStamina + (StaminaDrainPerSec * DeltaTime));
 	}
@@ -201,12 +201,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 
+	// General movement input setup
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
-
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerCharacter::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::UnSprint);
-
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::CrouchBegin);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::CrouchEnd);
 
@@ -237,7 +236,7 @@ void APlayerCharacter::TurnAtRate(float Rate)
 
 void APlayerCharacter::LookUpAtRate(float Rate)
 {
-	// calculate delta for this frame from the rate information
+	// Calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
@@ -495,8 +494,8 @@ void APlayerCharacter::HHUSecondaryActionBegin()
 	case EHHUType::TOMATO:
 	{
 		// Let the character follow camera rotation
-		if (bSprinting)
-			ForceSprintEnd();
+		if (SprintMovementComponent->IsSprinting())
+			UnSprint();
 		bUseControllerRotationYaw = true;
 		CameraBoom->bEnableCameraLag = false;
 		CameraBoom->bEnableCameraRotationLag = false;
@@ -603,7 +602,7 @@ void APlayerCharacter::BlockMovementAction(bool _bBlockMovementInput)
 	// Reset the sprint and crouch state
 	UnSprint();
 	//ForceSprintEnd();
-	CrouchEnd();	
+	CrouchEnd();
 
 	// If choose to block input as well
 	if (_bBlockMovementInput)
@@ -617,9 +616,9 @@ void APlayerCharacter::UnblockMovementInput()
 	bAllowMovementInput = true;
 }
 
-void APlayerCharacter::ForceSprintEnd()
+void APlayerCharacter::ForceUnSprint()
 {
-	bSprinting = false;
+	UnSprint();
 	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
 	GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
 }

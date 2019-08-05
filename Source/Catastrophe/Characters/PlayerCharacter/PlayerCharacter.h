@@ -352,9 +352,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void UnblockMovementInput();
 
-	/** Force player to exit spinting action */
+	/**
+	 * Force player to exit spinting action regards to how the sprint component is doing
+	 * @author Richard Wulansari
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	void ForceSprintEnd();
+	void ForceUnSprint();
 
 	/**
 	 * 
@@ -382,7 +385,6 @@ public:
 	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { 
 		return PerceptionStimuliSourceComponent; }
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
-	FORCEINLINE bool IsPlayerSprinting() const { return bSprinting; }
 	bool IsPlayerCrouched() const;
 	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
 	/** Getter End */
