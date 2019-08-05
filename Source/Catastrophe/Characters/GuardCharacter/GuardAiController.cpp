@@ -10,6 +10,8 @@
 
 #include "Guard.h"
 
+#include "DebugUtility/CatastropheDebug.h"
+
 AGuardAiController::AGuardAiController()
 {
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
@@ -77,6 +79,9 @@ void AGuardAiController::PerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 {
 	for (AActor* actor : UpdatedActors)
 	{
+		const FString msg = TEXT("PerceptionUpdated");
+		CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Cyan, msg);
+
 		FActorPerceptionBlueprintInfo actorPerceptionInfo;
 		if (PerceptionComponent->GetActorsPerception(actor, actorPerceptionInfo))
 		{
