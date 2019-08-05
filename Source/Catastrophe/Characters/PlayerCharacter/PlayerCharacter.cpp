@@ -28,8 +28,9 @@
 #include "Interactable/BaseClasses/InteractableObject.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
-//#include "TomatoSack.h"
+
 #include "InventoryComponent.h"
+#include "TomatoSack.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -82,10 +83,6 @@ APlayerCharacter::APlayerCharacter()
 	TomatoInHandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoInHandMesh"));
 	TomatoInHandMesh->SetupAttachment(GetMesh(), TEXT("RightHandSocket"));
 
-	//TomatoSack = CreateDefaultSubobject<UTomatoSack>(TEXT("TomatoSack"));
-	//TomatoSack->SetSackSize(1);
-	//TomatoSack->SetTomatoAmount(0);
-
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 
 	WorldUiAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("InteractableWidgetAnchor"));
@@ -94,7 +91,7 @@ APlayerCharacter::APlayerCharacter()
 	InteractableUiComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractableUiComponent"));
 	InteractableUiComponent->bVisible = false;
 	InteractableUiComponent->SetupAttachment(WorldUiAnchor);
-
+	
 	// Create stimuli
 	PerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("PerceptionStimuliSource"));
 	
@@ -302,14 +299,16 @@ void APlayerCharacter::CrouchEnd()
 
 void APlayerCharacter::CheckTomatoInHand()
 {
-	//if (TomatoSack->IsAbleToThrow())
-	//{
-	//	TomatoInHandMesh->SetVisibility(true);
-	//}
-	//else
-	//{
-	//	TomatoInHandMesh->SetVisibility(false);
-	//}
+	if (InventoryComponent->GetCurrentItemSack())
+	{
+		if (InventoryComponent->GetCurrentItemSack()->IsAbleToUse())
+		{
+			TomatoInHandMesh->SetVisibility(true);
+			return;
+		}
+	}
+
+	TomatoInHandMesh->SetVisibility(false);
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -420,33 +419,37 @@ void APlayerCharacter::HHUPrimaryActionBegin()
 	// Set the activation state to true
 	bHHUPrimaryActive = true;
 
-	InventoryComponent->UseItem();
 
 	//switch (ActiveHHUType)
 	//{
 	//case EHHUType::TOMATO: // To shoot tomato, must be zoomed in
 	//{
-	//	if (!bHHUSecondaryActive
-	//		|| TomatoSack->IsTomatoSackEmpty()
-	//		|| !TomatoClass) break; // Do the check
-	//	// Set the parameter for spawning the tomato
-	//	FVector tomatoSpawnLocation;
-	//	FRotator tomatoSpawnRotation;
-	//	FActorSpawnParameters tomatoSpawnInfo;
-	//	tomatoSpawnInfo.Owner = this;
-	//	tomatoSpawnInfo.SpawnCollisionHandlingOverride =
-	//		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	//	tomatoSpawnLocation = GetMesh()->GetSocketLocation(TEXT("RightHandSocket"));
-	//	tomatoSpawnRotation = FollowCamera->GetComponentRotation();
-	//	// Spawn the tomato
-	//	ATomato* SpawnedTomato;
-	//	SpawnedTomato = GetWorld()->SpawnActor<ATomato>(
-	//		TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
-	//	if (SpawnedTomato)
-	//		SpawnedTomato->LaunchTomato(FollowCamera->GetForwardVector(), TomatoLaunchForce);
-	//	// Lower the tomato count
-	//	TomatoSack->RemoveTomato();
-	//	CheckTomatoInHand();
+	if (bHHUSecondaryActive)
+	{
+		InventoryComponent->UseItem();
+	}
+
+		//if (!bHHUSecondaryActive
+		//	|| TomatoSack->IsTomatoSackEmpty()
+		//	|| !TomatoClass) break; // Do the check
+		// Set the parameter for spawning the tomato
+		//FVector tomatoSpawnLocation;
+		//FRotator tomatoSpawnRotation;
+		//FActorSpawnParameters tomatoSpawnInfo;
+		//tomatoSpawnInfo.Owner = this;
+		//tomatoSpawnInfo.SpawnCollisionHandlingOverride =
+		//	ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		//tomatoSpawnLocation = GetMesh()->GetSocketLocation(TEXT("RightHandSocket"));
+		//tomatoSpawnRotation = FollowCamera->GetComponentRotation();
+		// Spawn the tomato
+		//ATomato* SpawnedTomato;
+		//SpawnedTomato = GetWorld()->SpawnActor<ATomato>(
+		//	TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
+		//if (SpawnedTomato)
+		//	SpawnedTomato->LaunchTomato(FollowCamera->GetForwardVector(), TomatoLaunchForce);
+		// Lower the tomato count
+		//TomatoSack->RemoveTomato();
+		//CheckTomatoInHand();
 	//	break;
 	//}
 
@@ -554,22 +557,30 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 	}
 }
 
-void APlayerCharacter::RestoreAllTomatos()
-{
-	//TomatoSack->FillTomatoSack();
-	CheckTomatoInHand();
-}
-
-void APlayerCharacter::RestoreTomato(int32 _count)
-{
-	//TomatoSack->AddTomatoes(_count);
-	CheckTomatoInHand();
-}
-
+//void APlayerCharacter::RestoreAllTomatos()
+//{
+//	//TomatoSack->FillTomatoSack();
+//	InventoryComponent->GetItemSack(0)->FillItemSack();
+//	CheckTomatoInHand();
+//}
+//
+//void APlayerCharacter::RestoreTomato(int32 _count)
+//{
+//	//TomatoSack->AddTomatoes(_count);
+//	InventoryComponent->GetItemSack(0)->AddItems(_count);
+//	CheckTomatoInHand();
+//}
+//
 //int APlayerCharacter::GetTomatoCount()
 //{
-	//return TomatoSack->GetTomatoAmount();
+//	//return TomatoSack->GetTomatoAmount();
+//	return InventoryComponent->GetItemSack(0)->
 //}
+
+UInventoryComponent* APlayerCharacter::GetInventoryComponent()
+{
+	return InventoryComponent;
+}
 
 void APlayerCharacter::SetInteractionTarget(class UInteractableComponent* _interactTargetComponent)
 {

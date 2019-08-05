@@ -8,7 +8,10 @@
 #include "Engine/CollisionProfile.h"
 
 #include "Interactable/BaseClasses/InteractableComponent.h"
+#include "Characters/PlayerCharacter/InventoryComponent.h"
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
+
+#include "Characters/PlayerCharacter/TomatoSack.h"
 
 ATomatoBox::ATomatoBox()
 {
@@ -40,13 +43,16 @@ void ATomatoBox::PickUpTomato(APlayerCharacter* _playerCharacter)
 {
 	Receive_PickUpTomato();
 
+	UInventoryComponent* inventoryComp = _playerCharacter->GetInventoryComponent();
+
 	// Restore the tomato accordingly
 	if (bRestoreAllTomatoOneTime)
 	{
-		_playerCharacter->RestoreAllTomatos();
+		//_playerCharacter->RestoreAllTomatos();
+		//playInventoryComponent->
 	}
 	else
 	{
-		_playerCharacter->RestoreTomato(1);
+		inventoryComp->PickupItem(ATomatoSack::StaticClass());
 	}
 }

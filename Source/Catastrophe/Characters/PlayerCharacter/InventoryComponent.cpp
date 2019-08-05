@@ -5,6 +5,8 @@
 
 #include "ItemSack.h"
 
+#include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -30,7 +32,61 @@ void UInventoryComponent::AddItemType(class AItemSack* _NewItem)
 
 void UInventoryComponent::ReplaceItemTypeWith(int _Position, class AItemSack* _NewItem)
 {
-	SlotsList[_Position] = _NewItem;
+	if (SlotsList.Num() > _Position)
+	{
+		SlotsList[_Position] = _NewItem;
+	}
+}
+
+void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _NewItemSack)
+{
+	for (auto& slot : SlotsList)
+	{
+		if (slot->IsA(_NewItemSack))
+		{
+			slot->AddItem();
+			return;
+		}
+	}
+
+	AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_NewItemSack, FTransform::Identity);
+	newItemSack->SetSackSize(1);
+	newItemSack->AddItem();
+	SlotsList.Add(newItemSack);
+}
+
+void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _NewItemSack, int _Amount)
+{
+	for (auto& slot : SlotsList)
+	{
+		if (slot->IsA(_NewItemSack))
+		{
+			slot->AddItems(_Amount);
+			return;
+		}
+	}
+
+	AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_NewItemSack->StaticClass(), FTransform::Identity);
+	newItemSack->AddItems(_Amount);
+	SlotsList.Add(newItemSack);
+}
+
+class AItemSack* UInventoryComponent::GetItemSack(int _SlotPosition)
+{
+	if (SlotsList.Num() > _SlotPosition)
+	{
+		return SlotsList[_SlotPosition];
+	}
+	return nullptr;
+}
+
+class AItemSack* UInventoryComponent::GetCurrentItemSack()
+{
+	if (SlotsList.Num() > CurrentSelection)
+	{
+		return SlotsList[CurrentSelection];
+	}
+	return nullptr;
 }
 
 void UInventoryComponent::ChoosePreviousItem()

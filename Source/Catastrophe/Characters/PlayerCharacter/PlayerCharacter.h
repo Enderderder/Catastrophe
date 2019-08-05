@@ -64,10 +64,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
-
 	/** Where the camera is going to be focused on normally */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* CamFocusPoint;
@@ -220,6 +216,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* TomatoSpawnPoint;
 
+	/** Follow camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -291,9 +291,6 @@ protected:
 
 #pragma endregion Controller Action
 
-	/** Check if player has tomato in his hand */
-	void CheckTomatoInHand();
-
 	/** Called for shooting tomato */
 	//UFUNCTION(BlueprintCallable, Category = "HHU_Tomato")
 	//void ShootTomato();
@@ -310,17 +307,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/** Called for set the tomato count to maximum */
-	UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
-	void RestoreAllTomatos();
-
-	/** Called for restore certain amount of tomatoes (but not over the max) */
-	UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
-	void RestoreTomato(int32 _count);
-
-	/** Return the current count of tomatoes player is holding */
-	//UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
-	//int GetTomatoCount();
+	UFUNCTION(BlueprintCallable, Category = "HHU")
+	UInventoryComponent* GetInventoryComponent();
 
 	/** Set the target to interact for the player */
 	UFUNCTION()
@@ -379,6 +367,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void ToggleSpottedAlert(bool _bEnable);
+
+	/** Check if player has tomato in his hand */
+	void CheckTomatoInHand();
 
 	/** Getter */
 	FORCEINLINE FPlayerDefaultValue GetPlayerDefaultValues() const { return PlayerDefaultValues; }
