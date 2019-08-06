@@ -23,7 +23,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	
 	// Update animation data
-	if (CustomPlayerCharacter && !CustomPlayerCharacter->IsPendingKill())
+	if (IsValid(CustomPlayerCharacter))
 	{
 		if (UCharacterMovementComponent* PlayerMovementComponent 
 			= CustomPlayerCharacter->GetCharacterMovement())

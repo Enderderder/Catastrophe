@@ -70,9 +70,8 @@ void ALevelStreamingTrigger::OnPlayerEnterTrigger(class UPrimitiveComponent* Ove
 
 void ALevelStreamingTrigger::OnLevelLoaded()
 {
-	if (bTeleportAfterLoaded && 
-		PlayerToTeleport && 
-		!PlayerToTeleport->IsPendingKill())
+	if (bTeleportAfterLoaded 
+		&& IsValid(PlayerToTeleport))
 	{
 		// We dont do scale transform cause it will mess with the character scale very badly
 		FTransform teleportTransform = 
