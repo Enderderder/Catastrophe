@@ -16,6 +16,7 @@ public:
 	ATomatoSack();
 
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
 	TSubclassOf<class ATomato> TomatoClass;
 
 protected:

@@ -53,6 +53,10 @@ void ATomatoBox::PickUpTomato(APlayerCharacter* _playerCharacter)
 	}
 	else
 	{
-		inventoryComp->PickupItem(ATomatoSack::StaticClass());
+		// Picks up tomato if the tomato class is not a nullptr
+		if (TomatoSackClass)
+		{
+			inventoryComp->PickupItem(TomatoSackClass);
+		}
 	}
 }

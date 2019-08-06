@@ -38,37 +38,42 @@ void UInventoryComponent::ReplaceItemTypeWith(int _Position, class AItemSack* _N
 	}
 }
 
-void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _NewItemSack)
+void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _NewItemType)
 {
 	for (auto& slot : SlotsList)
 	{
-		if (slot->IsA(_NewItemSack))
+		if (slot->IsA(_NewItemType))
 		{
 			slot->AddItem();
 			return;
 		}
 	}
 
-	AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_NewItemSack, FTransform::Identity);
-	newItemSack->SetSackSize(1);
-	newItemSack->AddItem();
-	SlotsList.Add(newItemSack);
+	AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_NewItemType, FTransform::Identity);
+	if (newItemSack)
+	{
+		newItemSack->AddItem();
+		SlotsList.Add(newItemSack);
+	}
 }
 
-void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _NewItemSack, int _Amount)
+void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _NewItemType, int _Amount)
 {
 	for (auto& slot : SlotsList)
 	{
-		if (slot->IsA(_NewItemSack))
+		if (slot->IsA(_NewItemType))
 		{
 			slot->AddItems(_Amount);
 			return;
 		}
 	}
 
-	AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_NewItemSack->StaticClass(), FTransform::Identity);
-	newItemSack->AddItems(_Amount);
-	SlotsList.Add(newItemSack);
+	AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_NewItemType->StaticClass(), FTransform::Identity);
+	if (newItemSack)
+	{
+		newItemSack->AddItems(_Amount);
+		SlotsList.Add(newItemSack);
+	}
 }
 
 class AItemSack* UInventoryComponent::GetItemSack(int _SlotPosition)
@@ -120,6 +125,13 @@ void UInventoryComponent::UseItem()
 		if (SlotsList[CurrentSelection] != NULL)
 		{
 			SlotsList[CurrentSelection]->UseItem();
+			
+			// Deletes Slot if there is no items in the slot
+			if (SlotsList[CurrentSelection]->IsItemSackEmpty())
+			{
+				//GetWorld()->RemoveActor(SlotsList[CurrentSelection], true);
+				SlotsList.RemoveAt(CurrentSelection);
+			}
 		}
 	}
 }

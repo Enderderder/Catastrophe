@@ -299,12 +299,15 @@ void APlayerCharacter::CrouchEnd()
 
 void APlayerCharacter::CheckTomatoInHand()
 {
-	if (InventoryComponent->GetCurrentItemSack())
+	if (InventoryComponent)
 	{
-		if (InventoryComponent->GetCurrentItemSack()->IsAbleToUse())
+		if (InventoryComponent->GetCurrentItemSack())
 		{
-			TomatoInHandMesh->SetVisibility(true);
-			return;
+			if (InventoryComponent->GetCurrentItemSack()->IsAbleToUse())
+			{
+				TomatoInHandMesh->SetVisibility(true);
+				return;
+			}
 		}
 	}
 
