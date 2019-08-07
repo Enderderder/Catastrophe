@@ -50,6 +50,7 @@ void ATomatoSack::UseItem()
 				ATomato* SpawnedTomato = GetWorld()->SpawnActor<ATomato>(TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
 				if (SpawnedTomato)
 				{
+					// Adds force to the tomato to make it go flying
 					SpawnedTomato->LaunchTomato(Player->FollowCamera->GetForwardVector(), Player->TomatoLaunchForce);
 				}
 
@@ -62,6 +63,7 @@ void ATomatoSack::UseItem()
 			}
 			else
 			{
+				// Return warning if it cannot find world
 				UE_LOG(LogTemp, Warning, TEXT("GetWorld returned NULL"));
 			}
 
