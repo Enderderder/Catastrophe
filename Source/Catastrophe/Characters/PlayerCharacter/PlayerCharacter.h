@@ -172,11 +172,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "HHU | Tomato")
 	TSubclassOf<class ATomato> TomatoClass;
 
-	/** The force apply when player throw the tomato */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HHU | Tomato")
-	float TomatoLaunchForce = 100.0f;
-
-
 	/** Sprint & Stamina */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float TotalStamina = 100.0f;
@@ -215,6 +210,10 @@ public:
 	/** Spawn location for the throwable */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* TomatoSpawnPoint;
+
+	/** The force apply when player throw the tomato */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HHU | Tomato")
+	float TomatoLaunchForce = 100.0f;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

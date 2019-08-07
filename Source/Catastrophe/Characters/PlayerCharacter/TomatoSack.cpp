@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 #include "Camera/CameraComponent.h"
+#include "Gameplay/PlayerUtilities/Tomato.h"
 
 // Sets default values for this component's properties
 ATomatoSack::ATomatoSack()
@@ -47,6 +48,10 @@ void ATomatoSack::UseItem()
 				
 				// Spawn the tomato
 				ATomato* SpawnedTomato = GetWorld()->SpawnActor<ATomato>(TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
+				if (SpawnedTomato)
+				{
+					SpawnedTomato->LaunchTomato(Player->FollowCamera->GetForwardVector(), Player->TomatoLaunchForce);
+				}
 
 				// Lower the ammo
 				RemoveItem();
