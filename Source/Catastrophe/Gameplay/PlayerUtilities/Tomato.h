@@ -3,20 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "UseableItem.h"
 #include "Tomato.generated.h"
 
 UCLASS()
-class CATASTROPHE_API ATomato : public AActor
+class CATASTROPHE_API ATomato : public AUseableItem
 {
 	GENERATED_BODY()
-	
-private:
 
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* TomatoMesh;
+	class UStaticMeshComponent* ItemMesh;
 
-public:	
+public:
 	// Sets default values for this actor's properties
 	ATomato();
 
@@ -25,8 +24,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	/** Called when the mesh component overlapped */
-	UFUNCTION()
-	void OnTomatoOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void OnItemCollision_Implementation(class AActor* _OtherActor, class UPrimitiveComponent* OtherComp) override;
 
 	/** Called to destroy the tomato */
 	UFUNCTION()
@@ -35,14 +33,13 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Tomato")
 	void Receive_OnTomatoSplash(class AActor* _otherActor);
 
-public:	
-
-	/** Lauch tomato in certain direction */
+public:
+	/** Launch tomato in certain direction */
 	UFUNCTION(BlueprintCallable, Category = "Tomato")
 	void LaunchTomato(FVector _launchDirection, float _launchForce);
 
 	/** Getter */
-	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return TomatoMesh; }
+	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return ItemMesh; }
 	/** Getter End */
 
 };
