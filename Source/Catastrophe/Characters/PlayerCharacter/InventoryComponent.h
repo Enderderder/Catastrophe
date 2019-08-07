@@ -59,13 +59,20 @@ public:
 	 * @param _Amount The sack class type
 	 * @param _Amount The amount of items that are picked up
 	 */
-	UFUNCTION(BlueprintCallable, Category = "ItemuseSystem")
+	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
 	void PickupItems(TSubclassOf<class AItemSack> _NewItemSack, int _Amount);
+
+	/**
+	 * Called to check if the inventory contains any item sacks
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
+	bool IsInventoryEmpty();
 
 	/**
 	 * Called to get the item sack at a given position in the list
 	 * @author James Johnstone
-	 * @param _SlotPosition The positon of the sack you want to get
+	 * @param _SlotPosition The position of the sack you want to get
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
 	class AItemSack* GetItemSack(int _SlotPosition);

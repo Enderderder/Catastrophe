@@ -76,6 +76,15 @@ void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _NewItemType,
 	}
 }
 
+bool UInventoryComponent::IsInventoryEmpty()
+{
+	if (SlotsList.Num() > 0)
+	{
+		return false;
+	}
+	return true;
+}
+
 class AItemSack* UInventoryComponent::GetItemSack(int _SlotPosition)
 {
 	if (SlotsList.Num() > _SlotPosition)
@@ -164,7 +173,7 @@ void UInventoryComponent::UseItem()
 			// Deletes Slot if there is no items in the slot
 			if (SlotsList[CurrentSelection]->IsItemSackEmpty())
 			{
-				//GetWorld()->RemoveActor(SlotsList[CurrentSelection], true);
+				SlotsList[CurrentSelection]->K2_DestroyActor();
 				SlotsList.RemoveAt(CurrentSelection);
 			}
 		}

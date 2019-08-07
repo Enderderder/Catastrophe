@@ -83,6 +83,7 @@ APlayerCharacter::APlayerCharacter()
 	TomatoInHandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoInHandMesh"));
 	TomatoInHandMesh->SetupAttachment(GetMesh(), TEXT("RightHandSocket"));
 
+	// Creates an item inventory component which stores useable items
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 
 	WorldUiAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("InteractableWidgetAnchor"));
@@ -343,37 +344,6 @@ void APlayerCharacter::MoveRight(float Value)
 	}
 }
 
-//void APlayerCharacter::ShootTomato()
-//{
-//	// Validate the object pointer
-//	// Check if the player is ADSing
-//	// Check if there is enough tomato to shoot
-//	if (TomatoClass 
-//		&& bHHUSecondaryActive == true
-//		&& bCanUseHHU == true
-//		&& TomatoSack->IsAbleToThrow())
-//	{
-//		// Set the parameter for spawning the tomato
-//		FVector tomatoSpawnLocation;
-//		FRotator tomatoSpawnRotation;
-//		FActorSpawnParameters tomatoSpawnInfo;
-//		tomatoSpawnInfo.Owner = this;
-//		tomatoSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-//		tomatoSpawnLocation = TomatoSpawnPoint->GetComponentLocation();
-//		tomatoSpawnRotation = FollowCamera->GetComponentRotation();
-//
-//		// Spawn the tomato
-//		APawn* SpawnedTomato;
-//		SpawnedTomato = GetWorld()->SpawnActor<APawn>(TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
-//
-//		// Lower the ammo
-//		TomatoSack->RemoveTomato();
-//
-//		// Check if theres tomato left in the hand
-//		CheckTomatoInHand();
-//	}
-//}
-
 void APlayerCharacter::TimelineSetCameraZoomValue(float _alpha)
 {
 	float resultLength =
@@ -422,49 +392,11 @@ void APlayerCharacter::HHUPrimaryActionBegin()
 	// Set the activation state to true
 	bHHUPrimaryActive = true;
 
-
-	//switch (ActiveHHUType)
-	//{
-	//case EHHUType::TOMATO: // To shoot tomato, must be zoomed in
-	//{
+	// If the player is aiming and shoots, then use currently selected useable item
 	if (bHHUSecondaryActive)
 	{
 		InventoryComponent->UseItem();
 	}
-
-		//if (!bHHUSecondaryActive
-		//	|| TomatoSack->IsTomatoSackEmpty()
-		//	|| !TomatoClass) break; // Do the check
-		// Set the parameter for spawning the tomato
-		//FVector tomatoSpawnLocation;
-		//FRotator tomatoSpawnRotation;
-		//FActorSpawnParameters tomatoSpawnInfo;
-		//tomatoSpawnInfo.Owner = this;
-		//tomatoSpawnInfo.SpawnCollisionHandlingOverride =
-		//	ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		//tomatoSpawnLocation = GetMesh()->GetSocketLocation(TEXT("RightHandSocket"));
-		//tomatoSpawnRotation = FollowCamera->GetComponentRotation();
-		// Spawn the tomato
-		//ATomato* SpawnedTomato;
-		//SpawnedTomato = GetWorld()->SpawnActor<ATomato>(
-		//	TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
-		//if (SpawnedTomato)
-		//	SpawnedTomato->LaunchTomato(FollowCamera->GetForwardVector(), TomatoLaunchForce);
-		// Lower the tomato count
-		//TomatoSack->RemoveTomato();
-		//CheckTomatoInHand();
-	//	break;
-	//}
-
-	//case EHHUType::LASER:
-	//{
-
-	//	break;
-	//}
-
-	//default: break;
-	//}
-
 }
 
 void APlayerCharacter::HHUPrimaryActionEnd()
