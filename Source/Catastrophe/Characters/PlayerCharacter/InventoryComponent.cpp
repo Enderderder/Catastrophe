@@ -94,6 +94,41 @@ class AItemSack* UInventoryComponent::GetCurrentItemSack()
 	return nullptr;
 }
 
+class AItemSack* UInventoryComponent::GetPreviousItemSack()
+{
+	if (SlotsList.Num() > CurrentSelection)
+	{
+		if (CurrentSelection == 0)
+		{
+			return SlotsList.Last();
+		}
+		else
+		{
+			return SlotsList[CurrentSelection - 1];
+		}
+	}
+	return nullptr;
+}
+
+class AItemSack* UInventoryComponent::GetNextItemSack()
+{
+	if (SlotsList.Num() > CurrentSelection)
+	{
+		if (CurrentSelection == SlotsList.Num() - 1)
+		{
+			if (SlotsList.Num() > 0)
+			{
+				return SlotsList[0];
+			}
+		}
+		else
+		{
+			return SlotsList[CurrentSelection];
+		}
+	}
+	return nullptr;
+}
+
 void UInventoryComponent::ChoosePreviousItem()
 {
 	if (CurrentSelection == 0)

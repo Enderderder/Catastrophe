@@ -11,12 +11,12 @@ AUseableItem::AUseableItem()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
-	ItemMesh->SetGenerateOverlapEvents(true);
-	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
-	ItemMesh->OnComponentBeginOverlap.RemoveDynamic(this, &AUseableItem::OnItemCollisionBeginOverlap);
-	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &AUseableItem::OnItemCollisionBeginOverlap);
-	RootComponent = ItemMesh;
+	//ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
+	//ItemMesh->SetGenerateOverlapEvents(true);
+	//ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
+	//ItemMesh->OnComponentBeginOverlap.RemoveDynamic(this, &AUseableItem::OnItemCollisionBeginOverlap);
+	//ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &AUseableItem::OnItemCollisionBeginOverlap);
+	//RootComponent = ItemMesh;
 }
 
 // Called when the game starts or when spawned

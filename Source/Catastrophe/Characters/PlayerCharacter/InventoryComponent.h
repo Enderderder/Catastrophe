@@ -58,6 +58,10 @@ public:
 	class AItemSack* GetItemSack(int _SlotPosition);
 	UFUNCTION(BlueprintCallable,Category = "ItemUseSystem")
 	class AItemSack* GetCurrentItemSack();
+	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
+	class AItemSack* GetPreviousItemSack();
+	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
+	class AItemSack* GetNextItemSack();
 
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
 	void ChoosePreviousItem();

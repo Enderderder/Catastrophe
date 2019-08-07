@@ -12,10 +12,12 @@ class CATASTROPHE_API AItemSack : public AActor
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
 	uint8 ItemAmount;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
 	uint8 MaxItemAmount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ItemSack")
+	UTexture* IconTexture;
 
 public:	
 	// Sets default values for this actor's properties

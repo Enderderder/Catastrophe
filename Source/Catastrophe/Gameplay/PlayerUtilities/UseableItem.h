@@ -12,8 +12,7 @@ class CATASTROPHE_API AUseableItem : public AActor
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* ItemMesh;
+	
 
 public:
 	// Sets default values for this actor's properties
@@ -35,8 +34,8 @@ protected:
 	virtual void OnItemCollision_Implementation(class AActor* _OtherActor, class UPrimitiveComponent* OtherComp);
 
 
-public:
-	/** Getter */
-	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return ItemMesh; }
-	/** Getter End */
+//public:
+//	/** Getter */
+//	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return ItemMesh; }
+//	/** Getter End */
 };

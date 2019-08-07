@@ -11,6 +11,10 @@ class CATASTROPHE_API ATomato : public AUseableItem
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* ItemMesh;
+
 public:
 	// Sets default values for this actor's properties
 	ATomato();
@@ -33,5 +37,9 @@ public:
 	/** Launch tomato in certain direction */
 	UFUNCTION(BlueprintCallable, Category = "Tomato")
 	void LaunchTomato(FVector _launchDirection, float _launchForce);
+
+	/** Getter */
+	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return ItemMesh; }
+	/** Getter End */
 
 };
