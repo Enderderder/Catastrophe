@@ -4,8 +4,10 @@
 #include "CatastropheMainGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
+#include "Gameplay/QTE_Bob/QteBobLogicHolder.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -63,7 +65,15 @@ void ACatastropheMainGameMode::RemoveOneChasingGuard(AActor* _guard)
 
 void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* _guard)
 {
+	if (!IsValid(CurrentQteEvent))
+	{
+		CurrentQteEvent = GetWorld()->SpawnActor<AQteBobLogicHolder>(QteBobEventClass, FTransform::Identity);
+		if (CurrentQteEvent)
+		{
 
+		}
+
+	}
 }
 
 ACatastropheMainGameMode* ACatastropheMainGameMode::GetGameModeInst(const UObject* _worldContextObject)

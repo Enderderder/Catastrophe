@@ -16,8 +16,19 @@ class CATASTROPHE_API ACatastropheMainGameMode : public AGameModeBase
 	
 protected:
 
+	/** Array of guards thats chasing the player */
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | General")
 	TArray<AActor*> ChasingGuards;
+
+	/** The class reference to the QTE bob event */
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay | QTE_Bob")
+	TSubclassOf<class AQteBobLogicHolder> QteBobEventClass;
+
+	/** The currently running QTE_Event, there should only be one QTE event running at a time */
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | QTE_Bob")
+	class AQteBobLogicHolder* CurrentQteEvent;
+
+
 
 public:
 
@@ -52,6 +63,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Gameplay | QTE_Bob")
 	void InitiateQteBobEvent(class AGuard* _guard);
 	virtual void InitiateQteBobEvent_Implementation(class AGuard* _guard);
+
+
+
+
 
 
 
