@@ -32,10 +32,10 @@ AGuardAiController::AGuardAiController()
 void AGuardAiController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
+	
 	// Sets the reference of the guard
 	ControllingGuard = Cast<AGuard>(InPawn);
-	if (ControllingGuard && !ControllingGuard->IsPendingKill())
+	if (IsValid(ControllingGuard))
 	{
 		ControllingGuard->SetGuardControllerRef(this);
 
