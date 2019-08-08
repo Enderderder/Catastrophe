@@ -18,7 +18,7 @@ public:
 protected:
 
 	/**  */
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Gameplay | Cave")
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Gameplay | Cave", meta = (MakeEditWidget = "true"))
 	TArray<FVector> CaterpillarFollowPoints;
 
 
