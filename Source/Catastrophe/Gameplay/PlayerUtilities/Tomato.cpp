@@ -13,16 +13,10 @@ ATomato::ATomato()
  	// Set this actor to not call Tick() every frame.
 	PrimaryActorTick.bCanEverTick = false;
 
-	//TomatoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
-	//TomatoMesh->SetGenerateOverlapEvents(true);
-	//TomatoMesh->SetCollisionProfileName(TEXT("Throwable"));
-	//TomatoMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoOverlap);
-	//RootComponent = TomatoMesh;
-
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
 	ItemMesh->SetGenerateOverlapEvents(true);
 	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
-	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnItemCollisionBeginOverlap);
+	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoCollisionBeginOverlap);
 	RootComponent = ItemMesh;
 }
 
@@ -33,7 +27,7 @@ void ATomato::BeginPlay()
 	
 }
 
-void ATomato::OnItemCollision_Implementation(class AActor* _OtherActor, class UPrimitiveComponent* _OtherComp)
+void ATomato::OnTomatoCollisionBeginOverlap(class UPrimitiveComponent* _OverlappedComponent, class AActor* _OtherActor, class UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _SweepResult)
 {
 	// If the tomato hits the head of a guard
 	if (_OtherActor->IsA<AGuard>())

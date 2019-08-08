@@ -13,7 +13,8 @@ class CATASTROPHE_API AYarnBall : public AUseableItem
 	GENERATED_BODY()
 	
 private:
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* ItemMesh;
 
 public:	
 	// Sets default values for this actor's properties

@@ -11,7 +11,7 @@ class CATASTROPHE_API ATomato : public AUseableItem
 {
 	GENERATED_BODY()
 
-protected:
+private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* ItemMesh;
 
@@ -24,7 +24,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	/** Called when the mesh component overlapped */
-	virtual void OnItemCollision_Implementation(class AActor* _OtherActor, class UPrimitiveComponent* OtherComp) override;
+	UFUNCTION()
+	void OnTomatoCollisionBeginOverlap(class UPrimitiveComponent* _OverlappedComponent, class AActor* _OtherActor, class UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _SweepResult);
 
 	/** Called to destroy the tomato */
 	UFUNCTION()
