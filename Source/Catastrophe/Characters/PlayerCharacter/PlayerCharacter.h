@@ -80,11 +80,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_UseableItem", meta = (AllowPrivateAccess = "true"))
 	class UInventoryComponent* InventoryComponent;
 
-	//// Deprecated TODO: Remove reference of this component
-	///** Spawn location for the throwable */
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
-	//class USceneComponent* TomatoSpawnPoint;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
 
@@ -134,6 +129,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate = 45.0f;
 
+	/** Maximun angle the player camera can look up */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float CameraPitchConstrainMax = 60.0f;
+
+	/** Maximun angle the player camera can look down */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float CameraPitchConstrainMin = -60.0f;
 
 	/** The current interacble target */
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
