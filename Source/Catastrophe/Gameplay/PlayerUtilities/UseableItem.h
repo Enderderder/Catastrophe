@@ -19,7 +19,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Called when using the item
+	/**
+	 * Called to use item
+	 * @author James Johnstone
+	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void UseAbility();
 };

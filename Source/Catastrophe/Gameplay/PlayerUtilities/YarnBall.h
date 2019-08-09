@@ -14,7 +14,7 @@ class CATASTROPHE_API AYarnBall : public AUseableItem
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* ItemMesh;
+	class UStaticMeshComponent* YarnballMesh;
 
 public:	
 	// Sets default values for this actor's properties
@@ -24,8 +24,26 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	/**
+	 * Called to destroy the yarn ball
+	 * @author James Johnstone
+	 */
+	UFUNCTION()
+	void DestroyYarnball();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Yarnball", meta = (DisplayName = "OnDestroyYarnball"))
+	void Receive_OnDestroyYarnball();
 
+public:	
+	/**
+	 * Called to launch the yarn ball in a certain direction
+	 * @author James Johnstone
+	 * @param _launchDirection The direction vector in which the yarn ball is to be launched at
+	 * @param _launchForce The force at which the yarn ball is to be launched with
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Yarnball")
+	void LaunchYarnball(FVector _launchDirection, float _launchForce);
+
+	/** Getter */
+	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return YarnballMesh; }
+	/** Getter End */
 };

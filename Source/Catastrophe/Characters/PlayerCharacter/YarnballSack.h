@@ -23,7 +23,7 @@ protected:
 
 public:
 	/**
-	 * Called to throw a tomato from the sack
+	 * Called to throw a yarn ball from the sack
 	 * @author James Johnstone
 	 */
 	virtual void UseItem() override;

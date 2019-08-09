@@ -16,6 +16,7 @@ ATomato::ATomato()
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
 	ItemMesh->SetGenerateOverlapEvents(true);
 	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
+	ItemMesh->OnComponentBeginOverlap.RemoveDynamic(this, &ATomato::OnTomatoCollisionBeginOverlap);
 	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoCollisionBeginOverlap);
 	RootComponent = ItemMesh;
 }
@@ -24,7 +25,7 @@ ATomato::ATomato()
 void ATomato::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void ATomato::OnTomatoCollisionBeginOverlap(class UPrimitiveComponent* _OverlappedComponent, class AActor* _OtherActor, class UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _SweepResult)
@@ -54,6 +55,5 @@ void ATomato::DestroyTomato(class AActor* _otherActor)
 
 void ATomato::LaunchTomato(FVector _launchDirection, float _launchForce)
 {
-	//TomatoMesh->AddForce(_launchDirection * _launchForce);
 	ItemMesh->AddForce(_launchDirection * _launchForce);
 }

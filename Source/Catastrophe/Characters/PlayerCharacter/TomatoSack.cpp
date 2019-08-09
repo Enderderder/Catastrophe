@@ -41,7 +41,7 @@ void ATomatoSack::UseItem()
 
 			tomatoSpawnLocation = Player->TomatoSpawnPoint->GetComponentLocation();
 			tomatoSpawnRotation = Player->FollowCamera->GetComponentRotation();
-				
+			
 			// Spawn the tomato
 			ATomato* SpawnedTomato = GetWorld()->SpawnActor<ATomato>(TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
 			if (SpawnedTomato)
@@ -55,7 +55,6 @@ void ATomatoSack::UseItem()
 
 			// Check if theres tomato left in the hand
 			Player->CheckTomatoInHand();
-			//CheckTomatoInHand();
 		}
 		else
 		{

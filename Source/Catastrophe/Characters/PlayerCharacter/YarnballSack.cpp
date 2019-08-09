@@ -43,8 +43,14 @@ void AYarnballSack::UseItem()
 			if (SpawnedYarnball)
 			{
 				// Adds force to the yarnball to make it go flying
-
+				SpawnedYarnball->LaunchYarnball(Player->FollowCamera->GetForwardVector(), Player->TomatoLaunchForce);
 			}
+
+			// Lower the ammo
+			RemoveItem();
+
+			// Check if theres a yarnball left in the hand
+			Player->CheckTomatoInHand();
 		}
 	}
 }

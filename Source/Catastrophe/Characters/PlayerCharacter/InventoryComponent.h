@@ -17,7 +17,7 @@ private:
 	int8 CurrentSelection;
 
 	UPROPERTY()
-	TArray<class AItemSack*> SlotsList;
+	TArray<class AItemSack*> Slots;
 
 public:
 	// Sets default values for this component's properties
@@ -33,7 +33,7 @@ protected:
 	 * @param The position in the slot list to replace
 	 * @param The new item to replace with
 	 */
-	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
+	UFUNCTION()
 	void ReplaceItemTypeWith(int _Position, class AItemSack* _NewItem);
 
 	/**
@@ -41,7 +41,7 @@ protected:
 	 * @author James Johnstone
 	 * @param _newItem The new item to be added
 	 */
-	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
+	UFUNCTION()
 	void AddItemType(class AItemSack* _NewItem);
 
 public:
@@ -68,6 +68,13 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
 	bool IsInventoryEmpty();
+
+	/**
+	 * Called to get the number of slots in the inventory
+	 * @author James Johnstone
+	 */
+	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
+	int GetNumOfSlots();
 
 	/**
 	 * Called to get the item sack at a given position in the list

@@ -27,20 +27,20 @@ void UInventoryComponent::BeginPlay()
 
 void UInventoryComponent::AddItemType(class AItemSack* _NewItem)
 {
-	SlotsList.Add(_NewItem);
+	Slots.Add(_NewItem);
 }
 
 void UInventoryComponent::ReplaceItemTypeWith(int _Position, class AItemSack* _NewItem)
 {
-	if (SlotsList.Num() > _Position)
+	if (Slots.Num() > _Position)
 	{
-		SlotsList[_Position] = _NewItem;
+		Slots[_Position] = _NewItem;
 	}
 }
 
 void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _NewItemType)
 {
-	for (auto& slot : SlotsList)
+	for (auto& slot : Slots)
 	{
 		if (slot->IsA(_NewItemType))
 		{
@@ -53,13 +53,13 @@ void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _NewItemType)
 	if (newItemSack)
 	{
 		newItemSack->AddItem();
-		SlotsList.Add(newItemSack);
+		Slots.Add(newItemSack);
 	}
 }
 
 void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _NewItemType, int _Amount)
 {
-	for (auto& slot : SlotsList)
+	for (auto& slot : Slots)
 	{
 		if (slot->IsA(_NewItemType))
 		{
@@ -72,48 +72,53 @@ void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _NewItemType,
 	if (newItemSack)
 	{
 		newItemSack->AddItems(_Amount);
-		SlotsList.Add(newItemSack);
+		Slots.Add(newItemSack);
 	}
 }
 
 bool UInventoryComponent::IsInventoryEmpty()
 {
-	if (SlotsList.Num() > 0)
+	if (Slots.Num() > 0)
 	{
 		return false;
 	}
 	return true;
 }
 
+int UInventoryComponent::GetNumOfSlots()
+{
+	return Slots.Num();
+}
+
 class AItemSack* UInventoryComponent::GetItemSack(int _SlotPosition)
 {
-	if (SlotsList.Num() > _SlotPosition)
+	if (Slots.Num() > _SlotPosition)
 	{
-		return SlotsList[_SlotPosition];
+		return Slots[_SlotPosition];
 	}
 	return nullptr;
 }
 
 class AItemSack* UInventoryComponent::GetCurrentItemSack()
 {
-	if (SlotsList.Num() > CurrentSelection)
+	if (Slots.Num() > CurrentSelection)
 	{
-		return SlotsList[CurrentSelection];
+		return Slots[CurrentSelection];
 	}
 	return nullptr;
 }
 
 class AItemSack* UInventoryComponent::GetPreviousItemSack()
 {
-	if (SlotsList.Num() > CurrentSelection)
+	if (Slots.Num() > CurrentSelection)
 	{
 		if (CurrentSelection == 0)
 		{
-			return SlotsList.Last();
+			return Slots.Last();
 		}
 		else
 		{
-			return SlotsList[CurrentSelection - 1];
+			return Slots[CurrentSelection - 1];
 		}
 	}
 	return nullptr;
@@ -121,18 +126,18 @@ class AItemSack* UInventoryComponent::GetPreviousItemSack()
 
 class AItemSack* UInventoryComponent::GetNextItemSack()
 {
-	if (SlotsList.Num() > CurrentSelection)
+	if (Slots.Num() > CurrentSelection)
 	{
-		if (CurrentSelection == SlotsList.Num() - 1)
+		if (CurrentSelection == Slots.Num() - 1)
 		{
-			if (SlotsList.Num() > 0)
+			if (Slots.Num() > 0)
 			{
-				return SlotsList[0];
+				return Slots[0];
 			}
 		}
 		else
 		{
-			return SlotsList[CurrentSelection];
+			return Slots[CurrentSelection];
 		}
 	}
 	return nullptr;
@@ -142,7 +147,7 @@ void UInventoryComponent::ChoosePreviousItem()
 {
 	if (CurrentSelection == 0)
 	{
-		CurrentSelection = SlotsList.Num() - 1;
+		CurrentSelection = Slots.Num() - 1;
 	}
 	else
 	{
@@ -152,7 +157,7 @@ void UInventoryComponent::ChoosePreviousItem()
 
 void UInventoryComponent::ChooseNextItem()
 {
-	if (CurrentSelection == SlotsList.Num() - 1)
+	if (CurrentSelection == Slots.Num() - 1)
 	{
 		CurrentSelection = 0;
 	}
@@ -164,18 +169,23 @@ void UInventoryComponent::ChooseNextItem()
 
 void UInventoryComponent::UseItem()
 {
-	if (SlotsList.Num() > CurrentSelection)
+	if (Slots.Num() > CurrentSelection)
 	{
-		if (SlotsList[CurrentSelection] != NULL)
+		if (Slots[CurrentSelection] != NULL)
 		{
-			SlotsList[CurrentSelection]->UseItem();
+			Slots[CurrentSelection]->UseItem();
 			
 			// Deletes Slot if there is no items in the slot
-			if (SlotsList[CurrentSelection]->IsItemSackEmpty())
+			if (Slots[CurrentSelection]->IsItemSackEmpty())
 			{
-				SlotsList[CurrentSelection]->K2_DestroyActor();
-				SlotsList.RemoveAt(CurrentSelection);
+				Slots[CurrentSelection]->K2_DestroyActor();
+				Slots.RemoveAt(CurrentSelection);
+				if (Slots.Num() == CurrentSelection && Slots.Num() > 0)
+				{
+					ChoosePreviousItem();
+				}
 			}
 		}
+
 	}
 }
