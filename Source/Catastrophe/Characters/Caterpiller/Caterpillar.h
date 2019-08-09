@@ -11,6 +11,12 @@ class CATASTROPHE_API ACaterpillar : public ACharacter
 {
 	GENERATED_BODY()
 
+private:
+
+	/** The trigger box that detect overlap with player character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* CatchTriggerBox;
+
 public:
 	// Sets default values for this character's properties
 	ACaterpillar();

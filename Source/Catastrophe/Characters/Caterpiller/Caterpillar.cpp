@@ -3,6 +3,10 @@
 
 #include "Caterpillar.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -16,6 +20,16 @@ ACaterpillar::ACaterpillar()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+
+
+
+
+
+	CatchTriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CatchTriggerBox"));
+	CatchTriggerBox->SetGenerateOverlapEvents(true);
+	//CatchTriggerBox->SetCollisionProfileName(TEXT("Trigger"));
+	CatchTriggerBox->SetupAttachment(GetMesh());
 }
 
 // Called when the game starts or when spawned
