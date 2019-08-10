@@ -3,12 +3,18 @@
 
 #include "YarnBall.h"
 
+#include "Components/StaticMeshComponent.h"
+
 // Sets default values
 AYarnBall::AYarnBall()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	YarnballMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("YarnballMesh"));
+	YarnballMesh->SetGenerateOverlapEvents(false);
+	YarnballMesh->SetCollisionProfileName(TEXT("Yarnball"));
+	RootComponent = YarnballMesh;
 }
 
 // Called when the game starts or when spawned
@@ -18,10 +24,13 @@ void AYarnBall::BeginPlay()
 	
 }
 
-// Called every frame
-void AYarnBall::Tick(float DeltaTime)
+void AYarnBall::DestroyYarnball()
 {
-	Super::Tick(DeltaTime);
-
+	Receive_OnDestroyYarnball();
+	Destroy();
 }
 
+void AYarnBall::LaunchYarnball(FVector _launchDirection)
+{
+	YarnballMesh->AddForce(_launchDirection * LaunchForce);
+}
