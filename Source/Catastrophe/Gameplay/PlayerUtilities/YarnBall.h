@@ -16,6 +16,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* YarnballMesh;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Yarnball")
+	float LaunchForce;
+
 public:	
 	// Sets default values for this actor's properties
 	AYarnBall();
@@ -41,7 +44,7 @@ public:
 	 * @param _launchForce The force at which the yarn ball is to be launched with
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Yarnball")
-	void LaunchYarnball(FVector _launchDirection, float _launchForce);
+	void LaunchYarnball(FVector _launchDirection);
 
 	/** Getter */
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return YarnballMesh; }

@@ -14,7 +14,7 @@ ATomato::ATomato()
 	PrimaryActorTick.bCanEverTick = false;
 
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
-	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
+	ItemMesh->SetCollisionProfileName(TEXT("Tomato"));
 	ItemMesh->OnComponentHit.RemoveDynamic(this, &ATomato::OnTomatoHit);
 	ItemMesh->OnComponentHit.AddDynamic(this, &ATomato::OnTomatoHit);
 	RootComponent = ItemMesh;
@@ -48,7 +48,7 @@ void ATomato::DestroyTomato(class AActor* _otherActor)
 	Destroy();
 }
 
-void ATomato::LaunchTomato(FVector _launchDirection, float _launchForce)
+void ATomato::LaunchTomato(FVector _launchDirection)
 {
-	ItemMesh->AddForce(_launchDirection * _launchForce);
+	ItemMesh->AddForce(_launchDirection * LaunchForce);
 }

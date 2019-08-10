@@ -47,7 +47,7 @@ void ATomatoSack::UseItem()
 			if (SpawnedTomato)
 			{
 				// Adds force to the tomato to make it go flying
-				SpawnedTomato->LaunchTomato(Player->FollowCamera->GetForwardVector(), Player->TomatoLaunchForce);
+				SpawnedTomato->LaunchTomato(Player->FollowCamera->GetForwardVector());
 			}
 
 			// Lower the ammo

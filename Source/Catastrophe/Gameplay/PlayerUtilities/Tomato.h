@@ -15,6 +15,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* ItemMesh;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Tomato")
+	float LaunchForce;
+
 public:
 	// Sets default values for this actor's properties
 	ATomato();
@@ -52,7 +55,7 @@ public:
 	 * @param _launchForce The force of the throw
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Tomato")
-	void LaunchTomato(FVector _launchDirection, float _launchForce);
+	void LaunchTomato(FVector _launchDirection);
 
 	/** Getter */
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return ItemMesh; }

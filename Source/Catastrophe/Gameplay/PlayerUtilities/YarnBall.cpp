@@ -13,7 +13,7 @@ AYarnBall::AYarnBall()
 
 	YarnballMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("YarnballMesh"));
 	YarnballMesh->SetGenerateOverlapEvents(false);
-	YarnballMesh->SetCollisionProfileName(TEXT("Throwable"));
+	YarnballMesh->SetCollisionProfileName(TEXT("Yarnball"));
 	RootComponent = YarnballMesh;
 }
 
@@ -30,7 +30,7 @@ void AYarnBall::DestroyYarnball()
 	Destroy();
 }
 
-void AYarnBall::LaunchYarnball(FVector _launchDirection, float _launchForce)
+void AYarnBall::LaunchYarnball(FVector _launchDirection)
 {
-	YarnballMesh->AddForce(_launchDirection * _launchForce);
+	YarnballMesh->AddForce(_launchDirection * LaunchForce);
 }
