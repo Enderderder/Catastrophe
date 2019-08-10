@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "TomatoSack.h"
 #include "GameFramework/Actor.h"
 #include "PlayerCharacter.h"
@@ -30,43 +28,38 @@ void ATomatoSack::UseItem()
 	if (IsAbleToUse())
 	{
 		// Throw a tomato
-		if (IsAbleToUse())
+		if (GetWorld())
 		{
-			if (GetWorld())
-			{
-				APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+			APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 				
-				// Set the parameter for spawning the tomato
-				FVector tomatoSpawnLocation;
-				FRotator tomatoSpawnRotation;
-				FActorSpawnParameters tomatoSpawnInfo;
-				tomatoSpawnInfo.Owner = this;
-				tomatoSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			// Set the parameter for spawning the tomato
+			FVector tomatoSpawnLocation;
+			FRotator tomatoSpawnRotation;
+			FActorSpawnParameters tomatoSpawnInfo;
+			tomatoSpawnInfo.Owner = this;
+			tomatoSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-				tomatoSpawnLocation = Player->TomatoSpawnPoint->GetComponentLocation();
-				tomatoSpawnRotation = Player->FollowCamera->GetComponentRotation();
-				
-				// Spawn the tomato
-				ATomato* SpawnedTomato = GetWorld()->SpawnActor<ATomato>(TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
-				if (SpawnedTomato)
-				{
-					// Adds force to the tomato to make it go flying
-					SpawnedTomato->LaunchTomato(Player->FollowCamera->GetForwardVector(), Player->TomatoLaunchForce);
-				}
-
-				// Lower the ammo
-				RemoveItem();
-
-				// Check if theres tomato left in the hand
-				Player->CheckTomatoInHand();
-				//CheckTomatoInHand();
-			}
-			else
+			tomatoSpawnLocation = Player->TomatoSpawnPoint->GetComponentLocation();
+			tomatoSpawnRotation = Player->FollowCamera->GetComponentRotation();
+			
+			// Spawn the tomato
+			ATomato* SpawnedTomato = GetWorld()->SpawnActor<ATomato>(TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
+			if (SpawnedTomato)
 			{
-				// Return warning if it cannot find world
-				UE_LOG(LogTemp, Warning, TEXT("GetWorld returned NULL"));
+				// Adds force to the tomato to make it go flying
+				SpawnedTomato->LaunchTomato(Player->FollowCamera->GetForwardVector());
 			}
 
+			// Lower the ammo
+			RemoveItem();
+
+			// Check if theres tomato left in the hand
+			Player->CheckTomatoInHand();
+		}
+		else
+		{
+			// Return warning if it cannot find world
+			UE_LOG(LogTemp, Warning, TEXT("GetWorld returned NULL"));
 		}
 	}
 }

@@ -494,26 +494,6 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 	}
 }
 
-//void APlayerCharacter::RestoreAllTomatos()
-//{
-//	//TomatoSack->FillTomatoSack();
-//	InventoryComponent->GetItemSack(0)->FillItemSack();
-//	CheckTomatoInHand();
-//}
-//
-//void APlayerCharacter::RestoreTomato(int32 _count)
-//{
-//	//TomatoSack->AddTomatoes(_count);
-//	InventoryComponent->GetItemSack(0)->AddItems(_count);
-//	CheckTomatoInHand();
-//}
-//
-//int APlayerCharacter::GetTomatoCount()
-//{
-//	//return TomatoSack->GetTomatoAmount();
-//	return InventoryComponent->GetItemSack(0)->
-//}
-
 UInventoryComponent* APlayerCharacter::GetInventoryComponent()
 {
 	return InventoryComponent;

@@ -13,16 +13,10 @@ ATomato::ATomato()
  	// Set this actor to not call Tick() every frame.
 	PrimaryActorTick.bCanEverTick = false;
 
-	//TomatoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
-	//TomatoMesh->SetGenerateOverlapEvents(true);
-	//TomatoMesh->SetCollisionProfileName(TEXT("Throwable"));
-	//TomatoMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnTomatoOverlap);
-	//RootComponent = TomatoMesh;
-
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
-	ItemMesh->SetGenerateOverlapEvents(true);
-	ItemMesh->SetCollisionProfileName(TEXT("Throwable"));
-	ItemMesh->OnComponentBeginOverlap.AddDynamic(this, &ATomato::OnItemCollisionBeginOverlap);
+	ItemMesh->SetCollisionProfileName(TEXT("Tomato"));
+	ItemMesh->OnComponentHit.RemoveDynamic(this, &ATomato::OnTomatoHit);
+	ItemMesh->OnComponentHit.AddDynamic(this, &ATomato::OnTomatoHit);
 	RootComponent = ItemMesh;
 }
 
@@ -30,26 +24,25 @@ ATomato::ATomato()
 void ATomato::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
-void ATomato::OnItemCollision_Implementation(class AActor* _OtherActor, class UPrimitiveComponent* _OtherComp)
+void ATomato::OnTomatoHit(UPrimitiveComponent* _hitComp, AActor* _otherActor, UPrimitiveComponent* _otherComp, FVector _normalImpulse, const FHitResult& _hit)
 {
 	// If the tomato hits the head of a guard
-	if (_OtherActor->IsA<AGuard>())
+	if (_otherActor->IsA<AGuard>())
 	{
-		if (_OtherComp->ComponentHasTag(TEXT("Head")))
+		if (_otherComp->ComponentHasTag(TEXT("Head")))
 		{
-			AGuard* guard = Cast<AGuard>(_OtherActor);
+			AGuard* guard = Cast<AGuard>(_otherActor);
 			guard->SetGuardState(EGuardState::STUNED);
-			DestroyTomato(_OtherActor);
 		}
 	}
-	else
+	if (!_otherComp->ComponentHasTag("ThrowablesUnaffected"))
 	{
-		DestroyTomato(_OtherActor);
+		DestroyTomato(_otherActor);
 	}
-	// TODO: Spawn decal
 }
 
 void ATomato::DestroyTomato(class AActor* _otherActor)
@@ -58,8 +51,7 @@ void ATomato::DestroyTomato(class AActor* _otherActor)
 	Destroy();
 }
 
-void ATomato::LaunchTomato(FVector _launchDirection, float _launchForce)
+void ATomato::LaunchTomato(FVector _launchDirection)
 {
-	//TomatoMesh->AddForce(_launchDirection * _launchForce);
-	ItemMesh->AddForce(_launchDirection * _launchForce);
+	ItemMesh->AddForce(_launchDirection * LaunchForce);
 }
