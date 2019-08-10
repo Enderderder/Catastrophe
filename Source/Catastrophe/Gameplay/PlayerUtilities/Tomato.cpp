@@ -39,7 +39,10 @@ void ATomato::OnTomatoHit(UPrimitiveComponent* _hitComp, AActor* _otherActor, UP
 			guard->SetGuardState(EGuardState::STUNED);
 		}
 	}
-	DestroyTomato(_otherActor);
+	if (!_otherComp->ComponentHasTag("ThrowablesUnaffected"))
+	{
+		DestroyTomato(_otherActor);
+	}
 }
 
 void ATomato::DestroyTomato(class AActor* _otherActor)
