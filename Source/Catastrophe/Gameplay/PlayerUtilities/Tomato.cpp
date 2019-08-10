@@ -37,13 +37,9 @@ void ATomato::OnTomatoHit(UPrimitiveComponent* _hitComp, AActor* _otherActor, UP
 		{
 			AGuard* guard = Cast<AGuard>(_otherActor);
 			guard->SetGuardState(EGuardState::STUNED);
-			DestroyTomato(_otherActor);
 		}
 	}
-	else
-	{
-		DestroyTomato(_otherActor);
-	}
+	DestroyTomato(_otherActor);
 }
 
 void ATomato::DestroyTomato(class AActor* _otherActor)
