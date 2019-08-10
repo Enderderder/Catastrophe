@@ -438,7 +438,6 @@ void APlayerCharacter::HHUSecondaryActionBegin()
 			UnSprint();
 		bUseControllerRotationYaw = true;
 		CameraBoom->bEnableCameraLag = false;
-		CameraBoom->bEnableCameraRotationLag = false;
 		CameraBoom->AttachToComponent(
 			AimDownSightFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 		if (ZoomInTimeline)
@@ -470,7 +469,6 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 			// Let the character not follow camera rotation
 			bUseControllerRotationYaw = false;
 			CameraBoom->bEnableCameraLag = true;
-			CameraBoom->bEnableCameraRotationLag = true;
 			CameraBoom->AttachToComponent(
 				CamFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 			if (ZoomInTimeline)
