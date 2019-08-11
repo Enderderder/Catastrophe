@@ -19,6 +19,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ItemSack")
 	UTexture* IconTexture;
 
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
+	bool IsAimingNeeded;
+
 public:	
 	// Sets default values for this actor's properties
 	AItemSack();

@@ -167,12 +167,15 @@ void UInventoryComponent::ChooseNextItem()
 	}
 }
 
-void UInventoryComponent::UseItem()
+void UInventoryComponent::UseItem(bool _IsAiming)
 {
 	if (Slots.Num() > CurrentSelection)
 	{
 		if (Slots[CurrentSelection] != NULL)
 		{
+			// Check if the player is aiming if aiming is needed
+			if (Slots[CurrentSelection]->IsAimingNeeded && !_IsAiming) return;
+
 			Slots[CurrentSelection]->UseItem();
 			
 			// Deletes Slot if there is no items in the slot

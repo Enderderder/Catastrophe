@@ -390,11 +390,8 @@ void APlayerCharacter::HHUPrimaryActionBegin()
 	// Set the activation state to true
 	bHHUPrimaryActive = true;
 
-	// If the player is aiming and shoots, then use currently selected useable item
-	if (bHHUSecondaryActive)
-	{
-		InventoryComponent->UseItem();
-	}
+	// Use the currently selected useable item
+	InventoryComponent->UseItem(bHHUSecondaryActive);
 }
 
 void APlayerCharacter::HHUPrimaryActionEnd()
