@@ -102,8 +102,9 @@ bool UCharacterSprintMovementComponent::HasValidData() const
 
 bool UCharacterSprintMovementComponent::IsAbleToSprint() const
 {
-	const bool bAbleToSprint = 
-		CharacterMovementComponent->MovementMode == MOVE_Walking;
+	const bool bAbleToSprint =
+		CharacterMovementComponent->MovementMode == MOVE_Walking
+		&& GetOwner()->GetVelocity().Size() > 0.0f;
 
 	return bAbleToSprint;
 }

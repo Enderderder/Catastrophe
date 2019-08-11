@@ -64,10 +64,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
-
 	/** Where the camera is going to be focused on normally */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* CamFocusPoint;
@@ -79,13 +75,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* AimDownSightFocusPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
-	class UTomatoSack* TomatoSack;
-
-	// Deprecated TODO: Remove reference of this component
-	/** Spawn location for the throwable */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* TomatoSpawnPoint;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
+	//class UTomatoSack* TomatoSack;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_UseableItem", meta = (AllowPrivateAccess = "true"))
+	class UInventoryComponent* InventoryComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
@@ -136,6 +129,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate = 45.0f;
 
+	/** Maximun angle the player camera can look up */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float CameraPitchConstrainMax = 60.0f;
+
+	/** Maximun angle the player camera can look down */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float CameraPitchConstrainMin = -60.0f;
 
 	/** The current interacble target */
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
@@ -174,11 +174,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "HHU | Tomato")
 	TSubclassOf<class ATomato> TomatoClass;
 
-	/** The force apply when player throw the tomato */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HHU | Tomato")
-	float TomatoLaunchForce = 100.0f;
-
-
 	/** Sprint & Stamina */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float TotalStamina = 100.0f;
@@ -212,6 +207,15 @@ public:
 	/* Fish bones currency */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Fish Bones")
 	int32 FishBonesAmount;
+
+	// Deprecated TODO: Remove reference of this component
+	/** Spawn location for the throwable */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* TomatoSpawnPoint;
+
+	/** Follow camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
 
 protected:
 	// Called when the game starts or when spawned
@@ -292,12 +296,9 @@ protected:
 
 #pragma endregion Controller Action
 
-	/** Check if player has tomato in his hand */
-	void CheckTomatoInHand();
-
 	/** Called for shooting tomato */
-	UFUNCTION(BlueprintCallable, Category = "HHU_Tomato")
-	void ShootTomato();
+	//UFUNCTION(BlueprintCallable, Category = "HHU_Tomato")
+	//void ShootTomato();
 
 	/** Called when ZoomInTimeline ticks */
 	UFUNCTION()
@@ -311,17 +312,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/** Called for set the tomato count to maximum */
-	UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
-	void RestoreAllTomatos();
-
-	/** Called for restore certain amount of tomatoes (but not over the max) */
-	UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
-	void RestoreTomato(int32 _count);
-
-	/** Return the current count of tomatoes player is holding */
-	UFUNCTION(BlueprintCallable, Category = "HHU | Tomato")
-	int GetTomatoCount();
+	UFUNCTION(BlueprintCallable, Category = "HHU")
+	UInventoryComponent* GetInventoryComponent();
 
 	/** Set the target to interact for the player */
 	UFUNCTION()
@@ -380,6 +372,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void ToggleSpottedAlert(bool _bEnable);
+
+	/** Check if player has tomato in his hand */
+	void CheckTomatoInHand();
 
 	/** Getter */
 	FORCEINLINE FPlayerDefaultValue GetPlayerDefaultValues() const { return PlayerDefaultValues; }

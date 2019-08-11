@@ -108,7 +108,7 @@ FTransform URespawnSubsystem::GetFirstRespawnLocationAtDistrict(EDISTRICT _distr
 void URespawnSubsystem::RespawnPlayerAtLocation(EDISTRICT _districtType)
 {
 	ACharacter* player = UGameplayStatics::GetPlayerCharacter(this, 0);
-	if (player && !player->IsPendingKill())
+	if (IsValid(player))
 	{
 		FTransform location = GetFirstRespawnLocationAtDistrict(_districtType);
 		player->SetActorTransform(location);
@@ -127,7 +127,7 @@ URespawnSubsystem* URespawnSubsystem::GetInst(const UObject* _worldContextObject
 
 FName URespawnSubsystem::GetStreamingLevelNameFromActor(AActor* _actor)
 {
-	if (_actor && !_actor->IsPendingKill())
+	if (IsValid(_actor))
 	{
 		return _actor->GetLevel()->GetOuter()->GetFName();
 	}

@@ -20,7 +20,7 @@ void UGuardAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	
-	if (OwnerGuardActor && !OwnerGuardActor->IsPendingKill())
+	if (IsValid(OwnerGuardActor))
 	{
 		// Gets the speed of the character
 		MoveSpeed = OwnerGuardActor->GetCharacterMovement()->Velocity.Size();
