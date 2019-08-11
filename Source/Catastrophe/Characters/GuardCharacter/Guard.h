@@ -203,6 +203,7 @@ public:
 
 	/**
 	 * Sets the state of the guard then modify the character value base on the state
+	 * @author Richard Wulansari
 	 * @param The new state of the guard
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Guard | Behaviour | General")

@@ -45,12 +45,13 @@ void URespawnSubsystem::LoadLevelStreaming(FLoadStreamingLevelInfo _loadLevelInf
 	// Store the temp value
 	tempInfo = _loadLevelInfo;
 
+	OnLevelStartLoad.Broadcast();
+
 	FLatentActionInfo latenInfo;
 	latenInfo.CallbackTarget = this;
 	latenInfo.UUID = 1;
 	latenInfo.Linkage = 0;
 	latenInfo.ExecutionFunction = TEXT("OnStreamLevelLoaded");
-
 	UGameplayStatics::LoadStreamLevel(
 		this,
 		_loadLevelInfo.LoadedLevelName,
@@ -146,7 +147,7 @@ void URespawnSubsystem::OnStreamLevelLoaded()
 	{
 		FLatentActionInfo latenInfo;
 		latenInfo.CallbackTarget = this;
-		latenInfo.UUID = 1;
+		latenInfo.UUID = 2;
 		latenInfo.Linkage = 0;
 		latenInfo.ExecutionFunction = TEXT("OnStreamLevelUnloaded");
 
@@ -156,9 +157,13 @@ void URespawnSubsystem::OnStreamLevelLoaded()
 			latenInfo, 
 			tempInfo.bBlockOnLoad);
 	}
+	else
+	{
+		OnLevelFinsihLoad.Broadcast();
+	}
 }
 
 void URespawnSubsystem::OnStreamLevelUnloaded()
 {
-	
+	OnLevelFinsihLoad.Broadcast();
 }

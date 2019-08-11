@@ -241,20 +241,28 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/** Called for character sprinting begin */
+	/**
+	 * Called when player wants to sprint
+	 * @author Richard Wulansari
+	 */
 	void Sprint();
 
-	/** Called for character sprinting end */
+	/**
+	 * Called when player does not want to sprint anymore
+	 * @author Richard Wulansari
+	 */
 	void UnSprint();
 
 	/**
-	 * 
+	 * Called when the player character successfully enter sprint action
+
 	 */
 	UFUNCTION()
 	void OnSprintBegin();
 
 	/**
-	 * 
+	 * Called when the player character successfully exist sprint action
+	 * @author Richard Wulansari
 	 */
 	UFUNCTION()
 	void OnSprintEnd();
@@ -370,8 +378,7 @@ public:
 
 	/** Getter */
 	FORCEINLINE FPlayerDefaultValue GetPlayerDefaultValues() const { return PlayerDefaultValues; }
-	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { 
-		return PerceptionStimuliSourceComponent; }
+	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { return PerceptionStimuliSourceComponent; }
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
 	bool IsPlayerCrouched() const;
 	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
