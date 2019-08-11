@@ -17,14 +17,30 @@ class CATASTROPHE_API UCaterpillarAnimInstance : public UAnimInstance
 public:
 
 	/** The movement speed of the caterpillar */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CaterpillarAnim")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CaterpillarAim")
 	float Speed;
 
+	/** The in air state of the caterpillar */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CaterpillarAim")
+	bool bInAir;
 
 protected:
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CaterpillarAim")
 	class ACaterpillar* CaterpillarCharacter;
 
 
+protected:
+	
+	/** Executed when begin play is called on the owning component */
+	virtual void NativeBeginPlay() override;
+
+public:
+
+	/** Excuted every tick */
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	/** Getter */
+	FORCEINLINE class ACaterpillar* GetCaterpillarCharacter() const { return CaterpillarCharacter; }
+	/** Getter End */
 };
