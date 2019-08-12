@@ -16,6 +16,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Disguise")
 	int SecondsOfUse;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Disguise")
+	float DisguiseWalkSpeed;
+
+	float PlayerMoveSpeed;
+	
 	/** The handle to manage the disguise timer */
 	FTimerHandle TimerHandle;
 
@@ -34,6 +39,8 @@ protected:
 	 */
 	UFUNCTION()
 	void UseDisguise();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Disguise", meta = (DisplayName = "OnUseDisguise"))
+	void Receive_OnUseDisguise();
 
 	/**
 	 * Called to end the disguise
@@ -41,4 +48,6 @@ protected:
 	 */
 	UFUNCTION()
 	void OnEndDisguise();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Disguise", meta = (DisplayName = "OnEndDisguise"))
+	void Receive_OnEndDisguise();
 };

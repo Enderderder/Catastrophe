@@ -137,7 +137,7 @@ class AItemSack* UInventoryComponent::GetNextItemSack()
 		}
 		else
 		{
-			return Slots[CurrentSelection];
+			return Slots[CurrentSelection + 1];
 		}
 	}
 	return nullptr;

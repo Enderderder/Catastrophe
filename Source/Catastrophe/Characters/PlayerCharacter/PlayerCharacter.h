@@ -215,6 +215,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Disguise")
+	class UStaticMeshComponent* DisguiseMesh;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -373,6 +376,8 @@ public:
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
 	bool IsPlayerCrouched() const;
 	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
+	FORCEINLINE UCharacterSprintMovementComponent* GetSprintMovementComponent() const { 
+		return SprintMovementComponent; }
 	/** Getter End */
 
 };
