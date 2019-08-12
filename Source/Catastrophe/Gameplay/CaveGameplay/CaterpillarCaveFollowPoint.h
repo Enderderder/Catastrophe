@@ -15,6 +15,10 @@ private:
 
 	/** The trigger box that detect overlap with player character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* DefaultRoot;
+
+	/** The trigger box that detect overlap with player character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* EditorMesh;
 
 public:	

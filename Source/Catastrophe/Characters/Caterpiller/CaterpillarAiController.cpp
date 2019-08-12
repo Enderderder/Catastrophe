@@ -3,3 +3,12 @@
 
 #include "CaterpillarAiController.h"
 
+ACaterpillarAiController::ACaterpillarAiController()
+{
+
+}
+
+void ACaterpillarAiController::StartChase()
+{
+
+}

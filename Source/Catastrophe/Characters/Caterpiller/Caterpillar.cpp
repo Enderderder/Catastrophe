@@ -24,7 +24,9 @@ ACaterpillar::ACaterpillar()
 
 	CatchTriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CatchTriggerBox"));
 	CatchTriggerBox->SetGenerateOverlapEvents(true);
-	//CatchTriggerBox->SetCollisionProfileName(TEXT("Trigger"));
+	CatchTriggerBox->SetCollisionProfileName(TEXT("Trigger"));
+	CatchTriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
+	CatchTriggerBox->OnComponentBeginOverlap.AddDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
 	CatchTriggerBox->SetupAttachment(GetMesh());
 }
 
@@ -55,6 +57,14 @@ void ACaterpillar::BeginPlay()
 	{
 		const FString msg = TEXT("Insuffient amount of cave follow point, please check world");
 		CatastropheDebug::OnScreenDebugMsg(-1, 30.0f, FColor::Red, msg);
+	}
+}
+
+void ACaterpillar::OnCathchPlayerTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->ActorHasTag("Player"))
+	{
+		/// TODO: Actually catch the player
 	}
 }
 

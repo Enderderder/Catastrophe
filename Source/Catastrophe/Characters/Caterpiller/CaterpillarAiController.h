@@ -13,5 +13,25 @@ UCLASS()
 class CATASTROPHE_API ACaterpillarAiController : public AAIController
 {
 	GENERATED_BODY()
-	
+
+public:
+	/** Default constructor */
+	ACaterpillarAiController();
+
+
+protected:
+
+
+
+
+
+public:
+
+	/**
+	 * 
+	 * @author Richard Wulansari
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
+	void StartChase();
+
 };
