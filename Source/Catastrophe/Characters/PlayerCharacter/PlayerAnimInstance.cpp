@@ -14,7 +14,7 @@ void UPlayerAnimInstance::NativeBeginPlay()
 	CustomPlayerCharacter = Cast<APlayerCharacter>(GetOwningActor());
 	if (!CustomPlayerCharacter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CustomPlayerCharacter is null, check player character class"));
+		UE_LOG(LogTemp, Warning, TEXT("CustomPlayerCharacter is null, check player character anim class"));
 	}
 }
 
@@ -22,15 +22,15 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	
+	// Verify again after parent function call to make sure
+	if (!IsValid(CustomPlayerCharacter)) return;
+	
 	// Update animation data
-	if (CustomPlayerCharacter && !CustomPlayerCharacter->IsPendingKill())
+	if (UCharacterMovementComponent* PlayerMovementComponent 
+		= CustomPlayerCharacter->GetCharacterMovement())
 	{
-		if (UCharacterMovementComponent* PlayerMovementComponent 
-			= CustomPlayerCharacter->GetCharacterMovement())
-		{
-			Speed = PlayerMovementComponent->Velocity.Size();
-			bInAir = PlayerMovementComponent->IsFalling();
-			bCrouch = PlayerMovementComponent->IsCrouching();
-		}
+		Speed = PlayerMovementComponent->Velocity.Size();
+		bInAir = PlayerMovementComponent->IsFalling();
+		bCrouch = PlayerMovementComponent->IsCrouching();
 	}
 }

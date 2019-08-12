@@ -10,6 +10,8 @@
 
 #include "Guard.h"
 
+#include "DebugUtility/CatastropheDebug.h"
+
 AGuardAiController::AGuardAiController()
 {
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
@@ -32,10 +34,10 @@ AGuardAiController::AGuardAiController()
 void AGuardAiController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
+	
 	// Sets the reference of the guard
 	ControllingGuard = Cast<AGuard>(InPawn);
-	if (ControllingGuard && !ControllingGuard->IsPendingKill())
+	if (IsValid(ControllingGuard))
 	{
 		ControllingGuard->SetGuardControllerRef(this);
 
@@ -77,6 +79,9 @@ void AGuardAiController::PerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 {
 	for (AActor* actor : UpdatedActors)
 	{
+		const FString msg = TEXT("PerceptionUpdated");
+		CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Cyan, msg);
+
 		FActorPerceptionBlueprintInfo actorPerceptionInfo;
 		if (PerceptionComponent->GetActorsPerception(actor, actorPerceptionInfo))
 		{

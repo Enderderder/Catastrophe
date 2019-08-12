@@ -25,6 +25,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UInteractableComponent* InteractableComponent;
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
+	TSubclassOf<class ATomatoSack> TomatoSackClass;
+
 public:
 	// Sets default values for this actor's properties
 	ATomatoBox();

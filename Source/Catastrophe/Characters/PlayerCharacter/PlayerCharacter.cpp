@@ -28,6 +28,8 @@
 #include "Interactable/BaseClasses/InteractableObject.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
+
+#include "InventoryComponent.h"
 #include "TomatoSack.h"
 
 #include "DebugUtility/CatastropheDebug.h"
@@ -81,9 +83,8 @@ APlayerCharacter::APlayerCharacter()
 	TomatoInHandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoInHandMesh"));
 	TomatoInHandMesh->SetupAttachment(GetMesh(), TEXT("RightHandSocket"));
 
-	TomatoSack = CreateDefaultSubobject<UTomatoSack>(TEXT("TomatoSack"));
-	TomatoSack->SetSackSize(1);
-	TomatoSack->SetTomatoAmount(0);
+	// Creates an item inventory component which stores useable items
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 
 	WorldUiAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("InteractableWidgetAnchor"));
 	WorldUiAnchor->SetupAttachment(RootComponent);
@@ -91,15 +92,15 @@ APlayerCharacter::APlayerCharacter()
 	InteractableUiComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractableUiComponent"));
 	InteractableUiComponent->bVisible = false;
 	InteractableUiComponent->SetupAttachment(WorldUiAnchor);
-
+	
 	// Create stimuli
 	PerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("PerceptionStimuliSource"));
 	
-	// Hiding postprocess
+	// Hiding post-process
 	HidingPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("HidingPostProcess"));
 	HidingPostProcess->SetupAttachment(RootComponent);
 
-	// Sprinting postprocess
+	// Sprinting post-process
 	SprintingPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("SprintingPostProcess"));
 	SprintingPostProcess->SetupAttachment(RootComponent);
 
@@ -112,7 +113,11 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Configure player camera
+	UGameplayStatics::GetPlayerCameraManager(this, 0)->ViewPitchMin = CameraPitchConstrainMin;
+	UGameplayStatics::GetPlayerCameraManager(this, 0)->ViewPitchMax = CameraPitchConstrainMax;
+
 	// Gets the player animation instance
 	PlayerAnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!PlayerAnimInstance) UE_LOG(LogTemp, Error, TEXT("Player is not using the correct anim instance"));
@@ -211,7 +216,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
 
 	// Interaction actions
@@ -299,14 +304,19 @@ void APlayerCharacter::CrouchEnd()
 
 void APlayerCharacter::CheckTomatoInHand()
 {
-	if (TomatoSack->IsAbleToThrow())
+	if (InventoryComponent)
 	{
-		TomatoInHandMesh->SetVisibility(true);
+		if (InventoryComponent->GetCurrentItemSack())
+		{
+			if (InventoryComponent->GetCurrentItemSack()->IsAbleToUse())
+			{
+				TomatoInHandMesh->SetVisibility(true);
+				return;
+			}
+		}
 	}
-	else
-	{
-		TomatoInHandMesh->SetVisibility(false);
-	}
+
+	TomatoInHandMesh->SetVisibility(false);
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -338,37 +348,6 @@ void APlayerCharacter::MoveRight(float Value)
 	}
 }
 
-void APlayerCharacter::ShootTomato()
-{
-	// Validate the obejct pointer
-	// Check if the player is ADSing
-	// Check if there is enough tomato to shoot
-	if (TomatoClass 
-		&& bHHUSecondaryActive == true
-		&& bCanUseHHU == true
-		&& TomatoSack->IsAbleToThrow())
-	{
-		// Set the parameter for spawning the tomato
-		FVector tomatoSpawnLocation;
-		FRotator tomatoSpawnRotation;
-		FActorSpawnParameters tomatoSpawnInfo;
-		tomatoSpawnInfo.Owner = this;
-		tomatoSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		tomatoSpawnLocation = TomatoSpawnPoint->GetComponentLocation();
-		tomatoSpawnRotation = FollowCamera->GetComponentRotation();
-
-		// Spawn the tomato
-		APawn* SpawnedTomato;
-		SpawnedTomato = GetWorld()->SpawnActor<APawn>(TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
-
-		// Lower the ammo
-		TomatoSack->RemoveTomato();
-
-		// Check if theres tomato left in the hand
-		CheckTomatoInHand();
-	}
-}
-
 void APlayerCharacter::TimelineSetCameraZoomValue(float _alpha)
 {
 	float resultLength =
@@ -380,8 +359,7 @@ void APlayerCharacter::TimelineSetCameraZoomValue(float _alpha)
 
 void APlayerCharacter::InteractBegin()
 {
-	if (InteractingTargetComponent 
-		&& !InteractingTargetComponent->IsPendingKill())
+	if (IsValid(InteractingTargetComponent))
 	{
 		bInteracting = true; // Set the holding interaction begin
 		InteractingTargetComponent->Interact(this, InteractionTimeHold);
@@ -397,8 +375,7 @@ void APlayerCharacter::InteractEnd()
 void APlayerCharacter::InteractionTick(float _deltaTime)
 {
 	if (bInteracting
-		&& InteractingTargetComponent
-		&& !InteractingTargetComponent->IsPendingKill())
+		&& IsValid(InteractingTargetComponent))
 	{
 		InteractionTimeHold += _deltaTime;
 		InteractingTargetComponent->Interact(this, InteractionTimeHold);
@@ -417,43 +394,11 @@ void APlayerCharacter::HHUPrimaryActionBegin()
 	// Set the activation state to true
 	bHHUPrimaryActive = true;
 
-	switch (ActiveHHUType)
+	// If the player is aiming and shoots, then use currently selected useable item
+	if (bHHUSecondaryActive)
 	{
-	case EHHUType::TOMATO: // To shoot tomato, must be zoomed in
-	{
-		if (!bHHUSecondaryActive
-			|| TomatoSack->IsTomatoSackEmpty()
-			|| !TomatoClass) break; // Do the check
-		// Set the parameter for spawning the tomato
-		FVector tomatoSpawnLocation;
-		FRotator tomatoSpawnRotation;
-		FActorSpawnParameters tomatoSpawnInfo;
-		tomatoSpawnInfo.Owner = this;
-		tomatoSpawnInfo.SpawnCollisionHandlingOverride =
-			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		tomatoSpawnLocation = GetMesh()->GetSocketLocation(TEXT("RightHandSocket"));
-		tomatoSpawnRotation = FollowCamera->GetComponentRotation();
-		// Spawn the tomato
-		ATomato* SpawnedTomato;
-		SpawnedTomato = GetWorld()->SpawnActor<ATomato>(
-			TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
-		if (SpawnedTomato)
-			SpawnedTomato->LaunchTomato(FollowCamera->GetForwardVector(), TomatoLaunchForce);
-		// Lower the tomato count
-		TomatoSack->RemoveTomato();
-		CheckTomatoInHand();
-		break;
+		InventoryComponent->UseItem();
 	}
-
-	case EHHUType::LASER:
-	{
-
-		break;
-	}
-
-	default: break;
-	}
-
 }
 
 void APlayerCharacter::HHUPrimaryActionEnd()
@@ -478,7 +423,7 @@ void APlayerCharacter::HHUPrimaryActionEnd()
 
 void APlayerCharacter::HHUSecondaryActionBegin()
 {
-	// If cannot use HHU, just dont then
+	// If cannot use HHU, just don't then
 	if (!bCanUseHHU) return;
 
 	// Set the activation state to true
@@ -493,7 +438,6 @@ void APlayerCharacter::HHUSecondaryActionBegin()
 			UnSprint();
 		bUseControllerRotationYaw = true;
 		CameraBoom->bEnableCameraLag = false;
-		CameraBoom->bEnableCameraRotationLag = false;
 		CameraBoom->AttachToComponent(
 			AimDownSightFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 		if (ZoomInTimeline)
@@ -525,7 +469,6 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 			// Let the character not follow camera rotation
 			bUseControllerRotationYaw = false;
 			CameraBoom->bEnableCameraLag = true;
-			CameraBoom->bEnableCameraRotationLag = true;
 			CameraBoom->AttachToComponent(
 				CamFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 			if (ZoomInTimeline)
@@ -549,26 +492,14 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 	}
 }
 
-void APlayerCharacter::RestoreAllTomatos()
+UInventoryComponent* APlayerCharacter::GetInventoryComponent()
 {
-	TomatoSack->FillTomatoSack();
-	CheckTomatoInHand();
-}
-
-void APlayerCharacter::RestoreTomato(int32 _count)
-{
-	TomatoSack->AddTomatoes(_count);
-	CheckTomatoInHand();
-}
-
-int APlayerCharacter::GetTomatoCount()
-{
-	return TomatoSack->GetTomatoAmount();
+	return InventoryComponent;
 }
 
 void APlayerCharacter::SetInteractionTarget(class UInteractableComponent* _interactTargetComponent)
 {
-	if (_interactTargetComponent || !_interactTargetComponent->IsPendingKill())
+	if (IsValid(_interactTargetComponent))
 	{
 		InteractingTargetComponent = _interactTargetComponent;
 	}
