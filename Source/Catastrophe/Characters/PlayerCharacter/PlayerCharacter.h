@@ -80,11 +80,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_UseableItem", meta = (AllowPrivateAccess = "true"))
 	class UInventoryComponent* InventoryComponent;
 
-	//// Deprecated TODO: Remove reference of this component
-	///** Spawn location for the throwable */
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
-	//class USceneComponent* TomatoSpawnPoint;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
 
@@ -134,6 +129,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate = 45.0f;
 
+	/** Maximun angle the player camera can look up */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float CameraPitchConstrainMax = 60.0f;
+
+	/** Maximun angle the player camera can look down */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float CameraPitchConstrainMin = -60.0f;
 
 	/** The current interacble target */
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
@@ -242,20 +244,28 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/** Called for character sprinting begin */
+	/**
+	 * Called when player wants to sprint
+	 * @author Richard Wulansari
+	 */
 	void Sprint();
 
-	/** Called for character sprinting end */
+	/**
+	 * Called when player does not want to sprint anymore
+	 * @author Richard Wulansari
+	 */
 	void UnSprint();
 
 	/**
-	 * 
+	 * Called when the player character successfully enter sprint action
+
 	 */
 	UFUNCTION()
 	void OnSprintBegin();
 
 	/**
-	 * 
+	 * Called when the player character successfully exist sprint action
+	 * @author Richard Wulansari
 	 */
 	UFUNCTION()
 	void OnSprintEnd();
@@ -371,8 +381,7 @@ public:
 
 	/** Getter */
 	FORCEINLINE FPlayerDefaultValue GetPlayerDefaultValues() const { return PlayerDefaultValues; }
-	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { 
-		return PerceptionStimuliSourceComponent; }
+	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { return PerceptionStimuliSourceComponent; }
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
 	bool IsPlayerCrouched() const;
 	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }

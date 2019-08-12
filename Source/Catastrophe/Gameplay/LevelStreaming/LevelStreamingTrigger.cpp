@@ -11,6 +11,8 @@
 
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
 
+#include "DebugUtility/CatastropheDebug.h"
+
 // Sets default values
 ALevelStreamingTrigger::ALevelStreamingTrigger()
 {
@@ -20,6 +22,7 @@ ALevelStreamingTrigger::ALevelStreamingTrigger()
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	TriggerBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	TriggerBox->SetCollisionProfileName(TEXT("Trigger"));
+	TriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &ALevelStreamingTrigger::OnPlayerEnterTrigger);
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &ALevelStreamingTrigger::OnPlayerEnterTrigger);
 	RootComponent = TriggerBox;
 
@@ -37,9 +40,12 @@ void ALevelStreamingTrigger::BeginPlay()
 	Super::BeginPlay();
 	
 	// Do the check
-	if (CurrentLevel == TEXT("DefaultName") ||
-		DestinationLevel == TEXT("DefaultName"))
+	if (CurrentLevelName == TEXT("DefaultName") ||
+		DestinationLevelName == TEXT("DefaultName"))
 	{
+		const FString msg = GetName() + ": Has incorrect information.";
+		CatastropheDebug::OnScreenDebugMsg(-1, 30.0f, FColor::Red, msg);
+
 		UE_LOG(LogTemp, Error,
 			TEXT("Level Streaming Trigger Error:"
 				"CurrentLevelName and DestinationLevelName should not be 'DefaultName'"));
@@ -52,19 +58,28 @@ void ALevelStreamingTrigger::OnPlayerEnterTrigger(class UPrimitiveComponent* Ove
 	{
 		PlayerToTeleport = OtherActor;
 
-		if (LoadingScreenClass)
-		{
-			LoadingScreenWidget = CreateWidget<UUserWidget>(GetWorld(), LoadingScreenClass);
-			if (LoadingScreenWidget)
-				LoadingScreenWidget->AddToViewport();
-		}
+		FLoadStreamingLevelInfo loadLevelInfo;
+		loadLevelInfo.OriginalLevelName = CurrentLevelName;
+		loadLevelInfo.LoadedLevelName = DestinationLevelName;
+		loadLevelInfo.bBlockOnLoad = bShouldBlockOnLoad;
+		loadLevelInfo.bTeleportPlayer = bTeleportAfterLoaded;
+		loadLevelInfo.bUnloadCurrentLevel = bShouldUnloadThisLevelAfter;
+		loadLevelInfo.DistrictType = DestinationLevelDistrict;
+		URespawnSubsystem::GetInst(this)->LoadLevelStreaming(loadLevelInfo);
 
-		FLatentActionInfo latenInfo;
-		latenInfo.CallbackTarget = this;
-		latenInfo.UUID = 0;
-		latenInfo.Linkage = 0;
-		latenInfo.ExecutionFunction = TEXT("OnLevelLoaded");
-		UGameplayStatics::LoadStreamLevel(this, DestinationLevel, true, bShouldBlockOnLoad, latenInfo);
+// 		if (LoadingScreenClass)
+// 		{
+// 			LoadingScreenWidget = CreateWidget<UUserWidget>(GetWorld(), LoadingScreenClass);
+// 			if (LoadingScreenWidget)
+// 				LoadingScreenWidget->AddToViewport();
+// 		}
+//
+// 		FLatentActionInfo latenInfo;
+// 		latenInfo.CallbackTarget = this;
+// 		latenInfo.UUID = 0;
+// 		latenInfo.Linkage = 0;
+// 		latenInfo.ExecutionFunction = TEXT("OnLevelLoaded");
+// 		UGameplayStatics::LoadStreamLevel(this, DestinationLevel, true, bShouldBlockOnLoad, latenInfo);
 	}
 }
 
@@ -87,7 +102,7 @@ void ALevelStreamingTrigger::OnLevelLoaded()
 		latenInfo.ExecutionFunction = TEXT("OnLevelLoadingFullyFinished");
 		latenInfo.UUID = 0;
 		latenInfo.Linkage = 0;
-		UGameplayStatics::UnloadStreamLevel(this, CurrentLevel, latenInfo, bShouldBlockOnLoad);
+		UGameplayStatics::UnloadStreamLevel(this, CurrentLevelName, latenInfo, bShouldBlockOnLoad);
 	}
 	else
 	{

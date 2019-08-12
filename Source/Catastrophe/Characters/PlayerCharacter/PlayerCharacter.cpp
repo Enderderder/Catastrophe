@@ -117,7 +117,11 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Configure player camera
+	UGameplayStatics::GetPlayerCameraManager(this, 0)->ViewPitchMin = CameraPitchConstrainMin;
+	UGameplayStatics::GetPlayerCameraManager(this, 0)->ViewPitchMax = CameraPitchConstrainMax;
+
 	// Gets the player animation instance
 	PlayerAnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!PlayerAnimInstance) UE_LOG(LogTemp, Error, TEXT("Player is not using the correct anim instance"));
@@ -216,7 +220,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
 
 	// Interaction actions
@@ -435,7 +439,6 @@ void APlayerCharacter::HHUSecondaryActionBegin()
 			UnSprint();
 		bUseControllerRotationYaw = true;
 		CameraBoom->bEnableCameraLag = false;
-		CameraBoom->bEnableCameraRotationLag = false;
 		CameraBoom->AttachToComponent(
 			AimDownSightFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 		if (ZoomInTimeline)
@@ -467,7 +470,6 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 			// Let the character not follow camera rotation
 			bUseControllerRotationYaw = false;
 			CameraBoom->bEnableCameraLag = true;
-			CameraBoom->bEnableCameraRotationLag = true;
 			CameraBoom->AttachToComponent(
 				CamFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 			if (ZoomInTimeline)

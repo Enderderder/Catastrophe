@@ -7,7 +7,7 @@
 #include "RespawnSubsystem.generated.h"
 
 /**
- *
+ * This is a enum collection of all the posible respawn destrict in the game
  */
 UENUM(BlueprintType)
 enum class EDISTRICT : uint8
@@ -16,6 +16,9 @@ enum class EDISTRICT : uint8
 	MARKET,
 	HOLDINGCELL,
 	JAIL,
+	JAIL2,
+	CAVE,
+	HIDEOUT,
 
 	LOCATIONCOUNT // This should always be the last
 };
@@ -79,6 +82,10 @@ public:
 	{}
 };
 
+
+/** Delegates */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLevelTransitionSignature);
+
 /**
  * This system controls the spawn of the player
  */
@@ -93,7 +100,17 @@ private:
 	FLoadStreamingLevelInfo tempInfo;
 
 public:
+	/** Default constructor */
 	URespawnSubsystem();
+
+	/** Broadcast event called when a level transition start happening */
+	UPROPERTY(BlueprintAssignable, Category = "Respawn System")
+	FLevelTransitionSignature OnLevelStartLoad;
+
+	/** Broadcast event called when a level transition finish happening */
+	UPROPERTY(BlueprintAssignable, Category = "Respawn System")
+	FLevelTransitionSignature OnLevelFinsihLoad;
+
 
 protected:
 
@@ -113,6 +130,7 @@ public:
 
 	/**
 	 * Load the level inside the level streaming world
+	 * @author Richard Wulansari
 	 * @param _player The player reference that needs to be provided
 	 * @param _loadLevelInfo Information that needs to be filled in order to load level
 	 * @note Do not call this function before all BeginPlay() finished
@@ -122,6 +140,7 @@ public:
 
 	/**
 	 * Unload certain level by name
+	 * @author Richard Wulansari
 	 * @param _levelName The name of the streaming level
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
@@ -129,6 +148,7 @@ public:
 
 	/**
 	 * Called to store spawn locations at certain district
+	 * @author Richard Wulansari
 	 * @param _districtType
 	 * @param _transform
 	 */
@@ -137,6 +157,7 @@ public:
 
 	/**
 	 * Gets the first respawn location at provided district type
+	 * @author Richard Wulansari
 	 * @param _districtType
 	 * @note If there is no respawn location avaliable, return zero transform
 	 * @note Cause this will be the repsawn transform, the scale will forced to set to 1
@@ -146,14 +167,24 @@ public:
 
 	/**
 	 * Relocate the player to a district
+	 * @author Richard Wulansari
 	 * @param _districtType The location player is going to move to
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
 	void RespawnPlayerAtLocation(EDISTRICT _districtType);
 
-	/** Gets the instance without going through the GameInstance */
+	/**
+	 * Gets the instance without going through the GameInstance
+	 * @author Richard Wulansari
+	 * @param _worldContextObject The context object of the world
+	 */
 	static URespawnSubsystem* GetInst(const UObject* _worldContextObject);
 
+	/**
+	 * Gets the streaming level name given from an actor
+	 * @author Richard Wulansari
+	 * @param _actor The context actor
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
 	static FName GetStreamingLevelNameFromActor(class AActor* _actor);
 
