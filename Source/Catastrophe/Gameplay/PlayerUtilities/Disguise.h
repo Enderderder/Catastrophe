@@ -19,6 +19,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Disguise")
 	float DisguiseWalkSpeed;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Disguise", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* DisguiseMesh;
+
 	float PlayerMoveSpeed;
 	
 	/** The handle to manage the disguise timer */

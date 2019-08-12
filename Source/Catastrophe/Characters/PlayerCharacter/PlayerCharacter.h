@@ -217,9 +217,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Disguise")
-	class UStaticMeshComponent* DisguiseMesh;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

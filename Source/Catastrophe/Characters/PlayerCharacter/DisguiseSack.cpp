@@ -16,7 +16,6 @@ ADisguiseSack::ADisguiseSack()
 void ADisguiseSack::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void ADisguiseSack::UseItem()

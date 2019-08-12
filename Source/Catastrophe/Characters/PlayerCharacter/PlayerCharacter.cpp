@@ -107,10 +107,6 @@ APlayerCharacter::APlayerCharacter()
 	SpottedAlertParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SpottedAlertParticle"));
 	SpottedAlertParticle->SetupAttachment(GetMesh());
 	SpottedAlertParticle->SetVisibility(false);
-
-	DisguiseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DisguiseMesh"));
-	DisguiseMesh->SetupAttachment(RootComponent);
-	DisguiseMesh->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned

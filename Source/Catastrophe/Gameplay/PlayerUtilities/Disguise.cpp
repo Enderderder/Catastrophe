@@ -19,6 +19,10 @@
 ADisguise::ADisguise()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	
+	DisguiseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DisguiseMesh"));
+	RootComponent = DisguiseMesh;
+	DisguiseMesh->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -26,8 +30,12 @@ void ADisguise::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
 	Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 	PlayerMoveSpeed = Player->GetCharacterMovement()->MaxWalkSpeed;
+
+	DisguiseMesh->AttachTo(Player->GetRootComponent());
+	DisguiseMesh->RelativeLocation = FVector(0, 0, 10);
 
 	// Start the disguise on spawn
 	UseDisguise();
@@ -38,13 +46,11 @@ void ADisguise::UseDisguise()
 	if (GetWorld())
 	{
 		Receive_OnUseDisguise();
-		// Makes the cardboard box disguise to be visible
-		Player->DisguiseMesh->SetVisibility(true);
 
 		// Makes player invisible to the guards
 		Player->GetStimulusSourceComponent()->UnregisterFromSense(UAISense_Sight::StaticClass());
 
-		//p Makes the player unable to sprint
+		// Makes the player unable to sprint
 		Player->GetSprintMovementComponent()->bAllowsToSprint = false;
 		Player->GetSprintMovementComponent()->UnSprint();
 
@@ -59,11 +65,12 @@ void ADisguise::UseDisguise()
 void ADisguise::OnEndDisguise()
 {
 	Receive_OnEndDisguise();
-	// Make the cardboard box disguise invisible
-	Player->DisguiseMesh->SetVisibility(false);
+
 	// Make player visible to guards
 	Player->GetStimulusSourceComponent()->RegisterForSense(UAISense_Sight::StaticClass());
+	// Set the player walk speed to original speed
 	Player->GetCharacterMovement()->MaxWalkSpeed = PlayerMoveSpeed;
+	// Allow the player to be able to sprint again
 	Player->GetSprintMovementComponent()->bAllowsToSprint = true;
 	Destroy();
 }
