@@ -22,10 +22,6 @@ ACaterpillar::ACaterpillar()
 
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
-
-
-
-
 	CatchTriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CatchTriggerBox"));
 	CatchTriggerBox->SetGenerateOverlapEvents(true);
 	//CatchTriggerBox->SetCollisionProfileName(TEXT("Trigger"));
