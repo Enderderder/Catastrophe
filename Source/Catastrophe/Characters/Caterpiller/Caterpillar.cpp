@@ -47,8 +47,7 @@ void ACaterpillar::BeginPlay()
 			FTransform caveFollowPointActorTransform = caveFollowPointActor->GetActorTransform();
 			for (auto point : caveFollowPointsLocalSpace)
 			{
-				FVector pointWorldLocation = point;
-				caveFollowPointActorTransform.TransformPositionNoScale(pointWorldLocation);
+				FVector pointWorldLocation = caveFollowPointActorTransform.TransformPositionNoScale(point);
 				CaveFollowPointsWorldSpace.Add(pointWorldLocation);
 			}
 		}
