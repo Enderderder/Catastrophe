@@ -19,6 +19,17 @@ enum class EHHUType : uint8
 };
 
 /**
+ * Player movement sets
+ * This determind how the character reacts to the controller inputs at different situations
+ */
+UENUM(BlueprintType)
+enum class EPlayerMovementSet : uint8
+{
+	NORMAL,
+	CAVECHASE
+};
+
+/**
  * This struct stores the default value of the player
  */
 USTRUCT(BlueprintType)
@@ -213,9 +224,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* TomatoSpawnPoint;
 
+	///TODO: Move this component back to private and create getter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Movement")
+	EPlayerMovementSet CurrentMovementSet = EPlayerMovementSet::NORMAL;
 
 protected:
 	// Called when the game starts or when spawned
@@ -296,14 +311,9 @@ protected:
 
 #pragma endregion Controller Action
 
-	/** Called for shooting tomato */
-	//UFUNCTION(BlueprintCallable, Category = "HHU_Tomato")
-	//void ShootTomato();
-
 	/** Called when ZoomInTimeline ticks */
 	UFUNCTION()
 	void TimelineSetCameraZoomValue(float _alpha);
-
 
 public:	
 	// Called every frame

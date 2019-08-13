@@ -22,13 +22,11 @@ ACaterpillar::ACaterpillar()
 
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
-
-
-
-
 	CatchTriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CatchTriggerBox"));
 	CatchTriggerBox->SetGenerateOverlapEvents(true);
-	//CatchTriggerBox->SetCollisionProfileName(TEXT("Trigger"));
+	CatchTriggerBox->SetCollisionProfileName(TEXT("Trigger"));
+	CatchTriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
+	CatchTriggerBox->OnComponentBeginOverlap.AddDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
 	CatchTriggerBox->SetupAttachment(GetMesh());
 }
 
@@ -49,8 +47,7 @@ void ACaterpillar::BeginPlay()
 			FTransform caveFollowPointActorTransform = caveFollowPointActor->GetActorTransform();
 			for (auto point : caveFollowPointsLocalSpace)
 			{
-				FVector pointWorldLocation = point;
-				caveFollowPointActorTransform.TransformPositionNoScale(pointWorldLocation);
+				FVector pointWorldLocation = caveFollowPointActorTransform.TransformPositionNoScale(point);
 				CaveFollowPointsWorldSpace.Add(pointWorldLocation);
 			}
 		}
@@ -59,6 +56,14 @@ void ACaterpillar::BeginPlay()
 	{
 		const FString msg = TEXT("Insuffient amount of cave follow point, please check world");
 		CatastropheDebug::OnScreenDebugMsg(-1, 30.0f, FColor::Red, msg);
+	}
+}
+
+void ACaterpillar::OnCathchPlayerTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->ActorHasTag("Player"))
+	{
+		/// TODO: Actually catch the player
 	}
 }
 
