@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay | Cave")
 	float CameraInterpSpeed = 3.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay | Cave")
+	float CameraDistanceAheadOfPlayer = 200.0f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -59,6 +62,6 @@ public:
 
 	/** Getter */
 	FORCEINLINE bool IsCameraFollowingTrack() const { return bCameraFollowingTrack; }
-
+	FORCEINLINE class UCameraComponent* GetTrackFollowCamera() const { return TrackFollowCamera; }
 	/** Getter End */
 };

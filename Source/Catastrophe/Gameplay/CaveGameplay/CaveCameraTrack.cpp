@@ -51,15 +51,44 @@ void ACaveCameraTrack::Tick(float DeltaTime)
 	if (bCameraFollowingTrack
 		&& IsValid(PlayerCharacter))
 	{
+		// Get the location thats closest to the player on the track
 		CurrentCameraLocation = TrackFollowCamera->GetComponentLocation();
 		FVector playerWorldLocation = PlayerCharacter->GetActorLocation();
 		FVector closestLocationAlongSpline = 
 			CameraTrackSpline->FindLocationClosestToWorldLocation(
 				playerWorldLocation, ESplineCoordinateSpace::World);
+
+		// Calculate the ahead location of the camera
+		float inputKey = CameraTrackSpline->FindInputKeyClosestToWorldLocation(playerWorldLocation);
+		int32 truncKey = FMath::TruncToInt(inputKey);
+		int32 nextTruncKey = truncKey + 1;
+		float disTruncKey = CameraTrackSpline->GetDistanceAlongSplineAtSplinePoint(truncKey);
+		float disNextTruncKey = CameraTrackSpline->GetDistanceAlongSplineAtSplinePoint(nextTruncKey);
+		float distanceOnKey =
+			(inputKey - (float)truncKey) * (disNextTruncKey - disTruncKey) + disTruncKey;
+
+		// Debug message
+		{ 
+			const FString msg = FString::SanitizeFloat(distanceOnKey);
+			CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Blue, msg);
+		}
 		
+		float aheadDistance = 
+			FMath::Min(distanceOnKey + CameraDistanceAheadOfPlayer, CameraTrackSpline->GetSplineLength()) + 1.0f; // Add 1.0f to be save for later calculation
+		FVector aheadLocationOnSpline = 
+			CameraTrackSpline->GetLocationAtDistanceAlongSpline(
+				aheadDistance, ESplineCoordinateSpace::World);
+
+		FVector previousLocation = CameraTrackSpline->GetLocationAtDistanceAlongSpline(
+			aheadDistance - 1.0f, ESplineCoordinateSpace::World);
+
+// 		FRotator TargetCameraRotation = 
+// 			UKismetMathLibrary::FindLookAtRotation(aheadLocationOnSpline, previousLocation);
+
+
 		FVector TargetCameraLocation = 
 			FMath::VInterpTo(
-				CurrentCameraLocation, closestLocationAlongSpline, 
+				CurrentCameraLocation, aheadLocationOnSpline,
 				DeltaTime, CameraInterpSpeed);
 		FRotator TargetCameraRotation = 
 			UKismetMathLibrary::FindLookAtRotation(
@@ -73,11 +102,15 @@ void ACaveCameraTrack::ActivateCameraTrack()
 {
 	UGameplayStatics::GetPlayerController(this, 0)->SetViewTargetWithBlend(this, 0.5f);
 	bCameraFollowingTrack = true;
+	if (IsValid(PlayerCharacter))
+		PlayerCharacter->CurrentMovementSet = EPlayerMovementSet::CAVECHASE;
 }
 
 void ACaveCameraTrack::DeactivateCameraTrack()
 {
 	UGameplayStatics::GetPlayerController(this, 0)->SetViewTargetWithBlend(PlayerCharacter, 0.5f);
 	bCameraFollowingTrack = false;
+	if (IsValid(PlayerCharacter))
+		PlayerCharacter->CurrentMovementSet = EPlayerMovementSet::NORMAL;
 }
 
