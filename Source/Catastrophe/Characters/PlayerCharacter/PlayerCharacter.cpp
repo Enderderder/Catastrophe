@@ -2,7 +2,7 @@
 
 #include "PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
-#include "Camera/CameraActor.h"
+//#include "Camera/CameraActor.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -19,8 +19,10 @@
 
 #include "Math/UnrealMathUtility.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 
+#include "Gameplay/GameMode/CatastropheMainGameMode.h"
 #include "PlayerWidget.h"
 #include "PlayerAnimInstance.h"
 #include "CharacterSprintMovementComponent.h"
@@ -28,6 +30,7 @@
 #include "Interactable/BaseClasses/InteractableObject.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
+#include "Gameplay/CaveGameplay/CaveCameraTrack.h"
 
 #include "InventoryComponent.h"
 #include "TomatoSack.h"
@@ -321,11 +324,37 @@ void APlayerCharacter::CheckTomatoInHand()
 
 void APlayerCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f) && bAllowMovementInput)
+	if (Controller
+		&& (Value != 0.0f) 
+		&& bAllowMovementInput)
 	{
+		FRotator Rotation;
+		FRotator YawRotation;
+
 		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		switch (CurrentMovementSet)
+		{
+		case EPlayerMovementSet::NORMAL:
+		{
+			Rotation = Controller->GetControlRotation();
+			YawRotation = FRotator(0, Rotation.Yaw, 0);
+			break;
+		}
+		case EPlayerMovementSet::CAVECHASE:
+		{
+			if (ACatastropheMainGameMode* mainGameMode = ACatastropheMainGameMode::GetGameModeInst(this))
+			{
+				if (ACaveCameraTrack* caveCameraTrack = mainGameMode->GetCaveCameraTrack())
+				{
+					FVector trackCameraLocation = caveCameraTrack->GetTrackFollowCamera()->GetComponentLocation();
+					Rotation = UKismetMathLibrary::FindLookAtRotation(trackCameraLocation, GetActorLocation());
+					YawRotation = FRotator(0, Rotation.Yaw, 0);
+				}
+			}
+			break;
+		}
+		default: break;
+		}
 
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -335,11 +364,36 @@ void APlayerCharacter::MoveForward(float Value)
 
 void APlayerCharacter::MoveRight(float Value)
 {
-	if ((Controller != nullptr) && (Value != 0.0f) && bAllowMovementInput)
+	if (Controller 
+		&& (Value != 0.0f) 
+		&& bAllowMovementInput)
 	{
-		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		FRotator Rotation;
+		FRotator YawRotation;
+		// find out which way is forward
+		switch (CurrentMovementSet)
+		{
+		case EPlayerMovementSet::NORMAL:
+		{
+			Rotation = Controller->GetControlRotation();
+			YawRotation = FRotator(0, Rotation.Yaw, 0);
+			break;
+		}
+		case EPlayerMovementSet::CAVECHASE:
+		{
+			if (ACatastropheMainGameMode* mainGameMode = ACatastropheMainGameMode::GetGameModeInst(this))
+			{
+				if (ACaveCameraTrack* caveCameraTrack = mainGameMode->GetCaveCameraTrack())
+				{
+					FVector trackCameraLocation = caveCameraTrack->GetTrackFollowCamera()->GetComponentLocation();
+					Rotation = UKismetMathLibrary::FindLookAtRotation(trackCameraLocation, GetActorLocation());
+					YawRotation = FRotator(0, Rotation.Yaw, 0);
+				}
+			}
+			break;
+		}
+		default: break;
+		}
 
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);

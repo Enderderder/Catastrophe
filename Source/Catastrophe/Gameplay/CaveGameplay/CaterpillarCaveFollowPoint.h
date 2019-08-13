@@ -11,6 +11,16 @@ class CATASTROPHE_API ACaterpillarCaveFollowPoint : public AActor
 {
 	GENERATED_BODY()
 	
+private:
+
+	/** The trigger box that detect overlap with player character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* DefaultRoot;
+
+	/** The trigger box that detect overlap with player character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* EditorMesh;
+
 public:	
 	// Sets default values for this actor's properties
 	ACaterpillarCaveFollowPoint();
@@ -27,8 +37,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	/** Getter */
 	FORCEINLINE TArray<FVector> GetCaterpillarFollowPoints() const { return CaterpillarFollowPoints; }
