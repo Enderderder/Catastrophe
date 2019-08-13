@@ -122,5 +122,5 @@ public:
 	 * @author James Johnstone
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	void UseItem();
+	void UseItem(bool _IsAiming);
 };

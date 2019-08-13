@@ -382,6 +382,8 @@ public:
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
 	bool IsPlayerCrouched() const;
 	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
+	FORCEINLINE UCharacterSprintMovementComponent* GetSprintMovementComponent() const { 
+		return SprintMovementComponent; }
 	/** Getter End */
 
 };
