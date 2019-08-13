@@ -18,11 +18,12 @@
 // Sets default values
 ADisguise::ADisguise()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	// Setting tick to false
+	PrimaryActorTick.bCanEverTick = true;
 	
+	// Initializing the disguise mesh
 	DisguiseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DisguiseMesh"));
 	RootComponent = DisguiseMesh;
-	DisguiseMesh->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -30,11 +31,13 @@ void ADisguise::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	// Getting the player and storing him as a variable
 	Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	// Getting the players original walk speed and storing it
 	PlayerMoveSpeed = Player->GetCharacterMovement()->MaxWalkSpeed;
 
-	DisguiseMesh->AttachTo(Player->GetRootComponent());
+	// Attaching the disguise to the 
+	DisguiseMesh->AttachToComponent(Player->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	DisguiseMesh->RelativeLocation = FVector(0, 0, 10);
 
 	// Start the disguise on spawn
@@ -72,5 +75,16 @@ void ADisguise::OnEndDisguise()
 	Player->GetCharacterMovement()->MaxWalkSpeed = PlayerMoveSpeed;
 	// Allow the player to be able to sprint again
 	Player->GetSprintMovementComponent()->bAllowsToSprint = true;
+	// Deleting the actor from the world
 	Destroy();
+}
+
+float ADisguise::GetRemainingTime()
+{
+	// Gets the remaining time from the timer
+	if (GetWorld())
+	{
+		return GetWorld()->GetTimerManager().GetTimerRemaining(TimerHandle);
+	}
+	return 0;
 }
