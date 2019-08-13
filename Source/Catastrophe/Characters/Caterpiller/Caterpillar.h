@@ -6,6 +6,11 @@
 #include "GameFramework/Character.h"
 #include "Caterpillar.generated.h"
 
+/**
+ * The Caterpillar is a character in the cave gamaplay that performs a 
+ * nav mesh following to the end of the cave. As its collider collide with the player,
+ * it perform a catch player action
+ */
 UCLASS()
 class CATASTROPHE_API ACaterpillar : public ACharacter
 {

@@ -20,15 +20,12 @@ class CATASTROPHE_API UCharacterSprintMovementComponent : public UActorComponent
 private:
 
 	/**  */
-	UPROPERTY()
 	bool bSprinting = false;
 
 	/**  */
-	UPROPERTY()
 	bool bWantsToSprint = false;
 
 	/** The walk speed of the player, value will be the same as the CharacterMovementComponent */
-	UPROPERTY()
 	float WalkSpeed;
 
 	/**  */
@@ -44,19 +41,15 @@ public:
 	// Sets default values for this component's properties
 	UCharacterSprintMovementComponent();
 
-	/**  */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Sprint")
 	bool bAllowsToSprint = true;
 
-	/**  */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Sprint")
 	bool bUseConstantSprintSpeed = false;
 
-	/**  */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Sprint")
 	float ConstantSprintSpeed = 700.0f;
 
-	/**  */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Sprint")
 	float SprintSpeedMultiplier = 1.5f;
 
@@ -82,24 +75,20 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	/**
-	 * 
+	 * Set the bWantsToSprint to true
 	 * @author: Richard Wulansari
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Movement | Sprint")
 	void Sprint();
 
 	/**
-	 * 
+	 * Set the bWantsToSprint to false
 	 * @author: Richard Wulansari
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Movement | Sprint")
 	void UnSprint();
 
-
-
-
 	/** Getter */
-
 	UFUNCTION(BlueprintCallable, Category = "Movement | Sprint")
 	bool IsSprinting() const { return bSprinting; }
 
