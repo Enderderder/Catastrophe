@@ -66,26 +66,24 @@ void ACaveCameraTrack::Tick(float DeltaTime)
 		float disNextTruncKey = CameraTrackSpline->GetDistanceAlongSplineAtSplinePoint(nextTruncKey);
 		float distanceOnKey =
 			(inputKey - (float)truncKey) * (disNextTruncKey - disTruncKey) + disTruncKey;
-
-		// Debug message
-		{ 
-			const FString msg = FString::SanitizeFloat(distanceOnKey);
-			CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Blue, msg);
-		}
-		
-		float aheadDistance = 
+		float aheadDistance =
 			FMath::Min(distanceOnKey + CameraDistanceAheadOfPlayer, CameraTrackSpline->GetSplineLength()) + 1.0f; // Add 1.0f to be save for later calculation
-		FVector aheadLocationOnSpline = 
+		FVector aheadLocationOnSpline =
 			CameraTrackSpline->GetLocationAtDistanceAlongSpline(
 				aheadDistance, ESplineCoordinateSpace::World);
 
-		FVector previousLocation = CameraTrackSpline->GetLocationAtDistanceAlongSpline(
-			aheadDistance - 1.0f, ESplineCoordinateSpace::World);
+		// Debug message
+		{
+			const FString msg = FString::SanitizeFloat(distanceOnKey);
+			CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Blue, msg);
+		}
 
+// 		FVector previousLocation = CameraTrackSpline->GetLocationAtDistanceAlongSpline(
+// 			aheadDistance - 1.0f, ESplineCoordinateSpace::World);
 // 		FRotator TargetCameraRotation = 
 // 			UKismetMathLibrary::FindLookAtRotation(aheadLocationOnSpline, previousLocation);
 
-
+		// Apply the location and rotation to the camera
 		FVector TargetCameraLocation = 
 			FMath::VInterpTo(
 				CurrentCameraLocation, aheadLocationOnSpline,
@@ -93,7 +91,6 @@ void ACaveCameraTrack::Tick(float DeltaTime)
 		FRotator TargetCameraRotation = 
 			UKismetMathLibrary::FindLookAtRotation(
 				TargetCameraLocation, playerWorldLocation);
-
 		TrackFollowCamera->SetWorldLocationAndRotation(TargetCameraLocation, TargetCameraRotation);
 	}
 }
