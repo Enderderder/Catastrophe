@@ -17,7 +17,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
 	uint8 MaxItemAmount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ItemSack")
-	UTexture* IconTexture;
+	class UTexture* IconTexture;
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
+	bool IsAimingNeeded;
 
 public:	
 	// Sets default values for this actor's properties
