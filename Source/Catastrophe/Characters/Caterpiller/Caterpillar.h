@@ -47,7 +47,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
+	/**
+	 * Blueprint implemented function which will slow the movement of the character for certain amount of time
+	 * @author Richard Wulansari
+	 * @param _speed The speed which will be reduced for the character
+	 * @param _duration The duration of the effect (in second)
+	 */
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Gamplay | Cave", meta = (DisplayName = "ApplySpeedReduction"))
+	void Receive_ApplySpeedReduction(float _speed, float _duration);
 
 
 };
