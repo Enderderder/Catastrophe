@@ -68,7 +68,7 @@ void AShop::EnableShop()
 	if (ShopWidget)
 	{
 		Receive_EnableShop();
-		ShopWidget->AddToViewport();
+		ShopWidget->AddToViewport(100);
 		bIsActivated = true;
 	}
 }
