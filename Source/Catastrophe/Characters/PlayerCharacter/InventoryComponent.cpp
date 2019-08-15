@@ -98,6 +98,18 @@ class AItemSack* UInventoryComponent::GetItemSack(int _SlotPosition)
 	return nullptr;
 }
 
+class AItemSack* UInventoryComponent::GetItemSackOfType(TSubclassOf<class AItemSack> _ItemSackType)
+{
+	for (auto& slot : Slots)
+	{
+		if (slot->IsA(_ItemSackType))
+		{
+			return slot;
+		}
+	}
+	return nullptr;
+}
+
 class AItemSack* UInventoryComponent::GetCurrentItemSack()
 {
 	if (CurrentSelection >= 0)
