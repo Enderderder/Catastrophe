@@ -113,6 +113,14 @@ public:
 	void SetSackSize(uint8 _Size);
 
 	/**
+	 * Called to upgrade the sack size by a certain amount
+	 * @author James Johnstone
+	 * @param _IncreaseAmount The amount the sack size should be increased by
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TomatoSack")
+	void UpgradeSackSize(int _IncreaseAmount);
+
+	/**
 	 * Called to get the max size of the sack
 	 * @author James Johnstone
 	 */
