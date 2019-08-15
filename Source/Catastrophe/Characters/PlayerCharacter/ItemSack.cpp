@@ -22,6 +22,7 @@ void AItemSack::AddItem()
 {
 	if (ItemAmount < MaxItemAmount)
 	{
+		Receive_AddItem();
 		ItemAmount++;
 	}
 }
