@@ -10,6 +10,7 @@
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "RespawnSystem/RespawnSubsystem.h"
 #include "Gameplay/CaveGameplay/CaterpillarCaveFollowPoint.h"
 
 #include "DebugUtility/CatastropheDebug.h"
@@ -35,6 +36,9 @@ void ACaterpillar::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// Record the original transform
+	OriginalTransform = GetActorTransform();
+
 	// Search for the cave follow locations and convert them into world location
 	TArray<AActor*> outActors;
 	UGameplayStatics::GetAllActorsOfClass(this, ACaterpillarCaveFollowPoint::StaticClass(), outActors);
@@ -61,9 +65,13 @@ void ACaterpillar::BeginPlay()
 
 void ACaterpillar::OnCathchPlayerTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	// Sends itself back to the original transform and broadcast the signature
 	if (OtherActor->ActorHasTag("Player"))
 	{
-		/// TODO: Actually catch the player
+		SetActorTransform(OriginalTransform);
+		
+		URespawnSubsystem::GetInst(this)->RespawnPlayerAtLocation(EDISTRICT::CAVE);
+		OnCaterpillarCatchPlayer.Broadcast();
 	}
 }
 

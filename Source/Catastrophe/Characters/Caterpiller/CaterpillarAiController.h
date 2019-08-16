@@ -34,6 +34,9 @@ protected:
 	/** Called when the controller posses a character */
 	virtual void OnPossess(APawn* InPawn) override;
 
+	UFUNCTION()
+	void OnCaterpillarCatachPlayer();
+
 
 public:
 
