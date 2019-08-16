@@ -24,6 +24,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay | QTE_Bob")
 	TSubclassOf<class AQteBobLogicHolder> QteBobEventClass;
 
+	/** 
+	* The Qte range on the first time when player is getting caught
+	* Resets when player fails the qte
+	*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay | QTE_Bob")
+	float InitialGaurdQteRange = 24.0f;
+
 	/** The currently running QTE_Event, there should only be one QTE event running at a time */
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | QTE_Bob")
 	class AQteBobLogicHolder* CurrentQteEvent;

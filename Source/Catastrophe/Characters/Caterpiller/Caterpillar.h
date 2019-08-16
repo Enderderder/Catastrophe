@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "Caterpillar.generated.h"
 
+/** Signature broadcast when the caterpillar catahes the player */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCatchPlayerSignature);
+
 /**
  * The Caterpillar is a character in the cave gamaplay that performs a 
  * nav mesh following to the end of the cave. As its collider collide with the player,
@@ -26,11 +29,17 @@ public:
 	// Sets default values for this character's properties
 	ACaterpillar();
 
+	UPROPERTY(BlueprintAssignable)
+	FOnCatchPlayerSignature OnCaterpillarCatchPlayer;
+
 protected:
 	
-	/**  */
+	/** The path points where the caterpillar will need to follow as its for that gameplay of cave */
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gameplay | Cave")
 	TArray<FVector> CaveFollowPointsWorldSpace;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gameplay | Cave")
+	FTransform OriginalTransform;
 
 protected:
 	// Called when the game starts or when spawned

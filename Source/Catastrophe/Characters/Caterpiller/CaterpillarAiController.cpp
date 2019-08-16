@@ -23,11 +23,21 @@ void ACaterpillarAiController::OnPossess(APawn* InPawn)
 		&& CaterpillarBehaviourTree)
 	{
 		RunBehaviorTree(CaterpillarBehaviourTree);
+		ControllingCaterpillar->OnCaterpillarCatchPlayer.RemoveDynamic(this, &ACaterpillarAiController::OnCaterpillarCatachPlayer);
 	}
 	else
 	{
 		const FString msg = "Caterpillar Ai ERROR: The controller is not controlling a Caterpillar";
 		CatastropheDebug::OnScreenDebugMsg(-1, 30.0f, FColor::Red, msg);
+	}
+}
+
+void ACaterpillarAiController::OnCaterpillarCatachPlayer()
+{
+	// Reset the follow location
+	if (Blackboard)
+	{
+		Blackboard->SetValueAsInt(TEXT("FollowLocationIndex"), 0);
 	}
 }
 
