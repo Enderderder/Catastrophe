@@ -16,8 +16,28 @@ class CATASTROPHE_API ACatastropheMainGameMode : public AGameModeBase
 	
 protected:
 
+	/** Array of guards thats chasing the player */
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | General")
 	TArray<AActor*> ChasingGuards;
+
+	/** The class reference to the QTE bob event */
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay | QTE_Bob")
+	TSubclassOf<class AQteBobLogicHolder> QteBobEventClass;
+
+	/** 
+	* The Qte range on the first time when player is getting caught
+	* Resets when player fails the qte
+	*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay | QTE_Bob")
+	float InitialGaurdQteRange = 24.0f;
+
+	/** The currently running QTE_Event, there should only be one QTE event running at a time */
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | QTE_Bob")
+	class AQteBobLogicHolder* CurrentQteEvent;
+
+	/** Actor reference to the cave gameplay camera track */
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | Cave")
+	class ACaveCameraTrack* CaveCameraTrack;
 
 public:
 
@@ -44,6 +64,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | General")
 	void RemoveOneChasingGuard(AActor* _guard);
 
+	/**
+	 * Initiate the qte event which will involve the guard and the player character
+	 * @author Richard Wulansari
+	 * @param _guard The guard reference
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Gameplay | QTE_Bob")
+	void InitiateQteBobEvent(class AGuard* _guard);
+	virtual void InitiateQteBobEvent_Implementation(class AGuard* _guard);
+
+
+
+	/** Getter */
+	FORCEINLINE class ACaveCameraTrack* GetCaveCameraTrack() const { return CaveCameraTrack; }
+
+	/** Getter End */
 
 	/**
 	 * Gets the gamemode with static function call

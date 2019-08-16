@@ -4,8 +4,11 @@
 #include "CatastropheMainGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
+#include "Gameplay/QTE_Bob/QteBobLogicHolder.h"
+#include "Gameplay/CaveGameplay/CaveCameraTrack.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -13,8 +16,17 @@ void ACatastropheMainGameMode::StartPlay()
 {
 	Super::StartPlay();
 	
-
-
+	TArray<AActor*> resultActors;
+	UGameplayStatics::GetAllActorsOfClass(this, ACaveCameraTrack::StaticClass(), resultActors);
+	if (resultActors.Num() == 1)
+	{
+		CaveCameraTrack = Cast<ACaveCameraTrack>(resultActors[0]);
+	}
+	else
+	{
+		const FString msg = "Insufficient amount of Cave camera track.";
+		CatastropheDebug::OnScreenDebugMsg(-1, 30.0f, FColor::Red, msg);
+	}
 }
 
 void ACatastropheMainGameMode::Tick(float DeltaSeconds)
@@ -59,6 +71,19 @@ void ACatastropheMainGameMode::RemoveOneChasingGuard(AActor* _guard)
 			if (playerCharacter) playerCharacter->ToggleSpottedAlert(false);
 		}
 	}
+}
+
+void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* _guard)
+{
+// 	if (!IsValid(CurrentQteEvent))
+// 	{
+// 		CurrentQteEvent = GetWorld()->SpawnActor<AQteBobLogicHolder>(QteBobEventClass, FTransform::Identity);
+// 		if (CurrentQteEvent)
+// 		{
+// 
+// 		}
+// 
+// 	}
 }
 
 ACatastropheMainGameMode* ACatastropheMainGameMode::GetGameModeInst(const UObject* _worldContextObject)

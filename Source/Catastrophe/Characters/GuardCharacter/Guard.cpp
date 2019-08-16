@@ -285,7 +285,7 @@ void AGuard::OnStunBegin()
 	GuardController->StopMovement();
 
 	// Sight goes dark for guard
-	GuardController->ModifySightRange(0.0f);
+	//GuardController->ModifySightRange(0.0f);
 	if (ACharacter* player = UGameplayStatics::GetPlayerCharacter(this, 0))
 	{
 		GuardController->GetBlackboardComponent()->SetValueAsVector(

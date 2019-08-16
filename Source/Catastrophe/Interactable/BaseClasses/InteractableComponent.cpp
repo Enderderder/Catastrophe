@@ -72,7 +72,7 @@ void UInteractableComponent::OnTriggerWithPlayer(class UPrimitiveComponent* Over
 	}
 
 	// See if we already holds the player character pointer
-	if (PlayerRef && !PlayerRef->IsPendingKill())
+	if (IsValid(PlayerRef))
 	{
 		if (PlayerRef == OtherActor)
 		{
@@ -86,7 +86,7 @@ void UInteractableComponent::OnTriggerWithPlayer(class UPrimitiveComponent* Over
 	}
 
 	// If this component has set to auto interact, interact immediatly
-	if (bAutoInteract && PlayerRef && !PlayerRef->IsPendingKill())
+	if (bAutoInteract && IsValid(PlayerRef))
 	{
 		Interact(PlayerRef, 0.0f);
 	}
