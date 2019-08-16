@@ -15,6 +15,9 @@ AYarnBall::AYarnBall()
 	YarnballMesh->SetGenerateOverlapEvents(false);
 	YarnballMesh->SetCollisionProfileName(TEXT("Yarnball"));
 	RootComponent = YarnballMesh;
+
+	// Create stimuli so guards can see yarn ball
+	PerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("PerceptionStimuliSource"));
 }
 
 // Called when the game starts or when spawned

@@ -12,6 +12,8 @@
 
 #include "DebugUtility/CatastropheDebug.h"
 
+#include "Gameplay/PlayerUtilities/YarnBall.h"
+
 AGuardAiController::AGuardAiController()
 {
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
@@ -141,6 +143,14 @@ void AGuardAiController::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _st
 				// Do whatever, hasn't seen player yet
 			}
 		}
+	}
+
+	// If updated actor is a yarnball
+	if (_actor->IsA<class AYarnBall>())
+	{
+		// Make guard move to the yarn ball location
+		Blackboard->SetValueAsVector(TEXT("PointOfInterest"), _actor->GetActorLocation());
+		ControllingGuard->SetGuardState(EGuardState::INVESTATING);
 	}
 
 	// Calls the guard character version of the function

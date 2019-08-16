@@ -16,6 +16,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* YarnballMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UAIPerceptionStimuliSourceComponent* PerceptionStimuliSourceComponent;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Yarnball")
 	float LaunchForce;
 
