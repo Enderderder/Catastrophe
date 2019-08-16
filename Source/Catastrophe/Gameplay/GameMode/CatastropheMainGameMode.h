@@ -28,7 +28,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | QTE_Bob")
 	class AQteBobLogicHolder* CurrentQteEvent;
 
-
+	/** Actor reference to the cave gameplay camera track */
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | Cave")
+	class ACaveCameraTrack* CaveCameraTrack;
 
 public:
 
@@ -66,10 +68,10 @@ public:
 
 
 
+	/** Getter */
+	FORCEINLINE class ACaveCameraTrack* GetCaveCameraTrack() const { return CaveCameraTrack; }
 
-
-
-
+	/** Getter End */
 
 	/**
 	 * Gets the gamemode with static function call

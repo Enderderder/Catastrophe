@@ -14,8 +14,6 @@ UInventoryComponent::UInventoryComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	CurrentSelection = 0;
 }
 
 // Called when the game starts
@@ -23,6 +21,7 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	CurrentSelection = 0;
 }
 
 void UInventoryComponent::AddItemType(class AItemSack* _NewItem)
@@ -99,47 +98,71 @@ class AItemSack* UInventoryComponent::GetItemSack(int _SlotPosition)
 	return nullptr;
 }
 
+class AItemSack* UInventoryComponent::GetItemSackOfType(TSubclassOf<class AItemSack> _ItemSackType)
+{
+	for (auto& slot : Slots)
+	{
+		if (slot->IsA(_ItemSackType))
+		{
+			return slot;
+		}
+	}
+	return nullptr;
+}
+
 class AItemSack* UInventoryComponent::GetCurrentItemSack()
 {
-	if (Slots.Num() > CurrentSelection)
+	if (CurrentSelection >= 0)
 	{
-		return Slots[CurrentSelection];
+		if (Slots.Num() > CurrentSelection)
+		{
+			return Slots[CurrentSelection];
+		}
 	}
+	CurrentSelection = 0;
 	return nullptr;
 }
 
 class AItemSack* UInventoryComponent::GetPreviousItemSack()
 {
-	if (Slots.Num() > CurrentSelection)
+	if (CurrentSelection >= 0)
 	{
-		if (CurrentSelection == 0)
+		if (Slots.Num() > CurrentSelection && CurrentSelection >= 0)
 		{
-			return Slots.Last();
-		}
-		else
-		{
-			return Slots[CurrentSelection - 1];
+			if (CurrentSelection == 0)
+			{
+				return Slots.Last();
+			}
+			else
+			{
+				return Slots[CurrentSelection - 1];
+			}
 		}
 	}
+	CurrentSelection = 0;
 	return nullptr;
 }
 
 class AItemSack* UInventoryComponent::GetNextItemSack()
 {
-	if (Slots.Num() > CurrentSelection)
+	if (CurrentSelection >= 0)
 	{
-		if (CurrentSelection == Slots.Num() - 1)
+		if (Slots.Num() > CurrentSelection)
 		{
-			if (Slots.Num() > 0)
+			if (CurrentSelection == Slots.Num() - 1)
 			{
-				return Slots[0];
+				if (Slots.Num() > 0)
+				{
+					return Slots[0];
+				}
+			}
+			else
+			{
+				return Slots[CurrentSelection + 1];
 			}
 		}
-		else
-		{
-			return Slots[CurrentSelection];
-		}
 	}
+	CurrentSelection = 0;
 	return nullptr;
 }
 
@@ -167,12 +190,15 @@ void UInventoryComponent::ChooseNextItem()
 	}
 }
 
-void UInventoryComponent::UseItem()
+void UInventoryComponent::UseItem(bool _IsAiming)
 {
 	if (Slots.Num() > CurrentSelection)
 	{
 		if (Slots[CurrentSelection] != NULL)
 		{
+			// Check if the player is aiming if aiming is needed
+			if (Slots[CurrentSelection]->IsAimingNeeded && !_IsAiming) return;
+
 			Slots[CurrentSelection]->UseItem();
 			
 			// Deletes Slot if there is no items in the slot

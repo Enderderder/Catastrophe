@@ -85,10 +85,18 @@ public:
 	class AItemSack* GetItemSack(int _SlotPosition);
 
 	/**
+	 * Called to get the item sack of a certain type
+	 * @author James Johnstone
+	 * @param _SlotPosition The class type of the item sack
+	 */
+	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
+	class AItemSack* GetItemSackOfType(TSubclassOf<class AItemSack> _ItemSackType);
+
+	/**
 	 * Called to get the currently selected item sack
 	 * @author James Johnstone
 	 */
-	UFUNCTION(BlueprintCallable,Category = "ItemUseSystem")
+	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
 	class AItemSack* GetCurrentItemSack();
 	/**
 	 * Called to get the previous item sack
@@ -122,5 +130,5 @@ public:
 	 * @author James Johnstone
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	void UseItem();
+	void UseItem(bool _IsAiming);
 };

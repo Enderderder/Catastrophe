@@ -22,6 +22,7 @@ void AItemSack::AddItem()
 {
 	if (ItemAmount < MaxItemAmount)
 	{
+		Receive_AddItem();
 		ItemAmount++;
 	}
 }
@@ -77,6 +78,11 @@ uint8 AItemSack::GetItemAmount() const
 void AItemSack::SetSackSize(uint8 _Size)
 {
 	MaxItemAmount = _Size;
+}
+
+void AItemSack::UpgradeSackSize(int _IncreaseAmount)
+{
+	SetSackSize(GetSackSize() + _IncreaseAmount);
 }
 
 uint8 AItemSack::GetSackSize() const
