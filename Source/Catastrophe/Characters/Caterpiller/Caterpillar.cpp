@@ -71,6 +71,7 @@ void ACaterpillar::OnCathchPlayerTrigger(UPrimitiveComponent* OverlappedComponen
 		SetActorTransform(OriginalTransform);
 		
 		URespawnSubsystem::GetInst(this)->RespawnPlayerAtLocation(EDISTRICT::CAVE);
+		GetController()->StopMovement();
 		OnCaterpillarCatchPlayer.Broadcast();
 	}
 }
