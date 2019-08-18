@@ -17,6 +17,19 @@ class CATASTROPHE_API UPlayerWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	UPlayerWidget(const FObjectInitializer& ObjectInitializer);
+	
+
+protected:
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	class UCanvasPanel* MainCanvasPanel;
+
+protected:
+
+	virtual void NativeConstruct() override;
+
+public:
 
 	/**
 	 * Called to toggle crosshair visibility
@@ -62,4 +75,17 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
 	void HideInteractionUI();
 	virtual void HideInteractionUI_Implementation();
+
+
+	/**
+	 * Called to create a QTE widget with its logic holder
+	 * @author Richard Wulansari
+	 * @param _qteLogicHolder The logic holder of the QTE event which contains all information of the event
+	 * @return The created widget object
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
+	class UQteBobWidget* CreateQteBobWidget(class AQteBobLogicHolder* _qteLogicHolder);
+	class UQteBobWidget* CreateQteBobWidget_Implementation(class AQteBobLogicHolder* _qteLogicHolder);
+
+
 };

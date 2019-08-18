@@ -7,6 +7,7 @@
 #include "Engine/World.h"
 
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
+#include "Characters/GuardCharacter/Guard.h"
 #include "Gameplay/QTE_Bob/QteBobLogicHolder.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
 
@@ -16,11 +17,11 @@ void ACatastropheMainGameMode::StartPlay()
 {
 	Super::StartPlay();
 	
-	TArray<AActor*> resultActors;
-	UGameplayStatics::GetAllActorsOfClass(this, ACaveCameraTrack::StaticClass(), resultActors);
-	if (resultActors.Num() == 1)
+	TArray<AActor*> cameraTrackActors;
+	UGameplayStatics::GetAllActorsOfClass(this, ACaveCameraTrack::StaticClass(), cameraTrackActors);
+	if (cameraTrackActors.Num() == 1)
 	{
-		CaveCameraTrack = Cast<ACaveCameraTrack>(resultActors[0]);
+		CaveCameraTrack = Cast<ACaveCameraTrack>(cameraTrackActors[0]);
 	}
 	else
 	{
@@ -75,15 +76,60 @@ void ACatastropheMainGameMode::RemoveOneChasingGuard(AActor* _guard)
 
 void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* _guard)
 {
-// 	if (!IsValid(CurrentQteEvent))
-// 	{
-// 		CurrentQteEvent = GetWorld()->SpawnActor<AQteBobLogicHolder>(QteBobEventClass, FTransform::Identity);
-// 		if (CurrentQteEvent)
-// 		{
-// 
-// 		}
-// 
-// 	}
+	if (!IsValid(CurrentGuardQteEvent) && IsValid(_guard))
+	{
+		CurrentGuardQteEvent = GetWorld()->SpawnActor<AQteBobLogicHolder>(QteBobEventClass, FTransform::Identity);
+		if (CurrentGuardQteEvent)
+		{
+			QteGuard = _guard;
+			CurrentGuardQteEvent->OnQteEventComplete.RemoveDynamic(this, &ACatastropheMainGameMode::OnGuardQteEventComplete);
+			CurrentGuardQteEvent->OnQteEventComplete.AddDynamic(this, &ACatastropheMainGameMode::OnGuardQteEventComplete);
+			
+			float qteRange = InitialGaurdQteRange / (float)(GuardQteSuccessCounter + 1);
+			CurrentGuardQteEvent->InitiateEvent(qteRange);
+		}
+	}
+}
+
+void ACatastropheMainGameMode::OnGuardQteEventComplete(EQteEventState _eventState)
+{
+	if (_eventState == EQteEventState::Success)
+	{
+
+	}
+	else if (_eventState == EQteEventState::FailedByMissHit 
+		|| _eventState == EQteEventState::FailedByTimeOut)
+	{
+
+	}
+	else
+	{
+
+	}
+
+	switch (_eventState)
+	{
+	case EQteEventState::Success:
+		OnGuardQteSuccess();
+		break;
+	case EQteEventState::FailedByTimeOut:
+		OnGuardQteFailed();
+		break;
+	case EQteEventState::FailedByMissHit:
+		OnGuardQteFailed();
+		break;
+	default: break;
+	}
+}
+
+void ACatastropheMainGameMode::OnGuardQteSuccess()
+{
+
+}
+
+void ACatastropheMainGameMode::OnGuardQteFailed()
+{
+
 }
 
 ACatastropheMainGameMode* ACatastropheMainGameMode::GetGameModeInst(const UObject* _worldContextObject)

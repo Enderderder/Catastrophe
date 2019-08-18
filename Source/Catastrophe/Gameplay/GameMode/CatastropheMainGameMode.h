@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Gameplay/QTE_Bob/QteBobTypes.h"
 #include "CatastropheMainGameMode.generated.h"
 
 /**
@@ -20,20 +21,34 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | General")
 	TArray<AActor*> ChasingGuards;
 
-	/** The class reference to the QTE bob event */
+	/** The class reference to the QTE event */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay | QTE_Bob")
 	TSubclassOf<class AQteBobLogicHolder> QteBobEventClass;
+	
+	/**
+	 * The currently running QTE event 
+	 * @note There should only be one QTE event running at a time
+	 */
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | QTE_Bob")
+	class AQteBobLogicHolder* CurrentGuardQteEvent;
+
+	/** The guard thats currently involved in the Guard QTE event */
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | QTE_Bob")
+	class AGuard* QteGuard;
+
+	/**
+	 * Records how many times player has successfully QTE
+	 * @note This counter resets when the player failed once
+	 */
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | QTE_Bob")
+	int32 GuardQteSuccessCounter = 0;
 
 	/** 
 	* The Qte range on the first time when player is getting caught
-	* Resets when player fails the qte
+	* @note The range resets when player fails the qte
 	*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay | QTE_Bob")
 	float InitialGaurdQteRange = 24.0f;
-
-	/** The currently running QTE_Event, there should only be one QTE event running at a time */
-	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | QTE_Bob")
-	class AQteBobLogicHolder* CurrentQteEvent;
 
 	/** Actor reference to the cave gameplay camera track */
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | Cave")
@@ -66,6 +81,7 @@ public:
 
 	/**
 	 * Initiate the qte event which will involve the guard and the player character
+	 * This will spawn the AQteBobLogicHolder and set the QteGuard as involved guard
 	 * @author Richard Wulansari
 	 * @param _guard The guard reference
 	 */
@@ -73,6 +89,13 @@ public:
 	void InitiateQteBobEvent(class AGuard* _guard);
 	virtual void InitiateQteBobEvent_Implementation(class AGuard* _guard);
 
+	/**
+	 * Binded event. Called when a qte that initiated by guard completed
+	 * @author Richard Wulansari
+	 * @param _qteGuard The guard that initiated this qte event
+	 */
+	UFUNCTION()
+	void OnGuardQteEventComplete(EQteEventState _eventState);
 
 
 	/** Getter */
@@ -80,6 +103,20 @@ public:
 
 	/** Getter End */
 
+private:
+
+	/**
+	 * Called when player successfully finished a guard QTE event
+	 */
+	void OnGuardQteSuccess();
+
+	/**
+	 * Called when player failed to finished a guard QTE event
+	 */
+	void OnGuardQteFailed();
+
+
+public:
 	/**
 	 * Gets the gamemode with static function call
 	 * @author Richard Wulansari
@@ -87,5 +124,4 @@ public:
 	 * @note If the current gamemode if not ACatastropheMainGameMode, this function will return nullptr
 	 */
 	static ACatastropheMainGameMode* GetGameModeInst(const UObject* _worldContextObject);
-
 };
