@@ -11,6 +11,8 @@
 #include "Gameplay/QTE_Bob/QteBobLogicHolder.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
 
+#include "RespawnSystem/RespawnSubsystem.h"
+
 #include "DebugUtility/CatastropheDebug.h"
 
 void ACatastropheMainGameMode::StartPlay()
@@ -86,7 +88,7 @@ void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* 
 			CurrentGuardQteEvent->OnQteEventComplete.AddDynamic(this, &ACatastropheMainGameMode::OnGuardQteEventComplete);
 			
 			float qteRange = InitialGaurdQteRange / (float)(GuardQteSuccessCounter + 1);
-			CurrentGuardQteEvent->InitiateEvent(qteRange);
+			CurrentGuardQteEvent->InitiateEventWithRange(qteRange);
 		}
 	}
 }
@@ -95,41 +97,47 @@ void ACatastropheMainGameMode::OnGuardQteEventComplete(EQteEventState _eventStat
 {
 	if (_eventState == EQteEventState::Success)
 	{
-
+		OnGuardQteSuccess();
 	}
 	else if (_eventState == EQteEventState::FailedByMissHit 
 		|| _eventState == EQteEventState::FailedByTimeOut)
 	{
-
+		OnGuardQteFailed();
 	}
 	else
 	{
-
-	}
-
-	switch (_eventState)
-	{
-	case EQteEventState::Success:
-		OnGuardQteSuccess();
-		break;
-	case EQteEventState::FailedByTimeOut:
-		OnGuardQteFailed();
-		break;
-	case EQteEventState::FailedByMissHit:
-		OnGuardQteFailed();
-		break;
-	default: break;
+		const FString msg = "QteBobLogicHolder: Event completion happened at wrong event state";
+		CatastropheDebug::OnScreenDebugMsg(-1, 10.0f, FColor::Red, msg);
 	}
 }
 
 void ACatastropheMainGameMode::OnGuardQteSuccess()
 {
-
+	// Increase the success counter and stun the guard
+	GuardQteSuccessCounter++;
+	if (QteGuard)
+		QteGuard->SetGuardState(EGuardState::STUNED);
 }
 
 void ACatastropheMainGameMode::OnGuardQteFailed()
 {
-
+	// Reset the success counter and sends player to the jail
+	GuardQteSuccessCounter = 0;
+	if (QteGuard)
+	{
+		const FName guardLevelName = URespawnSubsystem::GetStreamingLevelNameFromActor(QteGuard);
+		if (guardLevelName != NAME_None)
+		{
+			FLoadStreamingLevelInfo info;
+			info.OriginalLevelName = guardLevelName;
+			info.LoadedLevelName = TEXT("ChrisJail");
+			info.bUnloadCurrentLevel = true;
+			info.bTeleportPlayer = true;
+			info.DistrictType = EDISTRICT::JAIL;
+			info.bBlockOnLoad = false;
+			URespawnSubsystem::GetInst(this)->LoadLevelStreaming(info);
+		}
+	}
 }
 
 ACatastropheMainGameMode* ACatastropheMainGameMode::GetGameModeInst(const UObject* _worldContextObject)

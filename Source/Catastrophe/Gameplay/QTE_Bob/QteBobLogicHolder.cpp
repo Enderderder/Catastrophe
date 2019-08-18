@@ -96,8 +96,8 @@ void AQteBobLogicHolder::PlayerQteAction()
 	if (EventState == EQteEventState::Pending)
 	{
 		// Check if the player hits the action within the success range
-		if (CurrentEventTime >= (EventInfo.SuccessAreaStart * 0.01f) &&
-			CurrentEventTime <= (100.0f / (EventInfo.SuccessAreaStart + EventInfo.SuccessAreaRange) * 0.01f))
+		if (CurrentEventTime >= (EventInfo.SuccessAreaStart * 0.01f) * EventInfo.EventDuration &&
+			CurrentEventTime <= (EventInfo.SuccessAreaStart + EventInfo.SuccessAreaRange) * 0.01f * EventInfo.EventDuration)
 		{
 			EventState = EQteEventState::Success;
 		}
