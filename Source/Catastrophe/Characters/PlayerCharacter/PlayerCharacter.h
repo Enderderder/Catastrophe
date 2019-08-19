@@ -344,6 +344,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void SetStamina(float _value);
 	
+
+	///TODO: Unclear function purpose, redo
 	/**
 	 * Called to stop all the movement that the player currently has
 	 * @param Option to block player movement input
