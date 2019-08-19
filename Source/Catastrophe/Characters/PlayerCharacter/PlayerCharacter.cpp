@@ -24,7 +24,7 @@
 #include "Gameplay/GameMode/CatastropheMainGameMode.h"
 #include "PlayerWidget.h"
 #include "PlayerAnimInstance.h"
-#include "CharacterSprintMovementComponent.h"
+#include "Components/CharacterSprintMovementComponent.h"
 #include "Interactable/InteractActor.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableObject.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableComponent.h"
