@@ -5,17 +5,14 @@
 
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
-
+#include "Components/MovementModifierComponent.h"
 
 // Sets default values for this component's properties
 UCharacterSprintMovementComponent::UCharacterSprintMovementComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+	// Set this component to be initialized when the game starts, and to be ticked every frame.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
 
@@ -28,6 +25,10 @@ void UCharacterSprintMovementComponent::BeginPlay()
 	CharacterOwner = Cast<ACharacter>(GetOwner());
 	if (CharacterOwner)
 	{
+		MovementModifierComponent = Cast<UMovementModifierComponent>(CharacterOwner->GetComponentByClass(UMovementModifierComponent::StaticClass()));
+		if (MovementModifierComponent)
+			bUseMovementModifierComponent = true;
+
 		CharacterMovementComponent = CharacterOwner->GetCharacterMovement();
 		if (CharacterMovementComponent)
 		{
@@ -54,7 +55,17 @@ void UCharacterSprintMovementComponent::TickComponent(float DeltaTime, ELevelTic
 		{
 			bSprinting = false;
 
-			CharacterMovementComponent->MaxWalkSpeed = WalkSpeed;
+			if (bUseMovementModifierComponent)
+			{
+				float reverseModifierValue = bUseConstantSprintSpeed ? 
+					-(ConstantSprintSpeed / WalkSpeed) : -(SprintSpeedMultiplier - 1.0f);
+				if (MovementModifierComponent)
+					MovementModifierComponent->ApplyWalkSpeedModifier(reverseModifierValue);
+			}
+			else
+			{
+				CharacterMovementComponent->MaxWalkSpeed = WalkSpeed;
+			}
 
 			OnSprintEnd.Broadcast();
 		}
@@ -68,14 +79,18 @@ void UCharacterSprintMovementComponent::TickComponent(float DeltaTime, ELevelTic
 		{
 			bSprinting = true;
 
-			if (bUseConstantSprintSpeed)
+			if (bUseMovementModifierComponent)
 			{
-				CharacterMovementComponent->MaxWalkSpeed = ConstantSprintSpeed;
+				float modifierValue = bUseConstantSprintSpeed ?
+					(ConstantSprintSpeed / WalkSpeed) : (SprintSpeedMultiplier - 1.0f);
+				if (MovementModifierComponent)
+					MovementModifierComponent->ApplyWalkSpeedModifier(modifierValue);
 			}
 			else
 			{
-				CharacterMovementComponent->MaxWalkSpeed = WalkSpeed * SprintSpeedMultiplier;
-			}	
+				CharacterMovementComponent->MaxWalkSpeed = bUseConstantSprintSpeed ?
+					ConstantSprintSpeed : (WalkSpeed * SprintSpeedMultiplier);
+			}
 
 			OnSprintBegin.Broadcast();
 		}
@@ -94,10 +109,8 @@ void UCharacterSprintMovementComponent::UnSprint()
 
 bool UCharacterSprintMovementComponent::HasValidData() const
 {
-	const bool hasValidData = 
-		CharacterMovementComponent && IsValid(CharacterOwner);
-
-	return hasValidData;
+	return IsValid(CharacterOwner)
+		&& (CharacterMovementComponent || MovementModifierComponent);
 }
 
 bool UCharacterSprintMovementComponent::IsAbleToSprint() const
