@@ -7,7 +7,8 @@
 #include "MovementModifierComponent.generated.h"
 
 /**
- * 
+ * This component is a centralized control directly to the UCharacterMovementComponent
+ * @note This component will require dependend compoent UCharacterMovementComponent as one of the actor component
  */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CATASTROPHE_API UMovementModifierComponent : public UActorComponent
@@ -24,17 +25,15 @@ protected:
 	 * The modifier value that will apply to the character walk speed
 	 * @note This value can go down below 0.0f, but during calculation the applied minimum value will always be 0.0f
 	 */
-	UPROPERTY(VisibleInstanceOnly, Category = "Movement")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeedModifier = 1.0f;
 
 	/**
 	 * The modifier value that will apply to the character crouch movement speed
 	 * @note This value can go down below 0.0f, but during calculation the applied minimum value will always be 0.0f
 	 */
-	UPROPERTY(VisibleInstanceOnly, Category = "Movement")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Movement")
 	float CrouchSpeedModifier = 1.0f;
-
-
 
 private:
 
@@ -49,8 +48,6 @@ private:
 	/** Speed modifier since last change */
 	float PreviousWalkSpeedModifier = 1.0f;
 	float PreviousCrouchSpeedModifier = 1.0f;
-
-
 
 protected:
 	/** Called when the game starts */
@@ -130,7 +127,7 @@ private:
 	 * @author Richard Wulansari
 	 * @return The result of the check
 	 */
-	bool ValidateData();
+	bool HasValidData();
 
 	/**
 	 * Check if any of the modifier value has changed, this usually indicates that speed needs to be updated

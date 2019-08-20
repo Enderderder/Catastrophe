@@ -9,6 +9,8 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 
+#include "DebugUtility/CatastropheDebug.h"
+
 UMovementModifierComponent::UMovementModifierComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.
@@ -19,7 +21,6 @@ UMovementModifierComponent::UMovementModifierComponent()
 void UMovementModifierComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 
 	ACharacter* CharacterOwner = Cast<ACharacter>(GetOwner());
 	if (CharacterOwner)
@@ -44,7 +45,7 @@ void UMovementModifierComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Check data validation before further procedure
-	if (!ValidateData())
+	if (!HasValidData())
 		return;
 
 	if (HasModifierValueChanged())
@@ -57,6 +58,11 @@ void UMovementModifierComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		PreviousWalkSpeedModifier = WalkSpeedModifier;
 		PreviousCrouchSpeedModifier = CrouchSpeedModifier;
 	}
+
+	const FString walkSpeedModifyMsg = "Walk speed modifier: " + FString::SanitizeFloat(WalkSpeedModifier);
+	const FString crouchSpeedModifyMsg = "Crouch speed modifier: " + FString::SanitizeFloat(CrouchSpeedModifier);
+	CatastropheDebug::OnScreenDebugMsg(4, 0.0f, FColor::Cyan, walkSpeedModifyMsg);
+	CatastropheDebug::OnScreenDebugMsg(5, 0.0f, FColor::Cyan, crouchSpeedModifyMsg);
 }
 
 void UMovementModifierComponent::ApplySpeedModifierToAll(float _modifyValue)
@@ -103,7 +109,7 @@ void UMovementModifierComponent::ApplyCrouchSpeedModifierWithDuration(float _mod
 	GetWorld()->GetTimerManager().SetTimer(reverseModifyTimerHandle, reverseModifierChangeDel, _duration, false);
 }
 
-bool UMovementModifierComponent::ValidateData()
+bool UMovementModifierComponent::HasValidData()
 {
 	return IsValid(MovementComponent);
 }
