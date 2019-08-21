@@ -19,26 +19,29 @@ class CATASTROPHE_API UCharacterSprintMovementComponent : public UActorComponent
 
 private:
 
-	/**  */
 	bool bSprinting = false;
 
-	/**  */
 	bool bWantsToSprint = false;
 
 	/** The walk speed of the player, value will be the same as the CharacterMovementComponent */
 	float WalkSpeed;
 
-	/**  */
+	/** Determind if the sprint speed update will go through MovementModifierComponent or not */
+	bool bUseMovementModifierComponent = false;
+
+	/** Priority update component to control the speed of the character */
+	UPROPERTY()
+	class UMovementModifierComponent* MovementModifierComponent;
+
+	/** If MovementModifierComponent does not exist, CharacterMovementComponenet will be the update component */
 	UPROPERTY()
 	class UCharacterMovementComponent* CharacterMovementComponent;
 
-	/**  */
+	/** The owner must be a character */
 	UPROPERTY()
 	class ACharacter* CharacterOwner;
 
-
 public:	
-	// Sets default values for this component's properties
 	UCharacterSprintMovementComponent();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Sprint")
@@ -53,18 +56,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Sprint")
 	float SprintSpeedMultiplier = 1.5f;
 
-	/**  */
 	UPROPERTY(BlueprintAssignable)
 	FSprintComponentDelegate OnSprintBegin;
 
-	/**  */
 	UPROPERTY(BlueprintAssignable)
 	FSprintComponentDelegate OnSprintEnd;
-
-protected:
-
-
-
 
 protected:
 	// Called when the game starts

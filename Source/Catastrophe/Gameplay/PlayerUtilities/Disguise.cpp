@@ -8,7 +8,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Characters/PlayerCharacter/CharacterSprintMovementComponent.h"
+#include "Components/CharacterSprintMovementComponent.h"
 
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
@@ -18,7 +18,7 @@
 // Sets default values
 ADisguise::ADisguise()
 {
-	// Setting tick to false
+	// Setting tick to true
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// Initializing the disguise mesh

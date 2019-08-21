@@ -24,7 +24,8 @@
 #include "Gameplay/GameMode/CatastropheMainGameMode.h"
 #include "PlayerWidget.h"
 #include "PlayerAnimInstance.h"
-#include "CharacterSprintMovementComponent.h"
+#include "Components/MovementModifierComponent.h"
+#include "Components/CharacterSprintMovementComponent.h"
 #include "Interactable/InteractActor.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableObject.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableComponent.h"
@@ -41,6 +42,9 @@ APlayerCharacter::APlayerCharacter()
 {
 	// Set this character to call Tick() every frame. 
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Setup the movement modifier component
+	MovementModifierComponent = CreateDefaultSubobject<UMovementModifierComponent>(TEXT("MovementModifierComponent"));
 
 	// Set up the sprint movement component
 	SprintMovementComponent = CreateDefaultSubobject<UCharacterSprintMovementComponent>(TEXT("SprintMovementComponent"));

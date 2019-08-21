@@ -67,8 +67,12 @@ class CATASTROPHE_API APlayerCharacter : public ACharacter
 
 private:
 
-	/**  */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	/** Component that modify the movement speed of the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	class UMovementModifierComponent* MovementModifierComponent;
+	
+	/** Component that controls the sprinting behaviour of the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	class UCharacterSprintMovementComponent* SprintMovementComponent;
 
 	/** Camera boom positioning the camera behind the character */
@@ -344,6 +348,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void SetStamina(float _value);
 	
+
+	///TODO: Unclear function purpose, redo
 	/**
 	 * Called to stop all the movement that the player currently has
 	 * @param Option to block player movement input
