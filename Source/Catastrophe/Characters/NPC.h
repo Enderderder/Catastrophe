@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,50 +5,50 @@
 #include "GameFramework/Actor.h"
 #include "NPC.generated.h"
 
-UENUM(BlueprintType)
-enum class ECharacter : uint8
-{
-	ECh_NPC		UMETA(DisplayName = "NPC"),
-	ECh_Player	UMETA(DisplayName = "Player")
-};
-
-USTRUCT(BlueprintType)
-struct FSSentence
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-	ECharacter m_CharType;
-
-	UPROPERTY(EditAnywhere)
-	FString m_Sentence;
-};
-
-USTRUCT(BlueprintType)
-struct FConversation
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSSentence> StartQuestConversation;
-	UPROPERTY(BlueprintReadWrite)
-	class UQuestObjectiveComponent* OldQuest;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bFinishOldQuest;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int FishBonesReward_OldQuest;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSSentence> FinishedQuestConversation;
-	UPROPERTY(BlueprintReadWrite)
-	class UQuestObjectiveComponent* NewQuest;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bFinishNewQuest;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int FishBonesReward_NewQuest;
-};
+//UENUM(BlueprintType)
+//enum class ECharacter : uint8
+//{
+//	ECh_NPC		UMETA(DisplayName = "NPC"),
+//	ECh_Player	UMETA(DisplayName = "Player")
+//};
+//
+//USTRUCT(BlueprintType)
+//struct FSSentence
+//{
+//	GENERATED_BODY()
+//
+//public:
+//	UPROPERTY(EditAnywhere)
+//	ECharacter m_CharType;
+//
+//	UPROPERTY(EditAnywhere)
+//	FString m_Sentence;
+//};
+//
+//USTRUCT(BlueprintType)
+//struct FConversation
+//{
+//	GENERATED_BODY()
+//
+//public:
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	TArray<FSSentence> StartQuestConversation;
+//	UPROPERTY(BlueprintReadWrite)
+//	class UQuestObjectiveComponent* OldQuest;
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	bool bFinishOldQuest;
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	int FishBonesReward_OldQuest;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	TArray<FSSentence> FinishedQuestConversation;
+//	UPROPERTY(BlueprintReadWrite)
+//	class UQuestObjectiveComponent* NewQuest;
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	bool bFinishNewQuest;
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	int FishBonesReward_NewQuest;
+//};
 
 UCLASS()
 class CATASTROPHE_API ANPC : public AActor
@@ -83,8 +82,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue: Text")
 	TSubclassOf<class UUserWidget> WidgetRef;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue: Text")
-	TArray<FConversation> ConversationsList;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue: Text")
+	//TArray<FConversation> ConversationsList;
 
 	UPROPERTY()
 	int CurrentDialogueNum;
