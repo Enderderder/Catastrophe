@@ -19,3 +19,8 @@ void CatastropheDebug::OnScreenDebugMsg(int32 _key, float _displayTime, FColor _
 		GEngine->AddOnScreenDebugMessage(_key, _displayTime, _color, _message, _bNewerOnTop, _textScale);
 	}
 }
+
+void CatastropheDebug::OnScreenErrorMsg(const FString& _message, float _displayTime)
+{
+	OnScreenDebugMsg(-1, _displayTime, FColor::Red, _message, true, FVector2D(2.0f, 2.0f));
+}
