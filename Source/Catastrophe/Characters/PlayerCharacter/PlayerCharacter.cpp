@@ -24,7 +24,8 @@
 #include "Gameplay/GameMode/CatastropheMainGameMode.h"
 #include "PlayerWidget.h"
 #include "PlayerAnimInstance.h"
-#include "CharacterSprintMovementComponent.h"
+#include "Components/MovementModifierComponent.h"
+#include "Components/CharacterSprintMovementComponent.h"
 #include "Interactable/InteractActor.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableObject.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableComponent.h"
@@ -41,6 +42,9 @@ APlayerCharacter::APlayerCharacter()
 {
 	// Set this character to call Tick() every frame. 
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Setup the movement modifier component
+	MovementModifierComponent = CreateDefaultSubobject<UMovementModifierComponent>(TEXT("MovementModifierComponent"));
 
 	// Set up the sprint movement component
 	SprintMovementComponent = CreateDefaultSubobject<UCharacterSprintMovementComponent>(TEXT("SprintMovementComponent"));
@@ -212,6 +216,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::UnSprint);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::CrouchBegin);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::CrouchEnd);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
