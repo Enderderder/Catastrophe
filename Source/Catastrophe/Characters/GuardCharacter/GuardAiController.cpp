@@ -52,24 +52,23 @@ void AGuardAiController::OnPossess(APawn* InPawn)
 		if (Blackboard)
 		{
 			// Sets the default state of the guard
-			ControllingGuard->SetGuardState(ControllingGuard->DefaultGuardState);
+			ControllingGuard->SetGuardState(ControllingGuard->PreferNeutralState);
+			Blackboard->SetValueAsEnum(
+				TEXT("NeturalState"), (uint8)(ControllingGuard->PreferNeutralState));
 
-			// If sets to patrol but guard dont have patrol behaviour 
-			// or dont have patrol points, reset it to stationary
-			if (ControllingGuard->GetGuardState() == EGuardState::PATROLLING)
+			// Check if guard is capable of doing patrol behaviour
+			// If not, return to stationary
+			if (ControllingGuard->bHasPatrolBehaviour &&
+				ControllingGuard->PatrolLocations.Num() > 0)
 			{
-				if (!ControllingGuard->bPatrolBehaviour
-					|| ControllingGuard->PatrolLocations.Num() <= 0)
-				{
-					ControllingGuard->SetGuardState(EGuardState::STATIONARY);
-				}
-				else
-				{
-					// Sets the origin location of the patrol location
-					Blackboard->SetValueAsVector(
-						TEXT("PatrolOriginLocation"),
-						ControllingGuard->PatrolLocations[0] + ControllingGuard->GetActorLocation());
-				}
+				// Sets the origin location of the patrol location
+				Blackboard->SetValueAsVector(
+					TEXT("PatrolOriginLocation"),
+					ControllingGuard->PatrolLocations[0] + ControllingGuard->GetActorLocation());
+			}
+			else if (ControllingGuard->GetGuardState() == EGuardState::PATROLLING)
+			{
+				ControllingGuard->SetGuardState(EGuardState::STATIONARY);
 			}
 		}
 	}

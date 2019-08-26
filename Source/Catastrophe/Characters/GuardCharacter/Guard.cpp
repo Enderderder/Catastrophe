@@ -239,7 +239,7 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 
 	case EGuardState::PATROLLING:
 		HeadLight->SetLightColor(NormalHeadLightColor);
-		if (bPatrolBehaviour && PatrolLocations.Num() > 0)
+		if (bHasPatrolBehaviour && PatrolLocations.Num() > 0)
 		{
 			SetGuardMaxSpeed(PatrolSpeed);
 			GuardController->ModifySightRange(PatrolSightRange, LosingSightRange);

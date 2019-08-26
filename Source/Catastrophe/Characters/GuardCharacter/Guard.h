@@ -69,10 +69,14 @@ public:
 	/** The default state of the guard when it spawns in to the world */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | General")
 	EGuardState DefaultGuardState = EGuardState::STATIONARY;
+	
+	/** The default state of the guard when it spawns in to the world */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | General")
+	EGuardState PreferNeutralState = EGuardState::STATIONARY;
 
 	/** Determine if the guard will walk around in his patrol location */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | Patrol")
-	bool bPatrolBehaviour = false;
+	bool bHasPatrolBehaviour = false;
 
 	/** The patrol way points of the guard, need to enable PatrolBehaviour to use them */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | Patrol", meta = (MakeEditWidget = "true"))
