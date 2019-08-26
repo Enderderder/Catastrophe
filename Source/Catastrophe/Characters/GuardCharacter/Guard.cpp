@@ -137,11 +137,6 @@ void AGuard::Tick(float DeltaTime)
 		default: break;
 		}
 	}
-
-	if (GuardState == EGuardState::CHASING)
-	{
-
-	}
 }
 
 void AGuard::GetPerceptionLocRot_Implementation(FVector& Location, FRotator& Rotation) const
@@ -169,6 +164,10 @@ void AGuard::OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus)
 
 void AGuard::SetGuardState(EGuardState _newState)
 {
+	// If switching to the same state, ignore it
+	if (_newState == GuardState)
+		return;
+
 	EGuardState oldState = GuardState;
 	GuardState = _newState;
 

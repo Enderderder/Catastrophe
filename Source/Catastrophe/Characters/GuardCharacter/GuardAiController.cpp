@@ -7,12 +7,14 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Classes/BehaviorTree/BlackboardComponent.h"
+// #include "NavigationSystem/Public/NavigationSystem.h"
+// #include "NavigationSystem/Public/NavigationPath.h"
 
 #include "Guard.h"
+#include "Gameplay/PlayerUtilities/YarnBall.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
-#include "Gameplay/PlayerUtilities/YarnBall.h"
 
 AGuardAiController::AGuardAiController()
 {
@@ -118,35 +120,35 @@ void AGuardAiController::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _st
 	{
 		if (_stimulus.WasSuccessfullySensed())
 		{
+
 			ControllingGuard->bPlayerInSight = true;
 			if (!ControllingGuard->bPlayerWasInSight)
 			{
 				ControllingGuard->bPlayerWasInSight = true;
-				ControllingGuard->SetGuardState(EGuardState::CHASING);
-				UE_LOG(LogTemp, Warning, TEXT("I can see uuuuu biotch"));
-			}	
+				Blackboard->SetValueAsBool(
+					TEXT("bHasSightOnPlayer"), true);
+			}
 		}
 		else
 		{
+			Blackboard->SetValueAsBool(
+				TEXT("bHasSightOnPlayer"), false);
 			ControllingGuard->bPlayerInSight = false;
 			if (ControllingGuard->bPlayerWasInSight)
 			{
+				ControllingGuard->bPlayerWasInSight = false;
+				
 				// Record the last seen location of the player
 				Blackboard->SetValueAsVector(
 					TEXT("PlayerlastSeenLocation"), _stimulus.StimulusLocation);
-
-				ControllingGuard->SetGuardState(EGuardState::SEARCHING);
-				ControllingGuard->bPlayerWasInSight = false;
 			}
 			else
 			{
-				// Do whatever, hasn't seen player yet
+				// Nothing happened yet
 			}
 		}
 	}
-
-	// If updated actor is a yarnball
-	if (_actor->IsA<class AYarnBall>())
+	else if (_actor->IsA<class AYarnBall>())
 	{
 		// Make guard move to the yarn ball location
 		Blackboard->SetValueAsVector(TEXT("PointOfInterest"), _actor->GetActorLocation());
@@ -171,7 +173,6 @@ void AGuardAiController::OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _
 			UE_LOG(LogTemp, Warning, TEXT("I can hear uuuuu"));
 		}
 	}
-
 
 	// Calls the guard character version of the function
 	ControllingGuard->OnHearingPerceptionUpdate(_actor, _stimulus);
