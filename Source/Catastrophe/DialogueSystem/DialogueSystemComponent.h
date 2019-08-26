@@ -24,12 +24,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FString Text;
-
-	UPROPERTY(EditAnywhere)
-	bool CompletesObjective;
-
-	UPROPERTY(EditAnywhere)
-	class UQuestObjectiveComponent* QuestObjectiveToComplete;
 };
 
 USTRUCT(BlueprintType)
@@ -40,6 +34,9 @@ struct FSConversation
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FSSentence> Sentences;
+
+	UPROPERTY()
+	class UQuestObjectiveComponent* QuestObjectiveToComplete;
 };
 
 
@@ -89,6 +86,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
 	void Interact(class APlayerCharacter* _playerCharacter);
+
+	UFUNCTION(BlueprintCallable, Category = "Dialogue System: Quest")
+	void AttachQuestObjectiveToConversation(int _ConversationIndex, class UQuestObjectiveComponent* _QuestObjectiveComponent);
 
 public:
 	// Starts the conversation

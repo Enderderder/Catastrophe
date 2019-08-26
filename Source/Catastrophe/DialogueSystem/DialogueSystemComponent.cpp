@@ -6,6 +6,7 @@
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
 #include "Characters/PlayerCharacter/PlayerWidget.h"
 #include "Components/BoxComponent.h"
+#include "QuestSystem/QuestObjectiveComponent.h"
 
 // Sets default values for this component's properties
 UDialogueSystemComponent::UDialogueSystemComponent()
@@ -37,25 +38,33 @@ void UDialogueSystemComponent::BeginPlay()
 
 void UDialogueSystemComponent::UpdateDialogue()
 {
-	FSConversation ActiveConversation = Conversations[CurrentConversationIndex];
-
 	DialogueWidget->BindDialogueComponent(this);
-
-	if (ActiveConversation.Sentences.Num() > CurrentSentenceIndex)
-	{
-		CurrentSentenceIndex++;
-	}
 }
 
 void UDialogueSystemComponent::Interact(class APlayerCharacter* _playerCharacter)
 {
 	if (bInConversation)
 	{
+		if (Conversations[CurrentConversationIndex].Sentences.Num() < CurrentSentenceIndex)
+		{
+			DisableDialogue();
+			return;
+		}
+
+		CurrentSentenceIndex++;
 		UpdateDialogue();
 	}
 	else
 	{
 		StartConversation(CurrentConversationIndex);
+	}
+}
+
+void UDialogueSystemComponent::AttachQuestObjectiveToConversation(int _ConversationIndex, class UQuestObjectiveComponent* _QuestObjectiveComponent)
+{
+	if (Conversations.Num() > _ConversationIndex)
+	{
+		Conversations[_ConversationIndex].QuestObjectiveToComplete = _QuestObjectiveComponent;
 	}
 }
 
@@ -83,6 +92,7 @@ void UDialogueSystemComponent::StartConversation(int _ConversationIndex)
 
 void UDialogueSystemComponent::DisableDialogue()
 {
+	// Remove dialogue widget from the screen
 	if (DialogueWidget)
 	{
 		DialogueWidget->RemoveFromViewport();
@@ -92,6 +102,13 @@ void UDialogueSystemComponent::DisableDialogue()
 	{
 		// Sets the player HUD visible again
 		Player->GetPlayerWidget()->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	// If an objective has been set, then complete it
+	UQuestObjectiveComponent* objective = Conversations[CurrentConversationIndex].QuestObjectiveToComplete;
+	if (objective)
+	{
+		objective->CompleteObjective();
 	}
 
 	// Resets current conversation and current sentence indices
@@ -115,6 +132,13 @@ FString UDialogueSystemComponent::GetCurrentDialogueText()
 
 bool UDialogueSystemComponent::IsPlayerTalking()
 {
-	ECharacter CurrentCharacterType = Conversations[CurrentConversationIndex].Sentences[CurrentSentenceIndex].CharacterType;
-	return (CurrentCharacterType == ECharacter::ECh_Player) ? true : false;
+	if (Conversations.Num() > CurrentConversationIndex)
+	{
+		if (Conversations[CurrentConversationIndex].Sentences.Num() > CurrentSentenceIndex)
+		{
+			ECharacter CurrentCharacterType = Conversations[CurrentConversationIndex].Sentences[CurrentSentenceIndex].CharacterType;
+			return (CurrentCharacterType == ECharacter::ECh_Player) ? true : false;
+		}
+	}
+	return false;
 }

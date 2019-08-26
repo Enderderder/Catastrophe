@@ -117,57 +117,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = "NPC")
-	void InitialInteract();
-	UFUNCTION(BlueprintImplementableEvent, Category = "NPC", meta = (DisplayName = "OnInitialInteract"))
-	void Receive_InitialInteract();
-
-	UFUNCTION(BlueprintCallable, Category = "NPC")
 	void Interact(class APlayerCharacter* _playerCharacter);
 	UFUNCTION(BlueprintImplementableEvent, Category = "NPC", meta = (DisplayName = "OnInteract"))
 	void Receive_Interact();
-
-	UFUNCTION()
-	void InitializeWidget();
-
-	UFUNCTION(BlueprintCallable, Category = "NPC")
-	void UpdateWidget();
-	UFUNCTION(BlueprintImplementableEvent, Category = "NPC", meta = (DisplayName = "OnUpdateWidget"))
-	void Receive_UpdateWidget();
-
-	UFUNCTION()
-	void NextDialogue();
-
-	UFUNCTION(BlueprintCallable, Category = "NPC")
-	void DisableDialogue();
-	UFUNCTION(BlueprintImplementableEvent, Category = "NPC", meta = (DisplayName = "OnDisableDialogue"))
-	void Receive_DisableDialogue();
-
-	UFUNCTION(BlueprintCallable, Category = "NPC")
-	void FinishConversation();
-
-	UFUNCTION(BlueprintCallable, Category = "NPC: Quests")
-	void StartNewQuest();
-	UFUNCTION(BlueprintImplementableEvent, Category = "NPC: Quests", meta = (DisplayName = "OnStartNewQuest"))
-	void Receive_StartNewQuest();
-
-	UFUNCTION(BlueprintCallable, Category = "NPC: Quests")
-	void FinishOldQuest();
-	UFUNCTION(BlueprintImplementableEvent, Category = "NPC: Quests", meta = (DisplayName = "OnFinishOldQuest"))
-	void Receive_FinishOldQuest();
-	UFUNCTION(BlueprintCallable, Category = "NPC: Quests")
-	void FinishNewQuest();
-	UFUNCTION(BlueprintImplementableEvent, Category = "NPC: Quests", meta = (DisplayName = "OnFinishNewQuest"))
-	void Receive_FinishNewQuest();
-	UFUNCTION(BlueprintImplementableEvent, Category = "NPC: Quests", meta = (DisplayName = "OnQuestsFinish"))
-	void Receive_FinishQuests();
-
-	UFUNCTION(BlueprintCallable, Category = "NPC: Conversation")
-	void SetConversationQuests(int _index, class UQuestObjectiveComponent* _oldQuest, class UQuestObjectiveComponent* _newQuest);
-
-	UFUNCTION(BlueprintCallable, Category = "NPC: Currency")
-	int GetCurrentFishboneReward_OldQuest();
-	UFUNCTION(BlueprintCallable, Category = "NPC: Currency")
-	int GetCurrentFishboneReward_NewQuest();
 
 public:	
 	// Called every frame
