@@ -51,25 +51,33 @@ void AGuardAiController::OnPossess(APawn* InPawn)
 
 		if (Blackboard)
 		{
-			// Sets the default state of the guard
-			ControllingGuard->SetGuardState(ControllingGuard->PreferNeutralState);
-			Blackboard->SetValueAsEnum(
-				TEXT("NeturalState"), (uint8)(ControllingGuard->PreferNeutralState));
-
 			// Check if guard is capable of doing patrol behaviour
 			// If not, return to stationary
-			if (ControllingGuard->bHasPatrolBehaviour &&
-				ControllingGuard->PatrolLocations.Num() > 0)
+			bool bCapableOfPatrolling =
+				ControllingGuard->bHasPatrolBehaviour &&
+				ControllingGuard->PatrolLocations.Num() > 0;
+			if (bCapableOfPatrolling)
 			{
 				// Sets the origin location of the patrol location
 				Blackboard->SetValueAsVector(
 					TEXT("PatrolOriginLocation"),
 					ControllingGuard->PatrolLocations[0] + ControllingGuard->GetActorLocation());
 			}
-			else if (ControllingGuard->GetGuardState() == EGuardState::PATROLLING)
+			else if (ControllingGuard->GetPreferNeutralState() == EGuardState::PATROLLING)
 			{
-				ControllingGuard->SetGuardState(EGuardState::STATIONARY);
+				ControllingGuard->SetPreferNeutralState(EGuardState::STATIONARY);
 			}
+			
+			// Sets the default state of the guard
+			//ControllingGuard->SetGuardState(ControllingGuard->PreferNeutralState);
+			Blackboard->SetValueAsEnum(
+				TEXT("PreferNeutralState"), (uint8)(ControllingGuard->PreferNeutralState));
+			Blackboard->SetValueAsVector(
+				TEXT("OriginLocation"), ControllingGuard->GetActorLocation());
+			Blackboard->SetValueAsRotator(
+				TEXT("OriginRotation"), ControllingGuard->GetActorRotation());
+			Blackboard->SetValueAsBool(
+				TEXT("bCapableOfPatrolling"), bCapableOfPatrolling);
 		}
 	}
 	else
@@ -119,7 +127,6 @@ void AGuardAiController::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _st
 	{
 		if (_stimulus.WasSuccessfullySensed())
 		{
-
 			ControllingGuard->bPlayerInSight = true;
 			if (!ControllingGuard->bPlayerWasInSight)
 			{
@@ -128,26 +135,22 @@ void AGuardAiController::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _st
 					TEXT("bHasSightOnPlayer"), true);
 			}
 		}
-		else
+		else if (ControllingGuard->bPlayerInSight)
 		{
+			ControllingGuard->bPlayerInSight = false;
 			Blackboard->SetValueAsBool(
 				TEXT("bHasSightOnPlayer"), false);
-			ControllingGuard->bPlayerInSight = false;
-			if (ControllingGuard->bPlayerWasInSight)
-			{
-				ControllingGuard->bPlayerWasInSight = false;
-				
-				// Record the last seen location of the player
-				Blackboard->SetValueAsVector(
-					TEXT("PlayerlastSeenLocation"), _stimulus.StimulusLocation);
-			}
-			else
-			{
-				// Nothing happened yet
-			}
+			Blackboard->SetValueAsBool(
+				TEXT("bPlayerWasInSight"), true);
+			Blackboard->SetValueAsVector(
+				TEXT("PlayerlastSeenLocation"), _stimulus.StimulusLocation);
+		}
+		else
+		{
+			// Nothing happened yet
 		}
 	}
-	else if (_actor->IsA<class AYarnBall>())
+	else if (_actor->IsA<AYarnBall>())
 	{
 		// Make guard move to the yarn ball location
 		Blackboard->SetValueAsVector(TEXT("PointOfInterest"), _actor->GetActorLocation());

@@ -250,14 +250,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Guard | General")
 	void ResetGuard();
 
-	/** Setter */
+	/**
+	 * Sets the controller reference of the guard
+	 * @author Richard Wulansari
+	 * @param _controller The Ai controller that possesing the guard
+	 */
 	void SetGuardControllerRef(class AGuardAiController* _controller) {
 		GuardController = _controller;
 	}
-	/** Setter End */
+
+	/** Sets the prefered neutral state of the guard */
+	void SetPreferNeutralState(EGuardState _state) { PreferNeutralState = _state; }
 
 	/** Getter */
 	FORCEINLINE EGuardState GetGuardState() const { return GuardState; }
+	FORCEINLINE EGuardState GetPreferNeutralState() const { return PreferNeutralState; }
 	FORCEINLINE class AGuardAiController* GetGuardController() const { return GuardController; }
 	/** Getter End */
 };
