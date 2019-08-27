@@ -244,7 +244,6 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 			SetGuardMaxSpeed(PatrolSpeed);
 			GuardController->ModifySightRange(PatrolSightRange, LosingSightRange);
 		}
-		else SetGuardState(DefaultGuardState); // If guard dont have a patrol behaviour, go back to the default state
 		break;
 
 	case EGuardState::INVESTATING:
@@ -280,11 +279,14 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 
 void AGuard::OnStunBegin()
 {
+	GuardController->GetBlackboardComponent()->SetValueAsBool(
+		TEXT("bStunned"), true);
+
 	// Make sure this bi** doesnt move
 	GuardController->StopMovement();
 
 	// Sight goes dark for guard
-	//GuardController->ModifySightRange(0.0f);
+	GuardController->ModifySightRange(0.0f);
 	if (ACharacter* player = UGameplayStatics::GetPlayerCharacter(this, 0))
 	{
 		GuardController->GetBlackboardComponent()->SetValueAsVector(
@@ -296,11 +298,6 @@ void AGuard::OnStunBegin()
 
 	if (GuardAnimInstance)
 		GuardAnimInstance->bStuned = true;
-	else
-	{
-		// Force the animation
-		Cast<UGuardAnimInstance>(GetMesh()->GetAnimInstance())->bStuned = true;
-	}
 
 	// Clear the old timer
 	GetWorld()->GetTimerManager().ClearTimer(StunTimerHnadle);
@@ -314,20 +311,20 @@ void AGuard::OnStunBegin()
 
 void AGuard::OnStunEnd()
 {
-	GuardAnimInstance->bStuned = false;
+	GuardController->GetBlackboardComponent()->SetValueAsBool(
+		TEXT("bStunned"), false);
+	
+	if (GuardAnimInstance)
+		GuardAnimInstance->bStuned = false;
+
+	if (bPlayerWasInSight)
+	{
+		GuardController->ModifySightRange(ChasingSightRange, LosingSightRange);
+	}
+	else GuardController->ModifySightRange(PatrolSightRange, LosingSightRange);
 
 	// Turn the head light back on
 	HeadLight->SetVisibility(true);
-
-	// Go search the player if he saw the player
-	if (bPlayerWasInSight)
-	{
-		SetGuardState(EGuardState::SEARCHING);
-	}
-	else // Or just go back to the default state
-	{
-		SetGuardState(DefaultGuardState);
-	}
 
 	// Call the blueprint implementation
 	Receive_OnStunEnd();

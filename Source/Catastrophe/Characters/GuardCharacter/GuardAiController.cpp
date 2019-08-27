@@ -128,16 +128,13 @@ void AGuardAiController::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _st
 		if (_stimulus.WasSuccessfullySensed())
 		{
 			ControllingGuard->bPlayerInSight = true;
-			if (!ControllingGuard->bPlayerWasInSight)
-			{
-				ControllingGuard->bPlayerWasInSight = true;
-				Blackboard->SetValueAsBool(
-					TEXT("bHasSightOnPlayer"), true);
-			}
+			Blackboard->SetValueAsBool(
+				TEXT("bHasSightOnPlayer"), true);
 		}
 		else if (ControllingGuard->bPlayerInSight)
 		{
 			ControllingGuard->bPlayerInSight = false;
+			ControllingGuard->bPlayerWasInSight = true;
 			Blackboard->SetValueAsBool(
 				TEXT("bHasSightOnPlayer"), false);
 			Blackboard->SetValueAsBool(
