@@ -45,7 +45,7 @@ void UDialogueSystemComponent::Interact(class APlayerCharacter* _playerCharacter
 {
 	if (bInConversation)
 	{
-		if (Conversations[CurrentConversationIndex].Sentences.Num() < CurrentSentenceIndex)
+		if (Conversations[CurrentConversationIndex].Sentences.Num() - 1 <= CurrentSentenceIndex)
 		{
 			DisableDialogue();
 			return;
@@ -104,11 +104,14 @@ void UDialogueSystemComponent::DisableDialogue()
 		Player->GetPlayerWidget()->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	// If an objective has been set, then complete it
-	UQuestObjectiveComponent* objective = Conversations[CurrentConversationIndex].QuestObjectiveToComplete;
-	if (objective)
+	if (Conversations.Num() > CurrentConversationIndex)
 	{
-		objective->CompleteObjective();
+		// If an objective has been set, then complete it
+		UQuestObjectiveComponent* objective = Conversations[CurrentConversationIndex].QuestObjectiveToComplete;
+		if (objective)
+		{
+			objective->CompleteObjective();
+		}
 	}
 
 	// Resets current conversation and current sentence indices

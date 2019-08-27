@@ -32,7 +32,7 @@ struct FSConversation
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	TArray<FSSentence> Sentences;
 
 	UPROPERTY()
@@ -50,14 +50,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue System", meta = (AllowPrivateAccess = "true"))
 	bool CanInteract;
 
-	// Stores all the possible conversations which could be had
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System", meta = (AllowPrivateAccess = "true"))
-	TArray<FSConversation> Conversations;
-
-	// The dialogue widget class type
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class UUserWidget> DialogueWidgetRef;
-
 	// The stored dialogue widget which is presented on screen
 	UPROPERTY()
 	class UDialogueWidget* DialogueWidget;
@@ -74,9 +66,19 @@ private:
 	// The current sentence in the current conversation
 	int CurrentSentenceIndex;
 
+protected:
+	// The dialogue widget class type
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System")
+	TSubclassOf<class UUserWidget> DialogueWidgetRef;
+
+	// Stores all the possible conversations which could be had
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System")
+	TArray<FSConversation> Conversations;
+
 public:	
 	// Sets default values for this component's properties
 	UDialogueSystemComponent();
+
 
 protected:
 	// Called when the game starts
