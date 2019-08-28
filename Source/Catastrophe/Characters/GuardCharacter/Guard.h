@@ -199,12 +199,6 @@ public:
 	/** Called to get the eye view point of the character */
 	virtual void GetActorEyesViewPoint(FVector& Location, FRotator& Rotation) const override;
 
-	/** Called when Ai character catches a visual stimulus source */
-	virtual void OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus);
-
-	/** Called when Ai character catches a sound stimulus source */
-	virtual void OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus);
-
 	/**
 	 * Sets the state of the guard then modify the character value base on the state
 	 * @author Richard Wulansari

@@ -69,7 +69,6 @@ void AGuardAiController::OnPossess(APawn* InPawn)
 			}
 			
 			// Sets the default state of the guard
-			//ControllingGuard->SetGuardState(ControllingGuard->PreferNeutralState);
 			Blackboard->SetValueAsEnum(
 				TEXT("PreferNeutralState"), (uint8)(ControllingGuard->PreferNeutralState));
 			Blackboard->SetValueAsVector(
@@ -90,9 +89,6 @@ void AGuardAiController::PerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 {
 	for (AActor* actor : UpdatedActors)
 	{
-		const FString msg = TEXT("PerceptionUpdated");
-		CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Cyan, msg);
-
 		FActorPerceptionBlueprintInfo actorPerceptionInfo;
 		if (PerceptionComponent->GetActorsPerception(actor, actorPerceptionInfo))
 		{
@@ -153,10 +149,6 @@ void AGuardAiController::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _st
 		Blackboard->SetValueAsVector(TEXT("PointOfInterest"), _actor->GetActorLocation());
 		ControllingGuard->SetGuardState(EGuardState::INVESTATING);
 	}
-
-	// Calls the guard character version of the function
-	ControllingGuard->OnSightPerceptionUpdate(_actor, _stimulus);
-
 }
 
 void AGuardAiController::OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus)
@@ -172,9 +164,6 @@ void AGuardAiController::OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _
 			UE_LOG(LogTemp, Warning, TEXT("I can hear uuuuu"));
 		}
 	}
-
-	// Calls the guard character version of the function
-	ControllingGuard->OnHearingPerceptionUpdate(_actor, _stimulus);
 }
 
 bool AGuardAiController::ModifySightRange(float _newSightRange, float _losingSightRange)
@@ -205,4 +194,22 @@ bool AGuardAiController::ModifySightRange(float _newSightRange, float _losingSig
 	PerceptionComponent->RequestStimuliListenerUpdate();
 
 	return true;
+}
+
+void AGuardAiController::SetGuardSenseEnable_Sight(bool _bEnable, bool _wipeMemory)
+{
+	PerceptionComponent->SetSenseEnabled(UAISense_Sight::StaticClass(), _bEnable);
+
+	ControllingGuard->bPlayerInSight = false;
+	Blackboard->SetValueAsBool(
+		TEXT("bHasSightOnPlayer"), false);
+
+	if (_wipeMemory)
+	{
+		ControllingGuard->bPlayerWasInSight = false;
+		Blackboard->SetValueAsBool(
+			TEXT("bPlayerWasInSight"), false);
+	}
+
+	PerceptionComponent->RequestStimuliListenerUpdate();
 }

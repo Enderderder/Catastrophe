@@ -4,6 +4,7 @@
 #include "Guard.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
@@ -152,16 +153,6 @@ void AGuard::GetActorEyesViewPoint(FVector& Location, FRotator& Rotation) const
 	GetPerceptionLocRot(Location, Rotation);
 }
 
-void AGuard::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus)
-{
-	
-}
-
-void AGuard::OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus)
-{
-
-}
-
 void AGuard::SetGuardState(EGuardState _newState)
 {
 	// If switching to the same state, ignore it
@@ -207,7 +198,6 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 		break;
 	case EGuardState::SEARCHING:
 		ToggleQuestionIndicator(false);
-		bPlayerWasInSight = false;
 		break;
 	case EGuardState::STUNED:
 		break;
@@ -286,7 +276,8 @@ void AGuard::OnStunBegin()
 	GuardController->StopMovement();
 
 	// Sight goes dark for guard
-	GuardController->ModifySightRange(0.0f);
+	GuardController->SetGuardSenseEnable_Sight(false);
+
 	if (ACharacter* player = UGameplayStatics::GetPlayerCharacter(this, 0))
 	{
 		GuardController->GetBlackboardComponent()->SetValueAsVector(
@@ -317,11 +308,7 @@ void AGuard::OnStunEnd()
 	if (GuardAnimInstance)
 		GuardAnimInstance->bStuned = false;
 
-	if (bPlayerWasInSight)
-	{
-		GuardController->ModifySightRange(ChasingSightRange, LosingSightRange);
-	}
-	else GuardController->ModifySightRange(PatrolSightRange, LosingSightRange);
+	GuardController->SetGuardSenseEnable_Sight(true);
 
 	// Turn the head light back on
 	HeadLight->SetVisibility(true);
