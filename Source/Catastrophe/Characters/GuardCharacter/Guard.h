@@ -69,10 +69,14 @@ public:
 	/** The default state of the guard when it spawns in to the world */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | General")
 	EGuardState DefaultGuardState = EGuardState::STATIONARY;
+	
+	/** The default state of the guard when it spawns in to the world */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | General")
+	EGuardState PreferNeutralState = EGuardState::STATIONARY;
 
 	/** Determine if the guard will walk around in his patrol location */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | Patrol")
-	bool bPatrolBehaviour = false;
+	bool bHasPatrolBehaviour = false;
 
 	/** The patrol way points of the guard, need to enable PatrolBehaviour to use them */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | Patrol", meta = (MakeEditWidget = "true"))
@@ -195,12 +199,6 @@ public:
 	/** Called to get the eye view point of the character */
 	virtual void GetActorEyesViewPoint(FVector& Location, FRotator& Rotation) const override;
 
-	/** Called when Ai character catches a visual stimulus source */
-	virtual void OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus);
-
-	/** Called when Ai character catches a sound stimulus source */
-	virtual void OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus);
-
 	/**
 	 * Sets the state of the guard then modify the character value base on the state
 	 * @author Richard Wulansari
@@ -246,14 +244,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Guard | General")
 	void ResetGuard();
 
-	/** Setter */
+	/**
+	 * Sets the controller reference of the guard
+	 * @author Richard Wulansari
+	 * @param _controller The Ai controller that possesing the guard
+	 */
 	void SetGuardControllerRef(class AGuardAiController* _controller) {
 		GuardController = _controller;
 	}
-	/** Setter End */
+
+	/** Sets the prefered neutral state of the guard */
+	void SetPreferNeutralState(EGuardState _state) { PreferNeutralState = _state; }
 
 	/** Getter */
 	FORCEINLINE EGuardState GetGuardState() const { return GuardState; }
+	FORCEINLINE EGuardState GetPreferNeutralState() const { return PreferNeutralState; }
 	FORCEINLINE class AGuardAiController* GetGuardController() const { return GuardController; }
 	/** Getter End */
 };
