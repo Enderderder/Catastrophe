@@ -86,13 +86,13 @@ protected:
 
 	void UpdateDialogue();
 
-	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
-	void Interact(class APlayerCharacter* _playerCharacter);
-
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System: Quest")
 	void AttachQuestObjectiveToConversation(int _ConversationIndex, class UQuestObjectiveComponent* _QuestObjectiveComponent);
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
+	void Interact(class APlayerCharacter* _playerCharacter);
+	
 	// Starts the conversation
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
 	void StartConversation(int _ConversationIndex);

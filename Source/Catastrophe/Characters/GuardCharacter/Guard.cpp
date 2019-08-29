@@ -4,6 +4,7 @@
 #include "Guard.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
@@ -137,11 +138,6 @@ void AGuard::Tick(float DeltaTime)
 		default: break;
 		}
 	}
-
-	if (GuardState == EGuardState::CHASING)
-	{
-
-	}
 }
 
 void AGuard::GetPerceptionLocRot_Implementation(FVector& Location, FRotator& Rotation) const
@@ -157,18 +153,12 @@ void AGuard::GetActorEyesViewPoint(FVector& Location, FRotator& Rotation) const
 	GetPerceptionLocRot(Location, Rotation);
 }
 
-void AGuard::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus)
-{
-	
-}
-
-void AGuard::OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus)
-{
-
-}
-
 void AGuard::SetGuardState(EGuardState _newState)
 {
+	// If switching to the same state, ignore it
+	if (_newState == GuardState)
+		return;
+
 	EGuardState oldState = GuardState;
 	GuardState = _newState;
 
@@ -208,7 +198,6 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 		break;
 	case EGuardState::SEARCHING:
 		ToggleQuestionIndicator(false);
-		bPlayerWasInSight = false;
 		break;
 	case EGuardState::STUNED:
 		break;
@@ -240,12 +229,11 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 
 	case EGuardState::PATROLLING:
 		HeadLight->SetLightColor(NormalHeadLightColor);
-		if (bPatrolBehaviour && PatrolLocations.Num() > 0)
+		if (bHasPatrolBehaviour && PatrolLocations.Num() > 0)
 		{
 			SetGuardMaxSpeed(PatrolSpeed);
 			GuardController->ModifySightRange(PatrolSightRange, LosingSightRange);
 		}
-		else SetGuardState(DefaultGuardState); // If guard dont have a patrol behaviour, go back to the default state
 		break;
 
 	case EGuardState::INVESTATING:
@@ -281,11 +269,15 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 
 void AGuard::OnStunBegin()
 {
+	GuardController->GetBlackboardComponent()->SetValueAsBool(
+		TEXT("bStunned"), true);
+
 	// Make sure this bi** doesnt move
 	GuardController->StopMovement();
 
 	// Sight goes dark for guard
-	//GuardController->ModifySightRange(0.0f);
+	GuardController->SetGuardSenseEnable_Sight(false);
+
 	if (ACharacter* player = UGameplayStatics::GetPlayerCharacter(this, 0))
 	{
 		GuardController->GetBlackboardComponent()->SetValueAsVector(
@@ -297,11 +289,6 @@ void AGuard::OnStunBegin()
 
 	if (GuardAnimInstance)
 		GuardAnimInstance->bStuned = true;
-	else
-	{
-		// Force the animation
-		Cast<UGuardAnimInstance>(GetMesh()->GetAnimInstance())->bStuned = true;
-	}
 
 	// Clear the old timer
 	GetWorld()->GetTimerManager().ClearTimer(StunTimerHnadle);
@@ -315,20 +302,16 @@ void AGuard::OnStunBegin()
 
 void AGuard::OnStunEnd()
 {
-	GuardAnimInstance->bStuned = false;
+	GuardController->GetBlackboardComponent()->SetValueAsBool(
+		TEXT("bStunned"), false);
+	
+	if (GuardAnimInstance)
+		GuardAnimInstance->bStuned = false;
+
+	GuardController->SetGuardSenseEnable_Sight(true);
 
 	// Turn the head light back on
 	HeadLight->SetVisibility(true);
-
-	// Go search the player if he saw the player
-	if (bPlayerWasInSight)
-	{
-		SetGuardState(EGuardState::SEARCHING);
-	}
-	else // Or just go back to the default state
-	{
-		SetGuardState(DefaultGuardState);
-	}
 
 	// Call the blueprint implementation
 	Receive_OnStunEnd();

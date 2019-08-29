@@ -8,6 +8,7 @@
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "QuestSystem/QuestObjectiveComponent.h"
 #include "PlayerCharacter/PlayerCharacter.h"
+#include "DialogueSystem/DialogueSystemComponent.h"
 
 // Sets default values
 ANPC::ANPC()
@@ -25,19 +26,14 @@ ANPC::ANPC()
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->RegisterTriggerVolume(TriggerBox);
 	InteractableComponent->OnInteract.AddDynamic(this, &ANPC::Interact);
+
+	DialogueSystemComponent = CreateDefaultSubobject<UDialogueSystemComponent>(TEXT("DialogueSystemComponent"));
 }
 
 // Called when the game starts or when spawned
 void ANPC::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ConversationInProgress = false;
-	CurrentDialogueNum = 0;
-	CurrentQuest = 0;
-
-	IsQuestStarted = false;
-	CanNPCTalk = true;
 }
 
 // Called every frame
@@ -50,4 +46,6 @@ void ANPC::Tick(float DeltaTime)
 void ANPC::Interact(class APlayerCharacter* _playerCharacter)
 {
 	Receive_Interact();
+
+	DialogueSystemComponent->Interact(_playerCharacter);
 }

@@ -7,12 +7,14 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Classes/BehaviorTree/BlackboardComponent.h"
+// #include "NavigationSystem/Public/NavigationSystem.h"
+// #include "NavigationSystem/Public/NavigationPath.h"
 
 #include "Guard.h"
+#include "Gameplay/PlayerUtilities/YarnBall.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
-#include "Gameplay/PlayerUtilities/YarnBall.h"
 
 AGuardAiController::AGuardAiController()
 {
@@ -49,26 +51,32 @@ void AGuardAiController::OnPossess(APawn* InPawn)
 
 		if (Blackboard)
 		{
-			// Sets the default state of the guard
-			ControllingGuard->SetGuardState(ControllingGuard->DefaultGuardState);
-
-			// If sets to patrol but guard dont have patrol behaviour 
-			// or dont have patrol points, reset it to stationary
-			if (ControllingGuard->GetGuardState() == EGuardState::PATROLLING)
+			// Check if guard is capable of doing patrol behaviour
+			// If not, return to stationary
+			bool bCapableOfPatrolling =
+				ControllingGuard->bHasPatrolBehaviour &&
+				ControllingGuard->PatrolLocations.Num() > 0;
+			if (bCapableOfPatrolling)
 			{
-				if (!ControllingGuard->bPatrolBehaviour
-					|| ControllingGuard->PatrolLocations.Num() <= 0)
-				{
-					ControllingGuard->SetGuardState(EGuardState::STATIONARY);
-				}
-				else
-				{
-					// Sets the origin location of the patrol location
-					Blackboard->SetValueAsVector(
-						TEXT("PatrolOriginLocation"),
-						ControllingGuard->PatrolLocations[0] + ControllingGuard->GetActorLocation());
-				}
+				// Sets the origin location of the patrol location
+				Blackboard->SetValueAsVector(
+					TEXT("PatrolOriginLocation"),
+					ControllingGuard->PatrolLocations[0] + ControllingGuard->GetActorLocation());
 			}
+			else if (ControllingGuard->GetPreferNeutralState() == EGuardState::PATROLLING)
+			{
+				ControllingGuard->SetPreferNeutralState(EGuardState::STATIONARY);
+			}
+			
+			// Sets the default state of the guard
+			Blackboard->SetValueAsEnum(
+				TEXT("PreferNeutralState"), (uint8)(ControllingGuard->PreferNeutralState));
+			Blackboard->SetValueAsVector(
+				TEXT("OriginLocation"), ControllingGuard->GetActorLocation());
+			Blackboard->SetValueAsRotator(
+				TEXT("OriginRotation"), ControllingGuard->GetActorRotation());
+			Blackboard->SetValueAsBool(
+				TEXT("bCapableOfPatrolling"), bCapableOfPatrolling);
 		}
 	}
 	else
@@ -81,9 +89,6 @@ void AGuardAiController::PerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 {
 	for (AActor* actor : UpdatedActors)
 	{
-		const FString msg = TEXT("PerceptionUpdated");
-		CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Cyan, msg);
-
 		FActorPerceptionBlueprintInfo actorPerceptionInfo;
 		if (PerceptionComponent->GetActorsPerception(actor, actorPerceptionInfo))
 		{
@@ -119,43 +124,31 @@ void AGuardAiController::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _st
 		if (_stimulus.WasSuccessfullySensed())
 		{
 			ControllingGuard->bPlayerInSight = true;
-			if (!ControllingGuard->bPlayerWasInSight)
-			{
-				ControllingGuard->bPlayerWasInSight = true;
-				ControllingGuard->SetGuardState(EGuardState::CHASING);
-				UE_LOG(LogTemp, Warning, TEXT("I can see uuuuu biotch"));
-			}	
+			Blackboard->SetValueAsBool(
+				TEXT("bHasSightOnPlayer"), true);
+		}
+		else if (ControllingGuard->bPlayerInSight)
+		{
+			ControllingGuard->bPlayerInSight = false;
+			ControllingGuard->bPlayerWasInSight = true;
+			Blackboard->SetValueAsBool(
+				TEXT("bHasSightOnPlayer"), false);
+			Blackboard->SetValueAsBool(
+				TEXT("bPlayerWasInSight"), true);
+			Blackboard->SetValueAsVector(
+				TEXT("PlayerlastSeenLocation"), _stimulus.StimulusLocation);
 		}
 		else
 		{
-			ControllingGuard->bPlayerInSight = false;
-			if (ControllingGuard->bPlayerWasInSight)
-			{
-				// Record the last seen location of the player
-				Blackboard->SetValueAsVector(
-					TEXT("PlayerlastSeenLocation"), _stimulus.StimulusLocation);
-
-				ControllingGuard->SetGuardState(EGuardState::SEARCHING);
-				ControllingGuard->bPlayerWasInSight = false;
-			}
-			else
-			{
-				// Do whatever, hasn't seen player yet
-			}
+			// Nothing happened yet
 		}
 	}
-
-	// If updated actor is a yarnball
-	if (_actor->IsA<class AYarnBall>())
+	else if (_actor->IsA<AYarnBall>())
 	{
 		// Make guard move to the yarn ball location
 		Blackboard->SetValueAsVector(TEXT("PointOfInterest"), _actor->GetActorLocation());
 		ControllingGuard->SetGuardState(EGuardState::INVESTATING);
 	}
-
-	// Calls the guard character version of the function
-	ControllingGuard->OnSightPerceptionUpdate(_actor, _stimulus);
-
 }
 
 void AGuardAiController::OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus)
@@ -171,10 +164,6 @@ void AGuardAiController::OnHearingPerceptionUpdate(AActor* _actor, FAIStimulus _
 			UE_LOG(LogTemp, Warning, TEXT("I can hear uuuuu"));
 		}
 	}
-
-
-	// Calls the guard character version of the function
-	ControllingGuard->OnHearingPerceptionUpdate(_actor, _stimulus);
 }
 
 bool AGuardAiController::ModifySightRange(float _newSightRange, float _losingSightRange)
@@ -205,4 +194,22 @@ bool AGuardAiController::ModifySightRange(float _newSightRange, float _losingSig
 	PerceptionComponent->RequestStimuliListenerUpdate();
 
 	return true;
+}
+
+void AGuardAiController::SetGuardSenseEnable_Sight(bool _bEnable, bool _wipeMemory)
+{
+	PerceptionComponent->SetSenseEnabled(UAISense_Sight::StaticClass(), _bEnable);
+
+	ControllingGuard->bPlayerInSight = false;
+	Blackboard->SetValueAsBool(
+		TEXT("bHasSightOnPlayer"), false);
+
+	if (_wipeMemory)
+	{
+		ControllingGuard->bPlayerWasInSight = false;
+		Blackboard->SetValueAsBool(
+			TEXT("bPlayerWasInSight"), false);
+	}
+
+	PerceptionComponent->RequestStimuliListenerUpdate();
 }

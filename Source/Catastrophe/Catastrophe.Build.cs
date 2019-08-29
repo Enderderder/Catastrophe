@@ -11,7 +11,7 @@ public class Catastrophe : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] {
             "Core", "CoreUObject", "Engine", "InputCore", "UMG",
             "CableComponent", "ApexDestruction",
-            "AIModule", "GameplayTasks" });
+            "AIModule", "GameplayTasks", "NavigationSystem" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
             "CableComponent", "ApexDestruction" });

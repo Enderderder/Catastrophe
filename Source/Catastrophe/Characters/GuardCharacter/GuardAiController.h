@@ -54,12 +54,21 @@ public:
 
 	/**
 	 * Modify the guard sight perception range
-	 * @param Range of the sight
-	 * @param Range on top of the sight range where perception will lose sight
+	 * @param _newSightRange Range of the sight
+	 * @param _losingSightRange Range on top of the sight range where perception will lose sight
 	 * @note This will overwrite the current value, make sure to store the old value
 	 */
 	UFUNCTION(BlueprintCallable, Category = "GuardAi")
 	bool ModifySightRange(float _newSightRange, float _losingSightRange = 500.0f);
+	
+	/**
+	 * Set the enable state of the sight sense of the guard
+	 * @param _bEnable
+	 * @param _wipeMemory Forget everything
+	 */
+	UFUNCTION(BlueprintCallable, Category = "GuardAi")
+	void SetGuardSenseEnable_Sight(bool _bEnable, bool _wipeMemory = false);
+
 
 	/** Getter */
 	FORCEINLINE UAISenseConfig_Sight* GetSightDefaultConfig() const { return SightDefaultConfig; }

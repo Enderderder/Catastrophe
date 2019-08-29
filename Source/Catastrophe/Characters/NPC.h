@@ -5,51 +5,6 @@
 #include "GameFramework/Actor.h"
 #include "NPC.generated.h"
 
-//UENUM(BlueprintType)
-//enum class ECharacter : uint8
-//{
-//	ECh_NPC		UMETA(DisplayName = "NPC"),
-//	ECh_Player	UMETA(DisplayName = "Player")
-//};
-//
-//USTRUCT(BlueprintType)
-//struct FSSentence
-//{
-//	GENERATED_BODY()
-//
-//public:
-//	UPROPERTY(EditAnywhere)
-//	ECharacter m_CharType;
-//
-//	UPROPERTY(EditAnywhere)
-//	FString m_Sentence;
-//};
-//
-//USTRUCT(BlueprintType)
-//struct FConversation
-//{
-//	GENERATED_BODY()
-//
-//public:
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	TArray<FSSentence> StartQuestConversation;
-//	UPROPERTY(BlueprintReadWrite)
-//	class UQuestObjectiveComponent* OldQuest;
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	bool bFinishOldQuest;
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	int FishBonesReward_OldQuest;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	TArray<FSSentence> FinishedQuestConversation;
-//	UPROPERTY(BlueprintReadWrite)
-//	class UQuestObjectiveComponent* NewQuest;
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	bool bFinishNewQuest;
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	int FishBonesReward_NewQuest;
-//};
-
 UCLASS()
 class CATASTROPHE_API ANPC : public AActor
 {
@@ -69,48 +24,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UInteractableComponent* InteractableComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class UUserWidget* DialogueWidget;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UDialogueSystemComponent* DialogueSystemComponent;
 
 	// Dialogue settings
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue: NPC")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
 	FString Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue: NPC")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
 	class UTexture* NPCIcon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue: Text")
-	TSubclassOf<class UUserWidget> WidgetRef;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue: Text")
-	//TArray<FConversation> ConversationsList;
-
-	UPROPERTY()
-	int CurrentDialogueNum;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Dialogue: Text")
-	FString CurrentPlayerDialogueText;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Dialogue: Text")
-	FString CurrentNPCDialogueText;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue: Interaction")
-	bool CanGiveQuests;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Dialogue: Interaction")
-	bool ConversationInProgress;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Dialogue: Interaction")
-	bool IsNPCTalking;
-
-	UPROPERTY()
-	bool IsQuestStarted;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Dialogue: Interaction")
+	UPROPERTY(BlueprintReadWrite, Category = "NPC")
 	bool CanNPCTalk;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Dialogue: Interaction")
-	int CurrentQuest;
 
 protected:
 	// Called when the game starts or when spawned
