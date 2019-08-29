@@ -41,7 +41,7 @@ void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 // 			bWantToShowUI = false;
 // 		}
 
-		// Toggle the UI if needed
+	// Toggle the UI if needed
 // 		if (!bShowingUI && bWantToShowUI) // Not showing but need to show
 // 		{
 // 			bShowingUI = true;
@@ -53,7 +53,7 @@ void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 // 			InteractableUI->SetVisibility(false);
 // 		}
 
-		// Rotate the ui towards camera when it is showing
+	// Rotate the ui towards camera when it is showing
 // 		if (bShowingUI)
 // 		{
 // 			FVector cameraLoc = UGameplayStatics::GetPlayerCameraManager(
@@ -66,7 +66,7 @@ void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 
 void UInteractableComponent::OnTriggerWithPlayer(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!PlayerRef && OtherActor->IsA<APlayerCharacter>())
+	if (!PlayerRef && OtherActor->ActorHasTag("Player"))
 	{
 		PlayerRef = Cast<APlayerCharacter>(OtherActor);
 	}
