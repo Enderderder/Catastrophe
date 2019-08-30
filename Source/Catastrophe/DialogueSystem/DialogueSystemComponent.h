@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "DialogueSystemComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDisableDialogueSignature);
+
 UENUM(BlueprintType)
 enum class ECharacter : uint8
 {
@@ -74,6 +76,10 @@ protected:
 	// Stores all the possible conversations which could be had
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System")
 	TArray<FSConversation> Conversations;
+
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
+	FOnDisableDialogueSignature OnDialogueDisable;
 
 public:	
 	// Sets default values for this component's properties

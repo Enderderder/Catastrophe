@@ -92,6 +92,8 @@ void UDialogueSystemComponent::StartConversation(int _ConversationIndex)
 
 void UDialogueSystemComponent::DisableDialogue()
 {
+	OnDialogueDisable.Broadcast();
+
 	// Remove dialogue widget from the screen
 	if (DialogueWidget)
 	{
