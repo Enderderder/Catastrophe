@@ -25,6 +25,7 @@ void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (IsValid(PlayerRef) &&
+		IsValid(this) &&
 		bShowingUi)
 	{
 		PlayerRef->GetPlayerWidget()->UpdateInteractionUi(this);
