@@ -38,10 +38,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
 	float RequiredHoldTime = 0.0f;
 
-	/** True if this object can only trigger once, will automatically disable interaction after the initial trigger */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
-	bool bOneTimeUse = false;
-
 	/** Text that describe the action in order to complete this interaction */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	FString InteractionActionText = "Press";
@@ -49,6 +45,10 @@ public:
 	/** Text that describe the result of the interaction */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	FString InteractionDescriptionText = "Interact";
+
+	/** True if this object can only trigger once, will automatically disable interaction after the initial trigger */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
+	bool bOneTimeUse = false;
 
 	/** If true, the interaction event will be automatically triggered */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
@@ -63,6 +63,8 @@ protected:
 	/** Reference to the player character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	class APlayerCharacter* PlayerRef;
+
+	bool bShowingUi = false;
 
 protected:
 
@@ -81,10 +83,6 @@ public:
 	/** Called when player interact */
 	void Interact(class APlayerCharacter* _playerCharacter, float _holdTime);
 
-	/// Currently not in use
-	/** Called when the player hold the interaction */
-	void InteractHold(class APlayerCharacter* _playerCharacter, float _holdTime);
-
 	/**
 	 * Register a component that has some trigger volume
 	 * @author Richard Wulansari
@@ -94,4 +92,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void RegisterTriggerVolume(class UPrimitiveComponent* _registeringComponent);
 
+	/**
+	 * 
+	 */
+	void SetInteractionUiVisible(bool _visibility);
 };
