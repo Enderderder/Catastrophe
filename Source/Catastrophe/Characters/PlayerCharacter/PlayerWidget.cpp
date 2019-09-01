@@ -35,21 +35,6 @@ void UPlayerWidget::ToggleInventory_Implementation(bool _bEnable)
 	/// Let blueprint do the thing
 }
 
-void UPlayerWidget::ShowInteractionUIWithText_Implementation(const FString& _descriptionText, const FString& _actionText)
-{
-	/// Let blueprint do the thing
-}
-
-void UPlayerWidget::HideInteractionUI_Implementation()
-{
-	/// Let blueprint do the thing
-}
-
-void UPlayerWidget::UpdateInteractionUi_Implementation(class UInteractableComponent* _interactableComp)
-{
-	/// Let blueprint do the thing
-}
-
 UQteBobWidget* UPlayerWidget::CreateQteBobWidget_Implementation(class AQteBobLogicHolder* _qteLogicHolder)
 {
 	/// Let blueprint do the thing

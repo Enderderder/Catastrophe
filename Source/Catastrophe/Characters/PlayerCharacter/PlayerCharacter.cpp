@@ -418,7 +418,8 @@ void APlayerCharacter::TimelineSetCameraZoomValue(float _alpha)
 
 void APlayerCharacter::InteractBegin()
 {
-	if (IsValid(InteractingTargetComponent))
+	if (IsValid(InteractingTargetComponent) &&
+		InteractingTargetComponent->bCanInteract)
 	{
 		bInteracting = true; // Set the holding interaction begin
 		InteractingTargetComponent->Interact(this, InteractionTimeHold);
@@ -433,8 +434,8 @@ void APlayerCharacter::InteractEnd()
 
 void APlayerCharacter::InteractionTick(float _deltaTime)
 {
-	if (bInteracting
-		&& IsValid(InteractingTargetComponent))
+	if (bInteracting && 
+		IsValid(InteractingTargetComponent))
 	{
 		InteractionTimeHold += _deltaTime;
 		InteractingTargetComponent->Interact(this, InteractionTimeHold);

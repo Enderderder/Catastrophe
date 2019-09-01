@@ -59,32 +59,20 @@ public:
 	virtual void ToggleInventory_Implementation(bool _bEnable);
 
 	/**
-	 * Called to show the interaction UI with custom text/action description
+	 * Set the visibility of the interaction ui
 	 * @author Richard Wulansari
-	 * @param _descriptionText Custom text that will show the result of the interaction (eg. Climb, Knock, Jump In)
-	 * @param _actionText Custom text that will show the player action in order to perform the interaction (eg. Press, Hold)
+	 * @param _visibility
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
-	void ShowInteractionUIWithText(const FString& _descriptionText, const FString& _actionText);
-	virtual void ShowInteractionUIWithText_Implementation(const FString& _descriptionText, const FString& _actionText);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "PlayerWidget | Interaction")
+	void SetInteractionUiVisible(bool _visibility);
 
 	/**
-	 * Called to hide the interaction UI
-	 * @author Richard Wulansari
-	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
-	void HideInteractionUI();
-	virtual void HideInteractionUI_Implementation();
-
-	/**
-	 * Called to update the display of the interactable widget
+	 * Update the interaction ui
 	 * @author Richard Wulansari
 	 * @param _interactableComp The interactable component that holds all the info
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "PlayerWidget | Interaction")
 	void UpdateInteractionUi(class UInteractableComponent* _interactableComp);
-	virtual void UpdateInteractionUi_Implementation(class UInteractableComponent* _interactableComp);
-
 
 	/**
 	 * Called to create a QTE widget with its logic holder
