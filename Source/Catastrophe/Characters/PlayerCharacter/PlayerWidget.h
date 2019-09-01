@@ -76,6 +76,15 @@ public:
 	void HideInteractionUI();
 	virtual void HideInteractionUI_Implementation();
 
+	/**
+	 * Called to update the display of the interactable widget
+	 * @author Richard Wulansari
+	 * @param _interactableComp The interactable component that holds all the info
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PlayerWidget")
+	void UpdateInteractionUi(class UInteractableComponent* _interactableComp);
+	virtual void UpdateInteractionUi_Implementation(class UInteractableComponent* _interactableComp);
+
 
 	/**
 	 * Called to create a QTE widget with its logic holder

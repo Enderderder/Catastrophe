@@ -45,6 +45,11 @@ void UPlayerWidget::HideInteractionUI_Implementation()
 	/// Let blueprint do the thing
 }
 
+void UPlayerWidget::UpdateInteractionUi_Implementation(class UInteractableComponent* _interactableComp)
+{
+	/// Let blueprint do the thing
+}
+
 UQteBobWidget* UPlayerWidget::CreateQteBobWidget_Implementation(class AQteBobLogicHolder* _qteLogicHolder)
 {
 	/// Let blueprint do the thing
