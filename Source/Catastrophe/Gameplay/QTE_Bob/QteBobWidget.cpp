@@ -6,3 +6,8 @@
 UQteBobWidget::UQteBobWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {}
+
+void UQteBobWidget::InitializeQteWidget_Implementation()
+{
+	/// Let blueprint do the thing
+}

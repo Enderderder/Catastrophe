@@ -7,8 +7,11 @@
 #include "Engine/World.h"
 
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
+#include "Characters/GuardCharacter/Guard.h"
 #include "Gameplay/QTE_Bob/QteBobLogicHolder.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
+
+#include "RespawnSystem/RespawnSubsystem.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -16,11 +19,11 @@ void ACatastropheMainGameMode::StartPlay()
 {
 	Super::StartPlay();
 	
-	TArray<AActor*> resultActors;
-	UGameplayStatics::GetAllActorsOfClass(this, ACaveCameraTrack::StaticClass(), resultActors);
-	if (resultActors.Num() == 1)
+	TArray<AActor*> cameraTrackActors;
+	UGameplayStatics::GetAllActorsOfClass(this, ACaveCameraTrack::StaticClass(), cameraTrackActors);
+	if (cameraTrackActors.Num() == 1)
 	{
-		CaveCameraTrack = Cast<ACaveCameraTrack>(resultActors[0]);
+		CaveCameraTrack = Cast<ACaveCameraTrack>(cameraTrackActors[0]);
 	}
 	else
 	{
@@ -75,15 +78,66 @@ void ACatastropheMainGameMode::RemoveOneChasingGuard(AActor* _guard)
 
 void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* _guard)
 {
-// 	if (!IsValid(CurrentQteEvent))
-// 	{
-// 		CurrentQteEvent = GetWorld()->SpawnActor<AQteBobLogicHolder>(QteBobEventClass, FTransform::Identity);
-// 		if (CurrentQteEvent)
-// 		{
-// 
-// 		}
-// 
-// 	}
+	if (!IsValid(CurrentGuardQteEvent) && IsValid(_guard))
+	{
+		CurrentGuardQteEvent = GetWorld()->SpawnActor<AQteBobLogicHolder>(QteBobEventClass, FTransform::Identity);
+		if (CurrentGuardQteEvent)
+		{
+			QteGuard = _guard;
+			CurrentGuardQteEvent->OnQteEventComplete.RemoveDynamic(this, &ACatastropheMainGameMode::OnGuardQteEventComplete);
+			CurrentGuardQteEvent->OnQteEventComplete.AddDynamic(this, &ACatastropheMainGameMode::OnGuardQteEventComplete);
+			
+			float qteRange = InitialGaurdQteRange / (float)(GuardQteSuccessCounter + 1);
+			CurrentGuardQteEvent->InitiateEventWithRange(qteRange);
+		}
+	}
+}
+
+void ACatastropheMainGameMode::OnGuardQteEventComplete(EQteEventState _eventState)
+{
+	if (_eventState == EQteEventState::Success)
+	{
+		OnGuardQteSuccess();
+	}
+	else if (_eventState == EQteEventState::FailedByMissHit 
+		|| _eventState == EQteEventState::FailedByTimeOut)
+	{
+		OnGuardQteFailed();
+	}
+	else
+	{
+		const FString msg = "QteBobLogicHolder: Event completion happened at wrong event state";
+		CatastropheDebug::OnScreenDebugMsg(-1, 10.0f, FColor::Red, msg);
+	}
+}
+
+void ACatastropheMainGameMode::OnGuardQteSuccess()
+{
+	// Increase the success counter and stun the guard
+	GuardQteSuccessCounter++;
+	if (QteGuard)
+		QteGuard->SetGuardState(EGuardState::STUNED);
+}
+
+void ACatastropheMainGameMode::OnGuardQteFailed()
+{
+	// Reset the success counter and sends player to the jail
+	GuardQteSuccessCounter = 0;
+	if (QteGuard)
+	{
+		const FName guardLevelName = URespawnSubsystem::GetStreamingLevelNameFromActor(QteGuard);
+		if (guardLevelName != NAME_None)
+		{
+			FLoadStreamingLevelInfo info;
+			info.OriginalLevelName = guardLevelName;
+			info.LoadedLevelName = TEXT("ChrisJail");
+			info.bUnloadCurrentLevel = true;
+			info.bTeleportPlayer = true;
+			info.DistrictType = EDISTRICT::JAIL;
+			info.bBlockOnLoad = false;
+			URespawnSubsystem::GetInst(this)->LoadLevelStreaming(info);
+		}
+	}
 }
 
 ACatastropheMainGameMode* ACatastropheMainGameMode::GetGameModeInst(const UObject* _worldContextObject)

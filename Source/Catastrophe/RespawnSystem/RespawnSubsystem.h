@@ -184,6 +184,7 @@ public:
 	 * Gets the streaming level name given from an actor
 	 * @author Richard Wulansari
 	 * @param _actor The context actor
+	 * @note This function may return NAME_None
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
 	static FName GetStreamingLevelNameFromActor(class AActor* _actor);
