@@ -7,6 +7,9 @@
 #include "Gameplay/QTE_Bob/QteBobTypes.h"
 #include "CatastropheMainGameMode.generated.h"
 
+/** Delegates */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerAimingSignature);
+
 /**
  * This is the main gameplay gamemode of the game
  */
@@ -15,6 +18,14 @@ class CATASTROPHE_API ACatastropheMainGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+
+	UPROPERTY(BlueprintAssignable)
+	FPlayerAimingSignature OnPlayerAimingBegin;
+
+	UPROPERTY(BlueprintAssignable)
+	FPlayerAimingSignature OnPlayerAimingEnd;
+
 protected:
 
 	/** Array of guards thats chasing the player */

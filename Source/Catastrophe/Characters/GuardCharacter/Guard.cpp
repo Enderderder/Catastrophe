@@ -7,6 +7,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -16,6 +17,8 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Camera/PlayerCameraManager.h"
 
 #include "GuardAiController.h"
 #include "GuardAnimInstance.h"
@@ -41,6 +44,15 @@ AGuard::AGuard()
 	HeadHitbox->ComponentTags.Add(TEXT("Head"));
 	HeadHitbox->CanCharacterStepUpOn = ECB_No;
 	HeadHitbox->SetupAttachment(GetMesh(), TEXT("HeadSocket"));
+
+	HeadShotTargetAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("HeadShotTargetAnchor"));
+	HeadShotTargetAnchor->SetupAttachment(GetMesh(), TEXT("HeadSocket"));
+
+	HeadShotTargetMesh = CreateAbstractDefaultSubobject<UStaticMeshComponent>(TEXT("HeadShotTargetMesh"));
+	HeadShotTargetMesh->SetGenerateOverlapEvents(false);
+	HeadShotTargetMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	HeadShotTargetMesh->SetVisibility(false);
+	HeadShotTargetMesh->SetupAttachment(HeadShotTargetAnchor);
 
 	BodyHitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BodyHitBox"));
 	BodyHitBox->SetGenerateOverlapEvents(true);
@@ -103,12 +115,28 @@ void AGuard::BeginPlay()
 	PlayerRef = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
 	if (!PlayerRef)
 		UE_LOG(LogTemp, Error, TEXT("Failed to get player reference"));
+
+	if (ACatastropheMainGameMode* gamemode = ACatastropheMainGameMode::GetGameModeInst(this))
+	{
+		gamemode->OnPlayerAimingBegin.RemoveDynamic(this, &AGuard::OnPlayerAimingBegin);
+		gamemode->OnPlayerAimingBegin.AddDynamic(this, &AGuard::OnPlayerAimingBegin);
+		gamemode->OnPlayerAimingEnd.RemoveDynamic(this, &AGuard::OnPlayerAimingEnd);
+		gamemode->OnPlayerAimingEnd.AddDynamic(this, &AGuard::OnPlayerAimingEnd);
+	}
 }
 
 // Called every frame
 void AGuard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Rotate the headshot target plane towards the camera
+	{
+		FRotator headShotTargetRot = UKismetMathLibrary::FindLookAtRotation(
+			HeadShotTargetAnchor->GetComponentLocation(), 
+			UGameplayStatics::GetPlayerCameraManager(this, 0)->GetCameraLocation());
+		HeadShotTargetAnchor->SetWorldRotation(headShotTargetRot);
+	}
 
 	if (bPlayerInSleepDetectRange)
 	{
@@ -366,4 +394,14 @@ void AGuard::ResetGuard()
 	SetActorLocationAndRotation(DefaultTransform.GetLocation(), DefaultTransform.GetRotation());
 
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
+void AGuard::OnPlayerAimingBegin()
+{
+	HeadShotTargetMesh->SetVisibility(true);
+}
+
+void AGuard::OnPlayerAimingEnd()
+{
+	HeadShotTargetMesh->SetVisibility(false);
 }

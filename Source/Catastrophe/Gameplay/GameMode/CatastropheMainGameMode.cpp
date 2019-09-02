@@ -42,8 +42,6 @@ void ACatastropheMainGameMode::Tick(float DeltaSeconds)
 
 void ACatastropheMainGameMode::AddChasingGuard(AActor* _guard)
 {
-	CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Red, TEXT("Chase!!!!"));
-
 	// Only add guard reference if it doesn't already exists
 	if (!ChasingGuards.Contains(_guard))
 	{
@@ -60,8 +58,6 @@ void ACatastropheMainGameMode::AddChasingGuard(AActor* _guard)
 
 void ACatastropheMainGameMode::RemoveOneChasingGuard(AActor* _guard)
 {
-	CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Red, TEXT("Stop!!!!"));
-
 	// Remove the guard reference only if it already exists
 	if (ChasingGuards.Contains(_guard))
 	{

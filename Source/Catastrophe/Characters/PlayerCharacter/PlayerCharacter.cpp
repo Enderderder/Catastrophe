@@ -26,8 +26,6 @@
 #include "PlayerAnimInstance.h"
 #include "Components/MovementModifierComponent.h"
 #include "Components/CharacterSprintMovementComponent.h"
-#include "Interactable/InteractActor.h" /// TODO: Remove this
-#include "Interactable/BaseClasses/InteractableObject.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
@@ -258,25 +256,11 @@ void APlayerCharacter::Sprint()
 	{
 		SprintMovementComponent->Sprint();
 	}
-// 	{
-// 		bSprinting = true;
-// 		SprintingPostProcess->bEnabled = true;
-// 
-// 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
-// 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed * SpringSpeedMultiplier;
-// 	}
 }
 
 void APlayerCharacter::UnSprint()
 {
 	SprintMovementComponent->UnSprint();
-// 	if (bSprinting)
-// 	{
-// 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
-// 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
-// 		SprintingPostProcess->bEnabled = false;
-// 	}
-// 	bSprinting = false;
 }
 
 void APlayerCharacter::OnSprintBegin()
@@ -501,6 +485,7 @@ void APlayerCharacter::HHUSecondaryActionBegin()
 			ZoomInTimeline->Play();
 		PlayerAnimInstance->bAiming = true;
 		if (PlayerWidget) PlayerWidget->ToggleCrosshair(true);
+		ACatastropheMainGameMode::GetGameModeInst(this)->OnPlayerAimingBegin.Broadcast();
 		break;
 	}
 
@@ -532,6 +517,7 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 				ZoomInTimeline->Reverse();
 			PlayerAnimInstance->bAiming = false;
 			PlayerWidget->ToggleCrosshair(false);
+			ACatastropheMainGameMode::GetGameModeInst(this)->OnPlayerAimingEnd.Broadcast();
 			break;
 		}
 
