@@ -31,9 +31,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
 	FString Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
-	class UTexture* NPCIcon;
-
 	UPROPERTY(BlueprintReadWrite, Category = "NPC")
 	bool CanNPCTalk;
 

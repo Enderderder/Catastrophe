@@ -69,6 +69,9 @@ private:
 	int CurrentSentenceIndex;
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue System")
+	class UTexture* NPCIcon;
+
 	// The dialogue widget class type
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System")
 	TSubclassOf<class UUserWidget> DialogueWidgetRef;
@@ -97,7 +100,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
-	void Interact(class APlayerCharacter* _playerCharacter);
+	void Interact(class APlayerCharacter* _playerCharacter, int _ConversationIndex);
 	
 	// Starts the conversation
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")

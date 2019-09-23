@@ -41,7 +41,7 @@ void UDialogueSystemComponent::UpdateDialogue()
 	DialogueWidget->BindDialogueComponent(this);
 }
 
-void UDialogueSystemComponent::Interact(class APlayerCharacter* _playerCharacter)
+void UDialogueSystemComponent::Interact(class APlayerCharacter* _playerCharacter, int _ConversationIndex)
 {
 	if (bInConversation)
 	{
@@ -56,7 +56,7 @@ void UDialogueSystemComponent::Interact(class APlayerCharacter* _playerCharacter
 	}
 	else
 	{
-		StartConversation(CurrentConversationIndex);
+		StartConversation(_ConversationIndex);
 	}
 }
 

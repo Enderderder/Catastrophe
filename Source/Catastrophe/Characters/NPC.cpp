@@ -46,6 +46,4 @@ void ANPC::Tick(float DeltaTime)
 void ANPC::Interact(class APlayerCharacter* _playerCharacter)
 {
 	Receive_Interact();
-
-	DialogueSystemComponent->Interact(_playerCharacter);
 }
