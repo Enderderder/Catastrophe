@@ -482,7 +482,7 @@ void APlayerCharacter::HHUSecondaryActionBegin()
 		CameraBoom->AttachToComponent(
 			AimDownSightFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 		if (ZoomInTimeline)
-			ZoomInTimeline->Play();
+			//ZoomInTimeline->Play();
 		PlayerAnimInstance->bAiming = true;
 		if (PlayerWidget) PlayerWidget->ToggleCrosshair(true);
 		ACatastropheMainGameMode::GetGameModeInst(this)->OnPlayerAimingBegin.Broadcast();
@@ -514,7 +514,7 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 			CameraBoom->AttachToComponent(
 				CamFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 			if (ZoomInTimeline)
-				ZoomInTimeline->Reverse();
+				//ZoomInTimeline->Reverse();
 			PlayerAnimInstance->bAiming = false;
 			PlayerWidget->ToggleCrosshair(false);
 			ACatastropheMainGameMode::GetGameModeInst(this)->OnPlayerAimingEnd.Broadcast();
