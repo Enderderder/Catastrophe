@@ -18,6 +18,7 @@ private:
 
 protected:
 
+	/** Number of segmnents to form the spline, more segment means smoother spline */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ProjectileIndicator")
 	int32 NumberOfMeshSegments = 30;
 
