@@ -10,7 +10,7 @@ class CATASTROPHE_API ANPC : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
 	// Sets default values for this actor's properties
 	ANPC();
 
@@ -46,5 +46,4 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };
