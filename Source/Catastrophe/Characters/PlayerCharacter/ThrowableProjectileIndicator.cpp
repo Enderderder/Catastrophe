@@ -15,20 +15,27 @@ AThrowableProjectileIndicator::AThrowableProjectileIndicator()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
+	RootComponent = SplineComponent;
 }
 
 // Called when the game starts or when spawned
 void AThrowableProjectileIndicator::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	// Initiate all the spline segment mesh components
 	for (int32 i = 0; i < NumberOfMeshSegments; ++i)
 	{
 		USplineMeshComponent* splineMesh = NewObject<USplineMeshComponent>(this);
-		splineMesh->SetStaticMesh(IndicatorMesh);
-		splineMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		splineMesh->RegisterComponent();
+		splineMesh->SetMobility(EComponentMobility::Movable);
 		splineMesh->SetForwardAxis(ESplineMeshAxis::X);
+		splineMesh->SetStaticMesh(IndicatorMesh);
+		splineMesh->SetMaterial(0, IndicatorMaterial);
+		splineMesh->SetGenerateOverlapEvents(false);
+		splineMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		splineMesh->SetCastShadow(false);	
+		splineMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		SplineMeshes.Add(splineMesh);
 	}
 }
@@ -38,22 +45,24 @@ void AThrowableProjectileIndicator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (SplineComponent->GetNumberOfSplinePoints() > 0)
+	{
+		float segmentLength = SplineComponent->GetSplineLength() / NumberOfMeshSegments;
+		for (int32 i = 0; i < NumberOfMeshSegments; ++i)
+		{
+			FVector startPos = SplineComponent->GetLocationAtDistanceAlongSpline(segmentLength * i, ESplineCoordinateSpace::World);
+			FVector startTangent = SplineComponent->GetTangentAtDistanceAlongSpline(segmentLength * i, ESplineCoordinateSpace::World);
+			FVector endPos = SplineComponent->GetLocationAtDistanceAlongSpline(segmentLength * (i + 1), ESplineCoordinateSpace::World);;
+			FVector endTangent = SplineComponent->GetTangentAtDistanceAlongSpline(segmentLength * (i + 1), ESplineCoordinateSpace::World);;
+
+			SplineMeshes[i]->SetStartAndEnd(startPos, startTangent, endPos, endTangent);
+		}
+	}
 }
 
 void AThrowableProjectileIndicator::UpdateIndicatorLine(TArray<FVector> _vectors)
 {
+	SplineComponent->ClearSplinePoints(false);
 	SplineComponent->SetSplinePoints(_vectors, ESplineCoordinateSpace::World, true);
-
-	float segmentLength = SplineComponent->GetSplineLength() / NumberOfMeshSegments;
-
-	for (int32 i = 0; i < NumberOfMeshSegments; ++i)
-	{
-		FVector startPos = SplineComponent->GetLocationAtDistanceAlongSpline(segmentLength * i, ESplineCoordinateSpace::World);
-		FVector startTangent = SplineComponent->GetTangentAtDistanceAlongSpline(segmentLength * i, ESplineCoordinateSpace::World);
-		FVector endPos = SplineComponent->GetLocationAtDistanceAlongSpline(segmentLength * (i + 1), ESplineCoordinateSpace::World);;
-		FVector endTangent = SplineComponent->GetTangentAtDistanceAlongSpline(segmentLength * (i + 1), ESplineCoordinateSpace::World);;
-
-		SplineMeshes[i]->SetStartAndEnd(startPos, startTangent, endPos, endTangent);
-	}
 }
 

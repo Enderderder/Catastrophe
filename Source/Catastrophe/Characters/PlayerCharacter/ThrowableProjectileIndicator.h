@@ -24,6 +24,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ProjectileIndicator")
 	class UStaticMesh* IndicatorMesh;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ProjectileIndicator")
+	class UMaterialInterface* IndicatorMaterial;
+
 	UPROPERTY(BlueprintReadWrite)
 	TArray<class USplineMeshComponent*> SplineMeshes;
 
@@ -42,6 +45,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ProjectileIndicator")
 	void UpdateIndicatorLine(TArray<FVector> _vectors);
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "ProjectileIndicator", meta = (DisplayName = "UpdateIndicatorLine"))
+	void K2_UpdateIndicaterLine(const TArray<FVector>& _vectors);
 
 	/** Getter */
 	FORCEINLINE class USplineComponent* GetSplineComponent() const { return SplineComponent; }
