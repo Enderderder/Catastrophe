@@ -108,7 +108,7 @@ public:
 
 	// Stops the conversation
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
-	void DisableDialogue();
+	void DisableDialogue(bool _bHasFinishedConversation);
 
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
 	FString GetCurrentDialogueText();

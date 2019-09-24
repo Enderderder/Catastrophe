@@ -47,7 +47,7 @@ void UDialogueSystemComponent::Interact(class APlayerCharacter* _playerCharacter
 	{
 		if (Conversations[CurrentConversationIndex].Sentences.Num() - 1 <= CurrentSentenceIndex)
 		{
-			DisableDialogue();
+			DisableDialogue(true);
 			return;
 		}
 
@@ -90,7 +90,7 @@ void UDialogueSystemComponent::StartConversation(int _ConversationIndex)
 	}
 }
 
-void UDialogueSystemComponent::DisableDialogue()
+void UDialogueSystemComponent::DisableDialogue(bool _bHasFinishedConversation)
 {
 	OnDialogueDisable.Broadcast();
 
@@ -106,7 +106,7 @@ void UDialogueSystemComponent::DisableDialogue()
 		Player->GetPlayerWidget()->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	if (Conversations.Num() > CurrentConversationIndex)
+	if (Conversations.Num() > CurrentConversationIndex && _bHasFinishedConversation)
 	{
 		// If an objective has been set, then complete it
 		UQuestObjectiveComponent* objective = Conversations[CurrentConversationIndex].QuestObjectiveToComplete;
