@@ -265,7 +265,7 @@ void APlayerCharacter::UnSprint()
 
 void APlayerCharacter::OnSprintBegin()
 {
-	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
+	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 2.5f);
 	SprintingPostProcess->bEnabled = true;
 }
 

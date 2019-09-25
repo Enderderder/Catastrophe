@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Gameplay/QTE_Bob/QteBobTypes.h"
+#include "RespawnSystem/RespawnSystemTypes.h"
 #include "CatastropheMainGameMode.generated.h"
 
 /** Delegates */
@@ -135,4 +136,24 @@ public:
 	 * @note If the current gamemode if not ACatastropheMainGameMode, this function will return nullptr
 	 */
 	static ACatastropheMainGameMode* GetGameModeInst(const UObject* _worldContextObject);
+
+
+
+
+
+
+
+
+// Console commands
+protected:
+
+	UFUNCTION(Exec)
+	virtual void Cheat_Teleport(const FString& _levelName, const FString& _districtName);
+
+
+
+
+
+
+
 };
