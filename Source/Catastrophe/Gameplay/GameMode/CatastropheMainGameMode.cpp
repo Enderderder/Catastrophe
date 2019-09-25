@@ -28,7 +28,7 @@ void ACatastropheMainGameMode::StartPlay()
 	else
 	{
 		const FString msg = "Insufficient amount of Cave camera track.";
-		CatastropheDebug::OnScreenDebugMsg(-1, 30.0f, FColor::Red, msg);
+		CatastropheDebug::OnScreenErrorMsg(msg, 30.0f);
 	}
 }
 
@@ -42,8 +42,6 @@ void ACatastropheMainGameMode::Tick(float DeltaSeconds)
 
 void ACatastropheMainGameMode::AddChasingGuard(AActor* _guard)
 {
-	CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Red, TEXT("Chase!!!!"));
-
 	// Only add guard reference if it doesn't already exists
 	if (!ChasingGuards.Contains(_guard))
 	{
@@ -60,8 +58,6 @@ void ACatastropheMainGameMode::AddChasingGuard(AActor* _guard)
 
 void ACatastropheMainGameMode::RemoveOneChasingGuard(AActor* _guard)
 {
-	CatastropheDebug::OnScreenDebugMsg(-1, 2.0f, FColor::Red, TEXT("Stop!!!!"));
-
 	// Remove the guard reference only if it already exists
 	if (ChasingGuards.Contains(_guard))
 	{
@@ -107,7 +103,7 @@ void ACatastropheMainGameMode::OnGuardQteEventComplete(EQteEventState _eventStat
 	else
 	{
 		const FString msg = "QteBobLogicHolder: Event completion happened at wrong event state";
-		CatastropheDebug::OnScreenDebugMsg(-1, 10.0f, FColor::Red, msg);
+		CatastropheDebug::OnScreenErrorMsg(msg, 10.0f);
 	}
 }
 
@@ -151,4 +147,39 @@ ACatastropheMainGameMode* ACatastropheMainGameMode::GetGameModeInst(const UObjec
 	}
 
 	return nullptr;
+}
+
+void ACatastropheMainGameMode::Cheat_Teleport(const FString& _levelName, const FString& _districtName)
+{
+	EDISTRICT district;
+	const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EDISTRICT"), true);
+	if (enumPtr)
+	{
+		int32 index = enumPtr->FindEnumIndex(FName(*_districtName));
+		if (index == INDEX_NONE || (EDISTRICT)index >= EDISTRICT::LOCATIONCOUNT)
+		{
+			CatastropheDebug::OnScreenErrorMsg(TEXT("Invalid district type"), 10.0f);
+			return;
+		}
+		district = (EDISTRICT)index;
+	
+		FLoadStreamingLevelInfo info;
+		
+		info.DistrictType = district;
+		info.bUnloadCurrentLevel = true;
+		URespawnSubsystem::GetInst(this)->LoadLevelStreaming(info);
+
+	}
+
+	if (!enumPtr) district = EDISTRICT::LOCATIONCOUNT;
+	else
+	{
+		
+	}
+
+
+
+
+
+	//CatastropheDebug::OnScreenDebugMsg(-1, 10.0f, FColor::Cyan, enumName);
 }

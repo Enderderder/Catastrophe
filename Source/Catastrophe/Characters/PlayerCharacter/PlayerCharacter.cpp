@@ -258,30 +258,16 @@ void APlayerCharacter::Sprint()
 	{
 		SprintMovementComponent->Sprint();
 	}
-// 	{
-// 		bSprinting = true;
-// 		SprintingPostProcess->bEnabled = true;
-// 
-// 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
-// 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed * SpringSpeedMultiplier;
-// 	}
 }
 
 void APlayerCharacter::UnSprint()
 {
 	SprintMovementComponent->UnSprint();
-// 	if (bSprinting)
-// 	{
-// 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
-// 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
-// 		SprintingPostProcess->bEnabled = false;
-// 	}
-// 	bSprinting = false;
 }
 
 void APlayerCharacter::OnSprintBegin()
 {
-	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
+	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 2.5f);
 	SprintingPostProcess->bEnabled = true;
 }
 
