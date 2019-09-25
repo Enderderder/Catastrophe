@@ -29,6 +29,7 @@
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
+#include "ThrowableProjectileIndicator.h"
 
 #include "InventoryComponent.h"
 #include "TomatoSack.h"
@@ -150,6 +151,23 @@ void APlayerCharacter::BeginPlay()
 	// Check if theres tomato in player's hand
 	CheckTomatoInHand();
 
+	// Spawn the projectile indicator actor
+	if (ThrowableProjectilIndicatorClass)
+	{
+		FActorSpawnParameters spawnParam;
+		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		ThrowableProjectilIndicator =
+			GetWorld()->SpawnActor<AThrowableProjectileIndicator>(
+				ThrowableProjectilIndicatorClass, 
+				FTransform::Identity,
+				spawnParam);
+	}
+	else
+	{
+		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerCharacter: Missing ThrowableProjectileIndicatorClass"), 30.0f);
+		UE_LOG(LogTemp, Error, TEXT("PlayerCharacter: Missing ThrowableProjectileIndicatorClass"));
+	}
+
 	// Set default state for the player UI
 	if (PlayerWidgetClass)
 	{
@@ -164,7 +182,8 @@ void APlayerCharacter::BeginPlay()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Missing Player hud widget class, failed to initiate player widget"));
+		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerCharacter: Missing PlayerWidgetClass"), 30.0f);
+		UE_LOG(LogTemp, Error, TEXT("PlayerCharacter: Missing PlayerWidgetClass"));
 	}
 }
 

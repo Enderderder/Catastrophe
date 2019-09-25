@@ -189,6 +189,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "HHU | Tomato")
 	TSubclassOf<class ATomato> TomatoClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "HHU | General")
+	TSubclassOf<class AThrowableProjectilIndicator> ThrowableProjectilIndicatorClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HHU | General")
+	class AThrowableProjectileIndicator* ThrowableProjectilIndicator;
+
 	/** Sprint & Stamina */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float TotalStamina = 100.0f;

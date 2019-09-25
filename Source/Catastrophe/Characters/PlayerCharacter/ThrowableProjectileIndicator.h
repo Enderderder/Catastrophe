@@ -35,6 +35,10 @@ public:
 	// Sets default values for this actor's properties
 	AThrowableProjectileIndicator();
 
+private:
+
+	bool bRenderingSpline = false;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -43,11 +47,22 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	/**
+	 * Update the spline points
+	 * @author Richard Wulansari
+	 * @param _vectors Array of vector points
+	 * @note Those vectors needs to be in world space coord
+	 */
 	UFUNCTION(BlueprintCallable, Category = "ProjectileIndicator")
 	void UpdateIndicatorLine(TArray<FVector> _vectors);
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "ProjectileIndicator", meta = (DisplayName = "UpdateIndicatorLine"))
-	void K2_UpdateIndicaterLine(const TArray<FVector>& _vectors);
+	/**
+	 * Set the visibility of the spline indicator
+	 * @author Richard Wulansari
+	 * @param _enabled
+	 */
+	UFUNCTION(BlueprintCallable, Category = "ProjectileIndicator")
+	void SetIndicatorEnabled(bool _enabled);
 
 	/** Getter */
 	FORCEINLINE class USplineComponent* GetSplineComponent() const { return SplineComponent; }
