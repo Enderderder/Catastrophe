@@ -210,8 +210,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HHU | Throwable")
 	float ThrowableGravityOverwrite = -2000.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "HHU | General")
+	UPROPERTY(BlueprintReadOnly, Category = "HHU | Throwable")
 	class AThrowableProjectileIndicator* ThrowableProjectilIndicator;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HHU | Throwable")
+	FVector CurrentThrowableLaunchVelocity;
 
 	/** Sprint & Stamina */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
@@ -421,6 +424,10 @@ public:
 	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
 	FORCEINLINE UCharacterSprintMovementComponent* GetSprintMovementComponent() const { 
 		return SprintMovementComponent; }
+	FORCEINLINE class AThrowableProjectileIndicator* GetProjectileIndicator() const {
+		return ThrowableProjectilIndicator;}
+	FORCEINLINE FVector GetCurrentThrowingVelocity() const { return CurrentThrowableLaunchVelocity; }
+	FORCEINLINE float GetThrowingGravity() const { return ThrowableGravityOverwrite; }
 	/** Getter End */
 
 };

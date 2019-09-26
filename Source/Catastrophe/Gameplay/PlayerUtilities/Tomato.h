@@ -13,7 +13,10 @@ class CATASTROPHE_API ATomato : public AUseableItem
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* ItemMesh;
+	class UStaticMeshComponent* TomatoMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UProjectileMovementComponent* ProjectileMovement;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Tomato")
 	float LaunchForce;
@@ -47,7 +50,7 @@ protected:
 	void Receive_OnTomatoSplash(class AActor* _otherActor);
 
 public:
-	/** Launch tomato in certain direction */
+
 	/**
 	 * Called to launch the tomato in a certain direction
 	 * @author James Johnstone
@@ -58,7 +61,9 @@ public:
 	void LaunchTomato(FVector _launchDirection);
 
 	/** Getter */
-	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return ItemMesh; }
+	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return TomatoMesh; }
+	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { 
+		return ProjectileMovement; }
 	/** Getter End */
 
 };

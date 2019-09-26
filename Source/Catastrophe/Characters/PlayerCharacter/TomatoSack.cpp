@@ -1,12 +1,18 @@
 
 #include "TomatoSack.h"
 
-#include "GameFramework/Actor.h"
-#include "PlayerCharacter.h"
-#include "GameFramework/PlayerController.h"
-#include "Engine/World.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+
+#include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+
+#include "PlayerCharacter.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
+#include "ThrowableProjectileIndicator.h"
+
+#include "DebugUtility/CatastropheDebug.h"
 
 // Sets default values for this component's properties
 ATomatoSack::ATomatoSack()
@@ -27,41 +33,46 @@ void ATomatoSack::BeginPlay()
 void ATomatoSack::UseItem()
 {
 	// If the sack is not empty and is able to throw tomatoes
-	if (IsAbleToUse())
+	if (IsAbleToUse() &&
+		GetWorld())
 	{
-		// Throw a tomato
-		if (GetWorld())
-		{
-			APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+		APlayerCharacter* playerCharacter = 
+			Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
 				
-			// Set the parameter for spawning the tomato
-			FVector tomatoSpawnLocation;
-			FRotator tomatoSpawnRotation;
-			FActorSpawnParameters tomatoSpawnInfo;
-			tomatoSpawnInfo.Owner = this;
-			tomatoSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-			tomatoSpawnLocation = Player->TomatoSpawnPoint->GetComponentLocation();
-			tomatoSpawnRotation = Player->FollowCamera->GetComponentRotation();
-			
-			// Spawn the tomato
-			ATomato* SpawnedTomato = GetWorld()->SpawnActor<ATomato>(TomatoClass, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
-			if (SpawnedTomato)
-			{
-				// Adds force to the tomato to make it go flying
-				SpawnedTomato->LaunchTomato(Player->FollowCamera->GetForwardVector());
-			}
+		// Set the parameter for spawning the tomato
+		FVector spawnLocation = playerCharacter->TomatoSpawnPoint->GetComponentLocation();
+		FRotator spawnRotation = playerCharacter->FollowCamera->GetComponentRotation();
+		FActorSpawnParameters spawnParam;
+		spawnParam.Owner = this;
+		spawnParam.SpawnCollisionHandlingOverride = 
+			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		
+		ATomato* tomato = 
+			GetWorld()->SpawnActor<ATomato>(
+				TomatoClass, 
+				spawnLocation, 
+				spawnRotation, 
+				spawnParam);
+		if (tomato)
+		{
+			UProjectileMovementComponent* tomatoProjectilMovement = tomato->GetProjectileMovement();
+			tomatoProjectilMovement->ProjectileGravityScale =
+				playerCharacter->GetThrowingGravity() / GetWorld()->GetGravityZ();
+			tomatoProjectilMovement->Velocity = playerCharacter->GetCurrentThrowingVelocity();
 
 			// Lower the ammo
 			RemoveItem();
 
 			// Check if theres tomato left in the hand
-			Player->CheckTomatoInHand();
+			playerCharacter->CheckTomatoInHand();
 		}
 		else
 		{
-			// Return warning if it cannot find world
-			UE_LOG(LogTemp, Warning, TEXT("GetWorld returned NULL"));
+			CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to spawn ATomato"), 10.0f);
 		}
+	}
+	else
+	{
+		CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to spawn ATomato"), 10.0f);
 	}
 }

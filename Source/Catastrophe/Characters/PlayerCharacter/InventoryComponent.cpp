@@ -204,7 +204,7 @@ void UInventoryComponent::UseItem(bool _IsAiming)
 			// Deletes Slot if there is no items in the slot
 			if (Slots[CurrentSelection]->IsItemSackEmpty())
 			{
-				Slots[CurrentSelection]->K2_DestroyActor();
+				Slots[CurrentSelection]->Destroy();
 				Slots.RemoveAt(CurrentSelection);
 				if (Slots.Num() == CurrentSelection && Slots.Num() > 0)
 				{

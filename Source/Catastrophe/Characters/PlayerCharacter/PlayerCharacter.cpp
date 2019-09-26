@@ -213,15 +213,19 @@ void APlayerCharacter::Tick(float DeltaTime)
 	// Do the interaction tick
 	InteractionTick(DeltaTime);
 
+	
+
 	// Calculate the projectile prediction and update the projectile spline 
 	// if it should be shown
 	if (ThrowableProjectilIndicator &&
 		bShowingProjectileIndicator)
 	{
 		FVector pathStartPosition = TomatoSpawnPoint->GetComponentLocation();
-		FVector launchVelocity = 
+		CurrentThrowableLaunchVelocity =
 			ThrowingStrength * FollowCamera->GetForwardVector().RotateAngleAxis(
 				ThrowingAngle, FollowCamera->GetRightVector());
+		FString msg = "AimingVelo: " + CurrentThrowableLaunchVelocity.ToString();
+		CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Cyan, msg);
 
 		float projectileRadius = 20.0f;
 		TArray<AActor*> actorsToIgnore;
@@ -230,7 +234,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		FPredictProjectilePathResult predictResult;
 		FPredictProjectilePathParams predictParam;
 		predictParam.StartLocation = pathStartPosition;
-		predictParam.LaunchVelocity = launchVelocity;
+		predictParam.LaunchVelocity = CurrentThrowableLaunchVelocity;
 		predictParam.bTraceComplex = true;
 		predictParam.ProjectileRadius = projectileRadius;
 		predictParam.ObjectTypes = ThrowablePrecdictObjectType;
@@ -498,6 +502,7 @@ void APlayerCharacter::HHUPrimaryActionBegin()
 
 	// Use the currently selected useable item
 	InventoryComponent->UseItem(bHHUSecondaryActive);
+	HHUSecondaryActionEnd();
 }
 
 void APlayerCharacter::HHUPrimaryActionEnd()
