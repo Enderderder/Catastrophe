@@ -73,5 +73,5 @@ void AThrowableProjectileIndicator::UpdateIndicatorLine(TArray<FVector> _vectors
 void AThrowableProjectileIndicator::SetIndicatorEnabled(bool _enabled)
 {
 	bRenderingSpline = _enabled;
-	SetActorHiddenInGame(_enabled);
+	SetActorHiddenInGame(!_enabled);
 }
