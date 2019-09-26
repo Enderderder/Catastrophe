@@ -7,7 +7,10 @@
 #include "DialogueSystemComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDisableDialogueSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConversationStartSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConversationEndSignature);
 
+// The types of characters that can talk in a conversation
 UENUM(BlueprintType)
 enum class ECharacter : uint8
 {
@@ -15,28 +18,34 @@ enum class ECharacter : uint8
 	ECh_Player	UMETA(DisplayName = "Player")
 };
 
+// A sentence that makes up a conversation
 USTRUCT(BlueprintType)
 struct FSSentence
 {
 	GENERATED_BODY()
 
 public:
+	// The type of character that is currently talking
 	UPROPERTY(EditAnywhere)
 	ECharacter CharacterType;
 
+	// The sentence that is spoken
 	UPROPERTY(EditAnywhere)
 	FString Text;
 };
 
+// A conversation which the player and the NPC can have
 USTRUCT(BlueprintType)
 struct FSConversation
 {
 	GENERATED_BODY()
 
 public:
+	// The ordered array of sentences that make up the conversation
 	UPROPERTY(EditAnywhere)
 	TArray<FSSentence> Sentences;
 
+	// A pointer to a linked quest objective
 	UPROPERTY()
 	class UQuestObjectiveComponent* QuestObjectiveToComplete;
 };
@@ -69,6 +78,7 @@ private:
 	int CurrentSentenceIndex;
 
 protected:
+	// The NPC icon which is used in the dialogue widget
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue System")
 	class UTexture* NPCIcon;
 
@@ -81,8 +91,17 @@ protected:
 	TArray<FSConversation> Conversations;
 
 public:
+	// The delegate which contains functionality for when the dialogue is disabled
 	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
 	FOnDisableDialogueSignature OnDialogueDisable;
+
+	// The delegate which contains functionality for when the conversation starts
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
+	FOnConversationStartSignature OnConversationStart;
+
+	// The delegate which contains functionality for when the conversation ends
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
+	FOnConversationEndSignature OnConversationEnd;
 
 public:	
 	// Sets default values for this component's properties
@@ -93,26 +112,60 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	void UpdateDialogue();
+	/**
+	 * Called to update the binding to the dialogue widget
+	 * @author James Johnstone
+	 */
+	void UpdateBindingToDialogueWidget();
 
+	/**
+	 * Called to attach a quest objective to a conversation
+	 * @author James Johnstone
+	 * @param _ConversationIndex The index of what conversation to attach quest objective to
+	 * @param _QuestObjectiveComponent The quest objective to attach to the conversation
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System: Quest")
 	void AttachQuestObjectiveToConversation(int _ConversationIndex, class UQuestObjectiveComponent* _QuestObjectiveComponent);
 
 public:
+	/**
+	 * Called to start/continue a conversation
+	 * @author James Johnstone
+	 * @param _PlayerCharacter The player character reference
+	 * @param _ConversationIndex The index of the conversation that is to be called
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
-	void Interact(class APlayerCharacter* _playerCharacter, int _ConversationIndex);
+	void DialogueInteract(class APlayerCharacter* _PlayerCharacter, int _ConversationIndex, bool _bCanInteract);
 	
-	// Starts the conversation
+	/**
+	 * Called to start a new conversation
+	 * @author James Johnstone
+	 * @param _ConversationIndex The index of the conversation that is to be started
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
 	void StartConversation(int _ConversationIndex);
 
-	// Stops the conversation
+	/**
+	 * Called to disable a conversation
+	 * @author James Johnstone
+	 * @param _bHasFinishedConversation Determines if the conversation has been finished or is disabling in middle of conversation
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
 	void DisableDialogue(bool _bHasFinishedConversation);
 
+	/**
+	 * Called to get the current dialogue sentence text
+	 * @author James Johnstone
+	 * @returns FString
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
 	FString GetCurrentDialogueText();
 
+	/**
+	 * Called to check if the player is talking
+	 * @author James Johnstone
+	 * @returns bool
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
 	bool IsPlayerTalking();
 };

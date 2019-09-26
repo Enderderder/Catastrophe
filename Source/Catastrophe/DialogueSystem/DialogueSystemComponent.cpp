@@ -36,27 +36,30 @@ void UDialogueSystemComponent::BeginPlay()
 	Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController());
 }
 
-void UDialogueSystemComponent::UpdateDialogue()
+void UDialogueSystemComponent::UpdateBindingToDialogueWidget()
 {
 	DialogueWidget->BindDialogueComponent(this);
 }
 
-void UDialogueSystemComponent::Interact(class APlayerCharacter* _playerCharacter, int _ConversationIndex)
+void UDialogueSystemComponent::DialogueInteract(class APlayerCharacter* _PlayerCharacter, int _ConversationIndex, bool _bCanInteract)
 {
-	if (bInConversation)
+	if (_bCanInteract)
 	{
-		if (Conversations[CurrentConversationIndex].Sentences.Num() - 1 <= CurrentSentenceIndex)
+		if (bInConversation)
 		{
-			DisableDialogue(true);
-			return;
-		}
+			if (Conversations[CurrentConversationIndex].Sentences.Num() - 1 <= CurrentSentenceIndex)
+			{
+				DisableDialogue(true);
+				return;
+			}
 
-		CurrentSentenceIndex++;
-		UpdateDialogue();
-	}
-	else
-	{
-		StartConversation(_ConversationIndex);
+			CurrentSentenceIndex++;
+			UpdateBindingToDialogueWidget();
+		}
+		else
+		{
+			StartConversation(_ConversationIndex);
+		}
 	}
 }
 
@@ -72,6 +75,8 @@ void UDialogueSystemComponent::StartConversation(int _ConversationIndex)
 {
 	if (Conversations.Num() > _ConversationIndex && DialogueWidget)
 	{
+		OnConversationStart.Broadcast();
+
 		CurrentConversationIndex = _ConversationIndex;
 		CurrentSentenceIndex = 0;
 		bInConversation = true;
@@ -86,7 +91,7 @@ void UDialogueSystemComponent::StartConversation(int _ConversationIndex)
 		DialogueWidget->AddToViewport();
 
 		// Calls the function which updates all the dialogue
-		UpdateDialogue();
+		UpdateBindingToDialogueWidget();
 	}
 }
 
@@ -108,6 +113,8 @@ void UDialogueSystemComponent::DisableDialogue(bool _bHasFinishedConversation)
 
 	if (Conversations.Num() > CurrentConversationIndex && _bHasFinishedConversation)
 	{
+		OnConversationEnd.Broadcast();
+
 		// If an objective has been set, then complete it
 		UQuestObjectiveComponent* objective = Conversations[CurrentConversationIndex].QuestObjectiveToComplete;
 		if (objective)
