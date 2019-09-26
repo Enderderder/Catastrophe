@@ -92,16 +92,17 @@ private:
 
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
 	//class UTomatoSack* TomatoSack;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_UseableItem", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU | General", meta = (AllowPrivateAccess = "true"))
 	class UInventoryComponent* InventoryComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU | Throwable", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
 
 	// The anchor of the interactable UI
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* WorldUiAnchor;
 
+	/// DEPRECATED: This component is no longer in use
 	// The interactable UI that appears on the player
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	class UWidgetComponent* InteractableUiComponent;
@@ -185,9 +186,35 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HHU | General")
 	float CameraZoomMultiplier;
 
+	/** The obejct types that use during the projectile path prediction */
+	UPROPERTY(EditDefaultsOnly, Category = "HHU | Throwable")
+	TArray<TEnumAsByte<EObjectTypeQuery>> ThrowablePrecdictObjectType;
+
 	/** Class object that define what object will be throw out as tomato */
-	UPROPERTY(EditDefaultsOnly, Category = "HHU | Tomato")
+	UPROPERTY(EditDefaultsOnly, Category = "HHU | Throwable")
 	TSubclassOf<class ATomato> TomatoClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HHU | Throwable")
+	TSubclassOf<class AThrowableProjectileIndicator> ThrowableProjectilIndicatorClass;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "HHU | Throwable")
+	bool bShowingProjectileIndicator;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HHU | Throwable")
+	float ThrowingStrength = 2500.0f;
+
+	/** The extra angle when throwing the object, negative number means up */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HHU | Throwable")
+	float ThrowingAngle = -30.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HHU | Throwable")
+	float ThrowableGravityOverwrite = -2000.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HHU | Throwable")
+	class AThrowableProjectileIndicator* ThrowableProjectilIndicator;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HHU | Throwable")
+	FVector CurrentThrowableLaunchVelocity;
 
 	/** Sprint & Stamina */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
@@ -219,13 +246,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interaction")
 	bool bCanInteract = true;
 
+	/// TODO: Redo the currency system
 	/* Fish bones currency */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Fish Bones")
 	int32 FishBonesAmount;
 
 	// Deprecated TODO: Remove reference of this component
 	/** Spawn location for the throwable */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU | Throwable", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* TomatoSpawnPoint;
 
 	///TODO: Move this component back to private and create getter
@@ -274,7 +302,7 @@ protected:
 
 	/**
 	 * Called when the player character successfully enter sprint action
-
+	 * @author Richard Wulansari
 	 */
 	UFUNCTION()
 	void OnSprintBegin();
@@ -326,7 +354,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable, Category = "HHU")
+	UFUNCTION(BlueprintCallable, Category = "HHU | General")
 	UInventoryComponent* GetInventoryComponent();
 
 	/** Set the target to interact for the player */
@@ -364,19 +392,15 @@ public:
 	/**
 	 * Force player to exit spinting action regards to how the sprint component is doing
 	 * @author Richard Wulansari
+	 * @note Use with caution
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void ForceUnSprint();
 
-	/**
-	 * 
-	 */
 	UFUNCTION(BlueprintCallable, Category = "Player | General")
 	void TogglePlayerHUD(bool _bEnable);
 
-	/**
-	 * 
-	 */
+	/// DEPRECATED: This component is no longer in use
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void ToggleInteractUI(bool _bEnable);
 
@@ -400,6 +424,10 @@ public:
 	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
 	FORCEINLINE UCharacterSprintMovementComponent* GetSprintMovementComponent() const { 
 		return SprintMovementComponent; }
+	FORCEINLINE class AThrowableProjectileIndicator* GetProjectileIndicator() const {
+		return ThrowableProjectilIndicator;}
+	FORCEINLINE FVector GetCurrentThrowingVelocity() const { return CurrentThrowableLaunchVelocity; }
+	FORCEINLINE float GetThrowingGravity() const { return ThrowableGravityOverwrite; }
 	/** Getter End */
 
 };

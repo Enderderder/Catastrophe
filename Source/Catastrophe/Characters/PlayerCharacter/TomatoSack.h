@@ -22,6 +22,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+
 	/**
 	 * Called to throw a tomato from the sack
 	 * @author James Johnstone
