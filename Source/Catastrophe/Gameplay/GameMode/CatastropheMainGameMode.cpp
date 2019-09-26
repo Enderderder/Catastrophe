@@ -155,7 +155,7 @@ void ACatastropheMainGameMode::Cheat_Teleport(const FString& _levelName, const F
 	const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EDISTRICT"), true);
 	if (enumPtr)
 	{
-		int32 index = enumPtr->FindEnumIndex(FName(*_districtName));
+		int32 index = enumPtr->GetIndexByName(FName(*_districtName));
 		if (index == INDEX_NONE || (EDISTRICT)index >= EDISTRICT::LOCATIONCOUNT)
 		{
 			CatastropheDebug::OnScreenErrorMsg(TEXT("Invalid district type"), 10.0f);

@@ -40,6 +40,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GuardComponents", meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* HeadHitbox;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GuardComponents", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* HeadShotTargetAnchor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GuardComponents", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* HeadShotTargetMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GuardComponents", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BodyHitBox;
@@ -191,7 +197,6 @@ protected:
 	UFUNCTION()
 	virtual void OnCatchHitBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
-	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -261,4 +266,15 @@ public:
 	FORCEINLINE EGuardState GetPreferNeutralState() const { return PreferNeutralState; }
 	FORCEINLINE class AGuardAiController* GetGuardController() const { return GuardController; }
 	/** Getter End */
+
+private:
+	
+	/**
+	 * Delegate bind function called whenever player is aiming and un-aim
+	 */
+	UFUNCTION()
+	void OnPlayerAimingBegin();
+	UFUNCTION()
+	void OnPlayerAimingEnd();
+
 };
