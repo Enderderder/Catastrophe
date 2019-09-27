@@ -33,6 +33,11 @@ private:
 	/** Stores the player character */
 	class APlayerCharacter* Player;
 
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Disguise")
+	FVector DisguiseOffset;
+
 public:
 	// Sets default values for this actor's properties
 	ADisguise();
