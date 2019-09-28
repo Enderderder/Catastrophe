@@ -7,7 +7,6 @@
 #include "Components/SplineMeshComponent.h"
 #include "Engine/StaticMesh.h"
 
-
 // Sets default values
 AThrowableProjectileIndicator::AThrowableProjectileIndicator()
 {
