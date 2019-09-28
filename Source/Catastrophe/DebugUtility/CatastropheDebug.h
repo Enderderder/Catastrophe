@@ -33,7 +33,7 @@ public:
 	 * @param _message The message to display
 	 * @param _displayTime The time of displaying the message
 	 */
-	static void OnScreenErrorMsg(const FString& _message, float _displayTime);
+	static void OnScreenErrorMsg(const FString& _message, float _displayTime = 10.0f);
 
 
 };

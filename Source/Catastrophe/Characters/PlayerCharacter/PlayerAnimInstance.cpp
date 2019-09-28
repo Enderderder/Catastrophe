@@ -6,6 +6,8 @@
 
 #include "PlayerCharacter.h"
 
+#include "DebugUtility/CatastropheDebug.h"
+
 void UPlayerAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
@@ -14,7 +16,8 @@ void UPlayerAnimInstance::NativeBeginPlay()
 	CustomPlayerCharacter = Cast<APlayerCharacter>(GetOwningActor());
 	if (!CustomPlayerCharacter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CustomPlayerCharacter is null, check player character anim class"));
+		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerAnimInstance: CustomPlayerCharacter is null"));
+		UE_LOG(LogTemp, Warning, TEXT("PlayerAnimInstance: CustomPlayerCharacter is null"));
 	}
 }
 
