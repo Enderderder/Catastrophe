@@ -18,15 +18,14 @@ AStackedCrates::AStackedCrates()
 	CratesMesh->SetupAttachment(RootComponent);
 
 	TriggerVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerVolume"));
-	TriggerVolume->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	TriggerVolume->SetCollisionProfileName(TEXT("Trigger"));
 	TriggerVolume->SetGenerateOverlapEvents(true);
 	TriggerVolume->SetupAttachment(CratesMesh);
 
 	BlockVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("BlockVolume"));
-	BlockVolume->bAutoActivate = false;
 	BlockVolume->SetCanEverAffectNavigation(true);
 	BlockVolume->SetGenerateOverlapEvents(false);
-	//BlockVolume->SetCollisionProfileName(TEXT("Obstacle"));
+	BlockVolume->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BlockVolume->SetupAttachment(CratesMesh);
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
@@ -52,5 +51,5 @@ void AStackedCrates::OnPlayerInteract(class APlayerCharacter* _playerCharacter)
 
 	// Set collision boxes
 	CratesMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	BlockVolume->Activate(true);
+	BlockVolume->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
