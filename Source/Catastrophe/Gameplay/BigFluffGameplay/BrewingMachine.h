@@ -29,7 +29,10 @@ private:
 	class UInteractableComponent* InteractableComponent;
 
 
+protected:
 
+
+	//class 
 
 public:	
 	// Sets default values for this actor's properties
