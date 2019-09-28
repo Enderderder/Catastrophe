@@ -4,6 +4,7 @@
 #include "Tomato.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 #include "Characters/GuardCharacter/Guard.h"
 
@@ -13,11 +14,13 @@ ATomato::ATomato()
  	// Set this actor to not call Tick() every frame.
 	PrimaryActorTick.bCanEverTick = false;
 
-	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
-	ItemMesh->SetCollisionProfileName(TEXT("Tomato"));
-	ItemMesh->OnComponentHit.RemoveDynamic(this, &ATomato::OnTomatoHit);
-	ItemMesh->OnComponentHit.AddDynamic(this, &ATomato::OnTomatoHit);
-	RootComponent = ItemMesh;
+	TomatoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
+	TomatoMesh->SetCollisionProfileName(TEXT("Tomato"));
+	TomatoMesh->OnComponentHit.RemoveDynamic(this, &ATomato::OnTomatoHit);
+	TomatoMesh->OnComponentHit.AddDynamic(this, &ATomato::OnTomatoHit);
+	RootComponent = TomatoMesh;
+
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 }
 
 // Called when the game starts or when spawned
@@ -53,5 +56,5 @@ void ATomato::DestroyTomato(class AActor* _otherActor)
 
 void ATomato::LaunchTomato(FVector _launchDirection)
 {
-	ItemMesh->AddForce(_launchDirection * LaunchForce);
+	TomatoMesh->AddForce(_launchDirection * LaunchForce);
 }

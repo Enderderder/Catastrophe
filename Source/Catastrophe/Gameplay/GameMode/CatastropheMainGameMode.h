@@ -5,7 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Gameplay/QTE_Bob/QteBobTypes.h"
+#include "RespawnSystem/RespawnSystemTypes.h"
 #include "CatastropheMainGameMode.generated.h"
+
+/** Delegates */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerAimingSignature);
 
 /**
  * This is the main gameplay gamemode of the game
@@ -15,6 +19,14 @@ class CATASTROPHE_API ACatastropheMainGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+
+	UPROPERTY(BlueprintAssignable)
+	FPlayerAimingSignature OnPlayerAimingBegin;
+
+	UPROPERTY(BlueprintAssignable)
+	FPlayerAimingSignature OnPlayerAimingEnd;
+
 protected:
 
 	/** Array of guards thats chasing the player */
@@ -124,4 +136,24 @@ public:
 	 * @note If the current gamemode if not ACatastropheMainGameMode, this function will return nullptr
 	 */
 	static ACatastropheMainGameMode* GetGameModeInst(const UObject* _worldContextObject);
+
+
+
+
+
+
+
+
+// Console commands
+protected:
+
+	UFUNCTION(Exec)
+	virtual void Cheat_Teleport(const FString& _levelName, const FString& _districtName);
+
+
+
+
+
+
+
 };

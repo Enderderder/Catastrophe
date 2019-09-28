@@ -26,12 +26,10 @@
 #include "PlayerAnimInstance.h"
 #include "Components/MovementModifierComponent.h"
 #include "Components/CharacterSprintMovementComponent.h"
-#include "Interactable/InteractActor.h" /// TODO: Remove this
-#include "Interactable/BaseClasses/InteractableObject.h" /// TODO: Remove this
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
-
+#include "ThrowableProjectileIndicator.h"
 #include "InventoryComponent.h"
 #include "TomatoSack.h"
 
@@ -126,7 +124,8 @@ void APlayerCharacter::BeginPlay()
 
 	// Gets the player animation instance
 	PlayerAnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!PlayerAnimInstance) UE_LOG(LogTemp, Error, TEXT("Player is not using the correct anim instance"));
+	if (!PlayerAnimInstance)
+		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerCharacter: Invalid anim instance"), 30.0f);
 
 	// Construct the zoom in timeline
 	if (!ZoomInCurve) UE_LOG(LogTemp, Error, TEXT("Player zoom in curve is nullptr!"));
@@ -152,6 +151,23 @@ void APlayerCharacter::BeginPlay()
 	// Check if theres tomato in player's hand
 	CheckTomatoInHand();
 
+	// Spawn the projectile indicator actor
+	if (ThrowableProjectilIndicatorClass)
+	{
+		FActorSpawnParameters spawnParam;
+		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		ThrowableProjectilIndicator =
+			GetWorld()->SpawnActor<AThrowableProjectileIndicator>(
+				ThrowableProjectilIndicatorClass, 
+				FTransform::Identity,
+				spawnParam);
+	}
+	else
+	{
+		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerCharacter: Missing ThrowableProjectileIndicatorClass"), 30.0f);
+		UE_LOG(LogTemp, Error, TEXT("PlayerCharacter: Missing ThrowableProjectileIndicatorClass"));
+	}
+
 	// Set default state for the player UI
 	if (PlayerWidgetClass)
 	{
@@ -159,14 +175,14 @@ void APlayerCharacter::BeginPlay()
 		if (PlayerWidget)
 		{
 			PlayerWidget->AddToViewport();
-
 			PlayerWidget->ToggleStamina(true);
 			PlayerWidget->ToggleCrosshair(false);
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Missing Player hud widget class, failed to initiate player widget"));
+		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerCharacter: Missing PlayerWidgetClass"), 30.0f);
+		UE_LOG(LogTemp, Error, TEXT("PlayerCharacter: Missing PlayerWidgetClass"));
 	}
 }
 
@@ -196,9 +212,52 @@ void APlayerCharacter::Tick(float DeltaTime)
 	// Do the interaction tick
 	InteractionTick(DeltaTime);
 
-	// Need to get the ui always face the camera
-	//FRotator uiRot = (FollowCamera->GetComponentLocation() - WorldUiAnchor->GetComponentLocation()).Rotation();
-	//WorldUiAnchor->SetWorldRotation(uiRot);
+	
+
+	// Calculate the projectile prediction and update the projectile spline 
+	// if it should be shown
+	if (ThrowableProjectilIndicator &&
+		bShowingProjectileIndicator)
+	{
+		FVector pathStartPosition = TomatoSpawnPoint->GetComponentLocation();
+		CurrentThrowableLaunchVelocity =
+			ThrowingStrength * FollowCamera->GetForwardVector().RotateAngleAxis(
+				ThrowingAngle, FollowCamera->GetRightVector());
+		FString msg = "AimingVelo: " + CurrentThrowableLaunchVelocity.ToString();
+		CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Cyan, msg);
+
+		float projectileRadius = 20.0f;
+		TArray<AActor*> actorsToIgnore;
+		actorsToIgnore.Add(this);
+
+		FPredictProjectilePathResult predictResult;
+		FPredictProjectilePathParams predictParam;
+		predictParam.StartLocation = pathStartPosition;
+		predictParam.LaunchVelocity = CurrentThrowableLaunchVelocity;
+		predictParam.bTraceComplex = true;
+		predictParam.ProjectileRadius = projectileRadius;
+		predictParam.ObjectTypes = ThrowablePrecdictObjectType;
+		predictParam.bTraceComplex = false;
+		predictParam.ActorsToIgnore = actorsToIgnore;
+		predictParam.DrawDebugType = EDrawDebugTrace::Type::None;
+		predictParam.SimFrequency = 15.0f;
+		predictParam.MaxSimTime = 2.0f;
+		predictParam.bTraceWithChannel = true;
+		predictParam.bTraceWithCollision = true;
+		predictParam.OverrideGravityZ = ThrowableGravityOverwrite;
+		UGameplayStatics::PredictProjectilePath(this, predictParam, predictResult);
+
+		// Only do the update when there are some data in
+		if (predictResult.PathData.Num() > 0)
+		{
+			TArray<FVector> pathLocations;
+			for (FPredictProjectilePathPointData data : predictResult.PathData)
+			{
+				pathLocations.Add(data.Location);
+			}
+			ThrowableProjectilIndicator->UpdateIndicatorLine(pathLocations);
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -258,30 +317,16 @@ void APlayerCharacter::Sprint()
 	{
 		SprintMovementComponent->Sprint();
 	}
-// 	{
-// 		bSprinting = true;
-// 		SprintingPostProcess->bEnabled = true;
-// 
-// 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
-// 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed * SpringSpeedMultiplier;
-// 	}
 }
 
 void APlayerCharacter::UnSprint()
 {
 	SprintMovementComponent->UnSprint();
-// 	if (bSprinting)
-// 	{
-// 		FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
-// 		GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
-// 		SprintingPostProcess->bEnabled = false;
-// 	}
-// 	bSprinting = false;
 }
 
 void APlayerCharacter::OnSprintBegin()
 {
-	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 5.0f);
+	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV + 2.5f);
 	SprintingPostProcess->bEnabled = true;
 }
 
@@ -456,6 +501,7 @@ void APlayerCharacter::HHUPrimaryActionBegin()
 
 	// Use the currently selected useable item
 	InventoryComponent->UseItem(bHHUSecondaryActive);
+	HHUSecondaryActionEnd();
 }
 
 void APlayerCharacter::HHUPrimaryActionEnd()
@@ -495,12 +541,11 @@ void APlayerCharacter::HHUSecondaryActionBegin()
 			UnSprint();
 		bUseControllerRotationYaw = true;
 		CameraBoom->bEnableCameraLag = false;
-		CameraBoom->AttachToComponent(
-			AimDownSightFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
-		if (ZoomInTimeline)
-			ZoomInTimeline->Play();
 		PlayerAnimInstance->bAiming = true;
-		if (PlayerWidget) PlayerWidget->ToggleCrosshair(true);
+		bShowingProjectileIndicator = true;
+		if (ThrowableProjectilIndicator)
+			ThrowableProjectilIndicator->SetIndicatorEnabled(true);
+		ACatastropheMainGameMode::GetGameModeInst(this)->OnPlayerAimingBegin.Broadcast();
 		break;
 	}
 
@@ -526,12 +571,11 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 			// Let the character not follow camera rotation
 			bUseControllerRotationYaw = false;
 			CameraBoom->bEnableCameraLag = true;
-			CameraBoom->AttachToComponent(
-				CamFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
-			if (ZoomInTimeline)
-				ZoomInTimeline->Reverse();
 			PlayerAnimInstance->bAiming = false;
-			PlayerWidget->ToggleCrosshair(false);
+			bShowingProjectileIndicator = false;
+			if (ThrowableProjectilIndicator)
+				ThrowableProjectilIndicator->SetIndicatorEnabled(false);
+			ACatastropheMainGameMode::GetGameModeInst(this)->OnPlayerAimingEnd.Broadcast();
 			break;
 		}
 
@@ -554,6 +598,7 @@ UInventoryComponent* APlayerCharacter::GetInventoryComponent()
 	return InventoryComponent;
 }
 
+// Setting the currently interacting component
 void APlayerCharacter::SetInteractionTarget(class UInteractableComponent* _interactTargetComponent)
 {
 	if (IsValid(_interactTargetComponent))
@@ -562,6 +607,7 @@ void APlayerCharacter::SetInteractionTarget(class UInteractableComponent* _inter
 	}
 }
 
+// Remove the pointer of the given interacting component if its currently interacting with
 void APlayerCharacter::RemoveInteractionTarget(class UInteractableComponent* _interactTargetComponent)
 {
 	if (_interactTargetComponent == InteractingTargetComponent)
@@ -622,6 +668,7 @@ void APlayerCharacter::TogglePlayerHUD(bool _bEnable)
 	}
 }
 
+/// DEPRECATED: This component is no longer in use
 void APlayerCharacter::ToggleInteractUI(bool _bEnable)
 {
 	InteractableUiComponent->SetVisibility(_bEnable);
