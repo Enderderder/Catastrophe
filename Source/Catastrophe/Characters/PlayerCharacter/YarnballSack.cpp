@@ -35,15 +35,15 @@ void AYarnballSack::UseItem()
 			yarnballSpawnInfo.Owner = this;
 			yarnballSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-			yarnballSpawnLocation = Player->TomatoSpawnPoint->GetComponentLocation();
-			yarnballSpawnRotation = Player->FollowCamera->GetComponentRotation();
+			yarnballSpawnLocation = Player->GetThrowableSpawnPoint()->GetComponentLocation();
+			yarnballSpawnRotation = Player->GetCamera()->GetComponentRotation();
 
 			// Spawn the yarn ball
 			AYarnBall* SpawnedYarnball = GetWorld()->SpawnActor<AYarnBall>(YarnballClass, yarnballSpawnLocation, yarnballSpawnRotation, yarnballSpawnInfo);
 			if (SpawnedYarnball)
 			{
 				// Adds force to the yarnball to make it go flying
-				SpawnedYarnball->LaunchYarnball(Player->FollowCamera->GetForwardVector());
+				SpawnedYarnball->LaunchYarnball(Player->GetCamera()->GetForwardVector());
 			}
 
 			// Lower the ammo

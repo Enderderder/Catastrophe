@@ -27,6 +27,7 @@
 #include "Components/MovementModifierComponent.h"
 #include "Components/CharacterSprintMovementComponent.h"
 #include "Interactable/BaseClasses/InteractableComponent.h"
+#include "Components/BackPackComponent.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
 #include "ThrowableProjectileIndicator.h"
@@ -80,22 +81,23 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	TomatoSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("TomatoSpawnPoint"));
-	TomatoSpawnPoint->SetupAttachment(GetMesh());
+	// Holds player utilities
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+
+	// Back pack which holds the player collected items
+	BackPackComponent = CreateDefaultSubobject<UBackPackComponent>(TEXT("BackPackComponent"));
+
+	// A spawn location of all the throwable objects
+	ThrowableSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("TomatoSpawnPoint"));
+	ThrowableSpawnPoint->SetupAttachment(GetMesh());
 
 	// Set the tomato that will show inside players hand
 	TomatoInHandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoInHandMesh"));
 	TomatoInHandMesh->SetupAttachment(GetMesh(), TEXT("RightHandSocket"));
 
-	// Creates an item inventory component which stores useable items
-	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 
 	WorldUiAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("InteractableWidgetAnchor"));
 	WorldUiAnchor->SetupAttachment(RootComponent);
-
-	InteractableUiComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractableUiComponent"));
-	InteractableUiComponent->bVisible = false;
-	InteractableUiComponent->SetupAttachment(WorldUiAnchor);
 	
 	// Create stimuli
 	PerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("PerceptionStimuliSource"));
@@ -108,6 +110,7 @@ APlayerCharacter::APlayerCharacter()
 	SprintingPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("SprintingPostProcess"));
 	SprintingPostProcess->SetupAttachment(RootComponent);
 
+	// Alert particle that appears when the player is getting chase
 	SpottedAlertParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SpottedAlertParticle"));
 	SpottedAlertParticle->SetupAttachment(GetMesh());
 	SpottedAlertParticle->SetVisibility(false);
@@ -125,7 +128,7 @@ void APlayerCharacter::BeginPlay()
 	// Gets the player animation instance
 	PlayerAnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!PlayerAnimInstance)
-		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerCharacter: Invalid anim instance"), 30.0f);
+		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerCharacter: Invalid anim instance"));
 
 	// Construct the zoom in timeline
 	if (!ZoomInCurve) UE_LOG(LogTemp, Error, TEXT("Player zoom in curve is nullptr!"));
@@ -219,7 +222,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	if (ThrowableProjectilIndicator &&
 		bShowingProjectileIndicator)
 	{
-		FVector pathStartPosition = TomatoSpawnPoint->GetComponentLocation();
+		FVector pathStartPosition = ThrowableSpawnPoint->GetComponentLocation();
 		CurrentThrowableLaunchVelocity =
 			ThrowingStrength * FollowCamera->GetForwardVector().RotateAngleAxis(
 				ThrowingAngle, FollowCamera->GetRightVector());
@@ -668,12 +671,6 @@ void APlayerCharacter::TogglePlayerHUD(bool _bEnable)
 	}
 }
 
-/// DEPRECATED: This component is no longer in use
-void APlayerCharacter::ToggleInteractUI(bool _bEnable)
-{
-	InteractableUiComponent->SetVisibility(_bEnable);
-}
-
 void APlayerCharacter::ToggleSpottedAlert(bool _bEnable)
 {
 	if (_bEnable)
@@ -686,6 +683,7 @@ void APlayerCharacter::ToggleSpottedAlert(bool _bEnable)
 	}
 }
 
+// Return the crouching state from the movement component
 bool APlayerCharacter::IsPlayerCrouched() const
 {
 	return GetCharacterMovement()->IsCrouching();

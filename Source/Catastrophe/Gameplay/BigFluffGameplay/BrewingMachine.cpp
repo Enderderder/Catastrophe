@@ -7,6 +7,9 @@
 #include "Components/BoxComponent.h"
 
 #include "Interactable/BaseClasses/InteractableComponent.h"
+#include "BrewingMachineAnimInstance.h"
+
+#include "DebugUtility/CatastropheDebug.h"
 
 // Sets default values
 ABrewingMachine::ABrewingMachine()
@@ -43,6 +46,10 @@ void ABrewingMachine::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	BrewingMachineAnimInstance = Cast<UBrewingMachineAnimInstance>(BrewingMachineMesh->GetAnimInstance());
+	if (!BrewingMachineAnimInstance)
+		CatastropheDebug::OnScreenErrorMsg(TEXT("BrewingMachine: Invalid anim instance"));
+
 }
 
 // Called when the player interact with the brewing machine

@@ -31,8 +31,8 @@ private:
 
 protected:
 
-
-	//class 
+	UPROPERTY(BlueprintReadOnly, Category = "BrewingMachine")
+	class UBrewingMachineAnimInstance* BrewingMachineAnimInstance;
 
 public:	
 	// Sets default values for this actor's properties
