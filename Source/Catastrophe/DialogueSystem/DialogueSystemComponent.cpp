@@ -84,7 +84,7 @@ void UDialogueSystemComponent::StartConversation(int _ConversationIndex)
 		if (Player)
 		{
 			// Sets the player HUD to hidden
-			Player->GetPlayerWidget()->SetVisibility(ESlateVisibility::Hidden);
+			Player->GetPlayerHudWidget()->SetVisibility(ESlateVisibility::Hidden);
 		}
 
 		// Adds the dialogue widget to screen
@@ -108,7 +108,7 @@ void UDialogueSystemComponent::DisableDialogue(bool _bHasFinishedConversation)
 	if (Player)
 	{
 		// Sets the player HUD visible again
-		Player->GetPlayerWidget()->SetVisibility(ESlateVisibility::Visible);
+		Player->GetPlayerHudWidget()->SetVisibility(ESlateVisibility::Visible);
 	}
 
 	if (Conversations.Num() > CurrentConversationIndex && _bHasFinishedConversation)

@@ -36,7 +36,7 @@ void AClimbableStall::BeginPlay()
 	Super::BeginPlay();
 
 	InteractableComponent->RegisterTriggerVolume(TriggerBox);
-	InteractableComponent->OnInteract.AddDynamic(this, &AClimbableStall::InteractionStarting);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &AClimbableStall::InteractionStarting);
 }
 
 float AClimbableStall::FindTotalDistance()

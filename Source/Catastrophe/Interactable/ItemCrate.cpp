@@ -45,7 +45,7 @@ void AItemCrate::BeginPlay()
 	Super::BeginPlay();
 
 	// TODO: Move to constructor when able to (not working atm)
-	InteractableComponent->OnInteract.AddDynamic(this, &AItemCrate::PickupItem);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &AItemCrate::PickupItem);
 }
 
 void AItemCrate::PickupItem(class APlayerCharacter* _playerCharacter)

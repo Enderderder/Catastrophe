@@ -62,7 +62,7 @@ void AQteBobLogicHolder::InitiateEventWithRange(float _range)
 	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
 	if (IsValid(playerCharacter))
 	{
-		QteBobWidget = playerCharacter->GetPlayerWidget()->CreateQteBobWidget(this);
+		QteBobWidget = playerCharacter->GetPlayerHudWidget()->CreateQteBobWidget(this);
 		if (QteBobWidget)
 		{
 			// Make sure the event range is less than 50 and starts after 50

@@ -24,7 +24,7 @@ AItemPickup::AItemPickup()
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->RegisterTriggerVolume(TriggerBox);
-	InteractableComponent->OnInteract.AddDynamic(this, &AItemPickup::PickUpItem);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &AItemPickup::PickUpItem);
 }
 
 // Called when the game starts or when spawned

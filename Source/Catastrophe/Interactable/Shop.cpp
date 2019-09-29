@@ -23,7 +23,7 @@ AShop::AShop()
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->RegisterTriggerVolume(TriggerBox);
-	InteractableComponent->OnInteract.AddDynamic(this, &AShop::Interact);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &AShop::Interact);
 }
 
 // Called when the game starts or when spawned

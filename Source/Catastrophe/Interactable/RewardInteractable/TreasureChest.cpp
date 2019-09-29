@@ -24,7 +24,7 @@ ATreasureChest::ATreasureChest()
 
 	InteractableCompoenent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableCompoenent"));
 	InteractableCompoenent->RegisterTriggerVolume(TriggerBox);
-	InteractableCompoenent->OnInteract.AddDynamic(this, &ATreasureChest::OnPlayerInteract);
+	InteractableCompoenent->OnInteractSuccess.AddDynamic(this, &ATreasureChest::OnPlayerInteract);
 }
 
 // Called when the game starts or when spawned

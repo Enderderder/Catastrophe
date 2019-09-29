@@ -8,7 +8,7 @@
 
 // Delegates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractSingature, class APlayerCharacter*, _playerCharacter);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInteractTickSingature, class APlayerCharacter*, _playerCharacter, float, _holdingTime);
 
 /**
  * This component control and sends out signal when player is interacting
@@ -22,9 +22,17 @@ public:
 	// Sets default values for this component's properties
 	UInteractableComponent();
 
-	/** Even called when the player interact with this component */
+	/** Event called when the player begin to interact with this component */
 	UPROPERTY(BlueprintAssignable)
-	FInteractSingature OnInteract;
+	FInteractSingature OnInteractTickBegin;
+
+	/** Event called when the player interact with this component */
+	UPROPERTY(BlueprintAssignable)
+	FInteractSingature OnInteractSuccess;
+
+	/** Event called during player interact with this component */
+	UPROPERTY(BlueprintAssignable)
+	FInteractTickSingature OnInteractTick;
 
 	/** Indicate that if this object can be interacted */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interaction")
@@ -60,9 +68,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	int32 TriggerCounter = 0;
 
-	/** Reference to the player character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
 	class APlayerCharacter* PlayerRef;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
+	class UPlayerWidget* PlayerHudRef;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
+	bool bInteracting = false;
+
+private:
 
 	bool bShowingUi = false;
 
@@ -77,10 +92,16 @@ protected:
 	void OnTriggerEndWithPlayer(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:	
+
 	/** Called each frame */
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	/** Called when player interact */
+	/**
+	 * Called when the player interact with this component
+	 * @author Richard Wulasnsari
+	 * @param _playerCharacter
+	 * @param _holdTime: How long has the player been holding interact
+	 */
 	void Interact(class APlayerCharacter* _playerCharacter, float _holdTime);
 
 	/**
@@ -93,7 +114,19 @@ public:
 	void RegisterTriggerVolume(class UPrimitiveComponent* _registeringComponent);
 
 	/**
-	 * 
+	 * Sets the visiblity of the player interaction Ui
+	 * @author Richard Wulansari
+	 * @param _visibility
 	 */
 	void SetInteractionUiVisible(bool _visibility);
+
+private:
+
+	/**
+	 * Called to validate the information this component contains
+	 * @author Richard Wulansari
+	 * @return bool Is data valid
+	 */
+	bool HasValidData();
+
 };

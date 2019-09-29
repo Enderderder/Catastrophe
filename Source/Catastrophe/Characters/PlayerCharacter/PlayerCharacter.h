@@ -421,7 +421,7 @@ public:
 	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { return PerceptionStimuliSourceComponent; }
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
 	bool IsPlayerCrouched() const;
-	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
+	FORCEINLINE class UPlayerWidget* GetPlayerHudWidget() const { return PlayerWidget; }
 	FORCEINLINE UCharacterSprintMovementComponent* GetSprintMovementComponent() const { 
 		return SprintMovementComponent; }
 	FORCEINLINE class AThrowableProjectileIndicator* GetProjectileIndicator() const {

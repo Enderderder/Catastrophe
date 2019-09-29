@@ -25,7 +25,7 @@ ANPC::ANPC()
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->RegisterTriggerVolume(TriggerBox);
-	InteractableComponent->OnInteract.AddDynamic(this, &ANPC::Interact);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &ANPC::Interact);
 
 	DialogueSystemComponent = CreateDefaultSubobject<UDialogueSystemComponent>(TEXT("DialogueSystemComponent"));
 }
