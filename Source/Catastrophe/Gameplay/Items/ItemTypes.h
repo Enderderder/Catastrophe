@@ -6,7 +6,7 @@
 #include "ItemTypes.generated.h"
 
 USTRUCT(BlueprintType)
-struct FItemInfo
+struct FItemData
 {
 	GENERATED_BODY()
 
@@ -15,7 +15,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString ItemName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemComponent", meta = (MultiLine = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MultiLine = "true"))
 	FString ItemDescription;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -28,14 +28,18 @@ public:
 	bool bUseable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bConsumeOnUse;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanDiscard;
 
-	FItemInfo() :
+	FItemData() :
 		ItemName("NAME_ITEM_DEFAULT"),
 		ItemDescription("DESCRIPTION_ITEM_DEFAULT"),
 		ItemIcon(nullptr),
 		ItemMaxStackSize(1),
 		bUseable(false),
+		bConsumeOnUse(true),
 		bCanDiscard(true)
 	{}
 };

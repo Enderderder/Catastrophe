@@ -15,7 +15,7 @@ class CATASTROPHE_API AItemBase : public AActor
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-	FItemInfo ItemInfo;
+	FItemData ItemInfo;
 
 public:	
 	// Sets default values for this actor's properties
@@ -25,8 +25,19 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
 
+	/**
+	 * Virtual function. Called when player uses the item
+	 * @author Richard Wulansari
+	 * @param _playerCharacter
+	 * @note Avoid any useage of self reference
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Item")
+	void UseItem(class APlayerCharacter* _playerCharacter);
+	virtual void UseItem_Implementation(class APlayerCharacter* _playerCharacter);
+
+
+	/** Getter */
+	FORCEINLINE FItemData GetItemData() const { return ItemInfo; }
 };

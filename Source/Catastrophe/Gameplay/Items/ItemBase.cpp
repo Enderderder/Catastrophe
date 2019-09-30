@@ -6,10 +6,7 @@
 // Sets default values
 AItemBase::AItemBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	
+	PrimaryActorTick.bCanEverTick = false;
 
 }
 
@@ -20,10 +17,8 @@ void AItemBase::BeginPlay()
 	
 }
 
-// Called every frame
-void AItemBase::Tick(float DeltaTime)
+void AItemBase::UseItem_Implementation(class APlayerCharacter* _playerCharacter)
 {
-	Super::Tick(DeltaTime);
-
+	/// Base class implementation
 }
 
