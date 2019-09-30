@@ -135,6 +135,7 @@ void AGuard::Tick(float DeltaTime)
 		FRotator headShotTargetRot = UKismetMathLibrary::FindLookAtRotation(
 			HeadShotTargetAnchor->GetComponentLocation(), 
 			UGameplayStatics::GetPlayerCameraManager(this, 0)->GetCameraLocation());
+		headShotTargetRot = UKismetMathLibrary::RotatorFromAxisAndAngle(headShotTargetRot.Euler(), DeltaTime);
 		HeadShotTargetAnchor->SetWorldRotation(headShotTargetRot);
 	}
 
