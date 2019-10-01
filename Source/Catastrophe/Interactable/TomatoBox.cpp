@@ -30,7 +30,7 @@ ATomatoBox::ATomatoBox()
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->bOneTimeUse = false;
 	InteractableComponent->RegisterTriggerVolume(TriggerVolume);
-	InteractableComponent->OnInteract.AddDynamic(this, &ATomatoBox::PickUpTomato);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &ATomatoBox::PickUpTomato);
 }
 
 void ATomatoBox::BeginPlay()

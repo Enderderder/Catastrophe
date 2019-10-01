@@ -41,7 +41,7 @@ AHidingUrn::AHidingUrn()
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->RegisterTriggerVolume(TriggerBox);
-	InteractableComponent->OnInteract.AddDynamic(this, &AHidingUrn::OnPlayerInteract);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &AHidingUrn::OnPlayerInteract);
 }
 
 void AHidingUrn::BeginPlay()

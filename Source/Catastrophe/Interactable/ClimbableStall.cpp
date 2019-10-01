@@ -24,6 +24,8 @@ AClimbableStall::AClimbableStall()
 	TriggerBox->SetupAttachment(RootComponent);
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
+	
+
 
 	// Set the default state
 	WayPointCount = 0;
@@ -36,7 +38,8 @@ void AClimbableStall::BeginPlay()
 	Super::BeginPlay();
 
 	InteractableComponent->RegisterTriggerVolume(TriggerBox);
-	InteractableComponent->OnInteract.AddDynamic(this, &AClimbableStall::InteractionStarting);
+	InteractableComponent->OnInteractSuccess.RemoveDynamic(this, &AClimbableStall::InteractionStarting);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &AClimbableStall::InteractionStarting);
 }
 
 float AClimbableStall::FindTotalDistance()

@@ -30,7 +30,7 @@ AStackedCrates::AStackedCrates()
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->RegisterTriggerVolume(TriggerVolume);
-	InteractableComponent->OnInteract.AddDynamic(this, &AStackedCrates::OnPlayerInteract);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &AStackedCrates::OnPlayerInteract);
 }
 
 void AStackedCrates::BeginPlay()

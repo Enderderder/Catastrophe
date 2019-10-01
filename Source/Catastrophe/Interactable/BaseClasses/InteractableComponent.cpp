@@ -24,40 +24,42 @@ void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (IsValid(PlayerRef) &&
-		IsValid(this) &&
-		bShowingUi)
+	if (HasValidData() && bShowingUi)
 	{
-		PlayerRef->GetPlayerWidget()->UpdateInteractionUi(this);
+		PlayerHudRef->UpdateInteractionUi(this);
 	}
 }
 
+// When trigger with the player character, set interaction target to it
 void UInteractableComponent::OnTriggerWithPlayer(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!PlayerRef && OtherActor->ActorHasTag("Player"))
+	if (OtherActor->ActorHasTag("Player"))
 	{
-		PlayerRef = Cast<APlayerCharacter>(OtherActor);
-	}
+		if (!PlayerRef)
+			PlayerRef = Cast<APlayerCharacter>(OtherActor);
 
-	// See if we already holds the player character pointer
-	if (IsValid(PlayerRef) && 
-		PlayerRef == OtherActor)
-	{
-		if (bCanInteract)
+		if (IsValid(PlayerRef))
 		{
-			PlayerRef->SetInteractionTarget(this);
-			SetInteractionUiVisible(true);
-		}
-		TriggerCounter++;
-	}
+			TriggerCounter++;
 
-	// If this component has set to auto interact, interact immediatly
-	if (bAutoInteract && IsValid(PlayerRef))
-	{
-		Interact(PlayerRef, 0.0f);
+			PlayerHudRef = PlayerRef->GetPlayerHudWidget();
+
+			if (bCanInteract)
+			{
+				PlayerRef->SetInteractionTarget(this);
+				SetInteractionUiVisible(true);
+
+				// If this component has set to auto interact, interact immediatly
+				if (bAutoInteract && IsValid(PlayerRef))
+				{
+					Interact(PlayerRef, 0.0f);
+				}
+			}
+		}
 	}
 }
 
+// As player leaves the trigger area, decrease trigger count and if no more trigger count, disable interaction
 void UInteractableComponent::OnTriggerEndWithPlayer(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (PlayerRef == OtherActor)
@@ -73,29 +75,48 @@ void UInteractableComponent::OnTriggerEndWithPlayer(class UPrimitiveComponent* O
 	}
 }
 
+// Called when the player interact with this component
 void UInteractableComponent::Interact(class APlayerCharacter* _playerCharacter, float _holdTime)
 {
-	HoldingTime = _holdTime;
+	if (!HasValidData()) return;
 
-	UPlayerWidget* playerWidget = _playerCharacter->GetPlayerWidget();
-	if (bCanInteract && _holdTime >= RequiredHoldTime)
+	if (bCanInteract)
 	{
-		// Calls the interact functions
-		OnInteract.Broadcast(_playerCharacter);
+		HoldingTime = _holdTime;
 
-		// Reset the holding time
-		HoldingTime = 0.0f;
-		_playerCharacter->ResetInteractionAction();
-
-		// If the component has set to one time use, disable after interaction
-		if (bOneTimeUse)
+		// Check if this is the beginning of the interaction
+		if (!bInteracting)
 		{
-			bCanInteract = false;
-			SetInteractionUiVisible(false);
+			bInteracting = true;
+			OnInteractTickBegin.Broadcast(_playerCharacter);
 		}
-	}
 
-	playerWidget->UpdateInteractionUi(this);
+		UPlayerWidget* playerWidget = _playerCharacter->GetPlayerHudWidget();
+		if (playerWidget)
+		{
+			// Check if player has completed the holding time requirement
+			if (_holdTime >= RequiredHoldTime)
+			{
+				OnInteractSuccess.Broadcast(_playerCharacter);
+
+				// After a successful interaction
+				HoldingTime = 0.0f;
+				bInteracting = false;
+				_playerCharacter->ResetInteractionAction();
+
+				// If the component has set to one time use, disable after interaction
+				if (bOneTimeUse)
+				{
+					bCanInteract = false;
+					SetInteractionUiVisible(false);
+				}
+			}
+			else // If not, then broadcast the holding event
+			{
+				OnInteractTick.Broadcast(_playerCharacter, _holdTime);
+			}
+		}	
+	}
 }
 
 void UInteractableComponent::RegisterTriggerVolume(class UPrimitiveComponent* _registeringComponent)
@@ -110,11 +131,21 @@ void UInteractableComponent::RegisterTriggerVolume(class UPrimitiveComponent* _r
 		this, &UInteractableComponent::OnTriggerEndWithPlayer);
 }
 
+// Sets the visibility of the player interaction ui
 void UInteractableComponent::SetInteractionUiVisible(bool _visibility)
 {
+	if (!HasValidData()) return;
+
 	bShowingUi = _visibility;
-	if (IsValid(PlayerRef))
-	{
-		PlayerRef->GetPlayerWidget()->SetInteractionUiVisible(_visibility);
-	}
+	PlayerHudRef->UpdateInteractionUi(this);
+	PlayerHudRef->SetInteractionUiVisible(_visibility);
+}
+
+bool UInteractableComponent::HasValidData()
+{
+	return 
+		IsValid(this) && 
+		IsValid(GetOwner()) && 
+		IsValid(PlayerRef) &&
+		IsValid(PlayerHudRef);
 }

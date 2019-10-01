@@ -79,6 +79,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
+	/** Follow camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
+
 	/** Where the camera is going to be focused on normally */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* CamFocusPoint;
@@ -90,22 +94,22 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* AimDownSightFocusPoint;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU_Tomato", meta = (AllowPrivateAccess = "true"))
-	//class UTomatoSack* TomatoSack;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU | General", meta = (AllowPrivateAccess = "true"))
 	class UInventoryComponent* InventoryComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BackPackComponent", meta = (AllowPrivateAccess = "true"))
+	class UBackPackComponent* BackPackComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU | Throwable", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
 
+	/** Spawn location for the throwable items */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU | Throwable", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* ThrowableSpawnPoint;
+
 	// The anchor of the interactable UI
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* WorldUiAnchor;
-
-	/// DEPRECATED: This component is no longer in use
-	// The interactable UI that appears on the player
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
-	class UWidgetComponent* InteractableUiComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAIPerceptionStimuliSourceComponent* PerceptionStimuliSourceComponent;
@@ -251,16 +255,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Fish Bones")
 	int32 FishBonesAmount;
 
-	// Deprecated TODO: Remove reference of this component
-	/** Spawn location for the throwable */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HHU | Throwable", meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* TomatoSpawnPoint;
-
-	///TODO: Move this component back to private and create getter
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
-
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Movement")
 	EPlayerMovementSet CurrentMovementSet = EPlayerMovementSet::NORMAL;
 
@@ -400,10 +394,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player | General")
 	void TogglePlayerHUD(bool _bEnable);
 
-	/// DEPRECATED: This component is no longer in use
-	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void ToggleInteractUI(bool _bEnable);
-
 	/**
 	 * Toggle the activation state of the spotted alert
 	 * This will turn the SpottedParticle on and off
@@ -416,16 +406,21 @@ public:
 	/** Check if player has tomato in his hand */
 	void CheckTomatoInHand();
 
+	/** Check if player is crouching */
+	bool IsPlayerCrouched() const;
+
 	/** Getter */
 	FORCEINLINE FPlayerDefaultValue GetPlayerDefaultValues() const { return PlayerDefaultValues; }
 	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { return PerceptionStimuliSourceComponent; }
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
-	bool IsPlayerCrouched() const;
-	FORCEINLINE class UPlayerWidget* GetPlayerWidget() const { return PlayerWidget; }
+	FORCEINLINE class UPlayerWidget* GetPlayerHudWidget() const { return PlayerWidget; }
+	FORCEINLINE class UCameraComponent* GetCamera() const { return FollowCamera; }
 	FORCEINLINE UCharacterSprintMovementComponent* GetSprintMovementComponent() const { 
 		return SprintMovementComponent; }
 	FORCEINLINE class AThrowableProjectileIndicator* GetProjectileIndicator() const {
 		return ThrowableProjectilIndicator;}
+	FORCEINLINE class USceneComponent* GetThrowableSpawnPoint() const { return ThrowableSpawnPoint; }
+	FORCEINLINE class UBackPackComponent* GetBackPack() const { return BackPackComponent; }
 	FORCEINLINE FVector GetCurrentThrowingVelocity() const { return CurrentThrowableLaunchVelocity; }
 	FORCEINLINE float GetThrowingGravity() const { return ThrowableGravityOverwrite; }
 	/** Getter End */

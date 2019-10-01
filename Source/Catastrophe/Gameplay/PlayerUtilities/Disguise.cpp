@@ -38,7 +38,7 @@ void ADisguise::BeginPlay()
 
 	// Attaching the disguise to the 
 	DisguiseMesh->AttachToComponent(Player->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	DisguiseMesh->RelativeLocation = FVector(0, 0, 10);
+	DisguiseMesh->RelativeLocation = DisguiseOffset;
 
 	// Start the disguise on spawn
 	UseDisguise();

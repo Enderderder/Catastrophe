@@ -31,8 +31,8 @@ private:
 
 protected:
 
-
-	//class 
+	UPROPERTY(BlueprintReadOnly, Category = "BrewingMachine")
+	class UBrewingMachineAnimInstance* BrewingMachineAnimInstance;
 
 public:	
 	// Sets default values for this actor's properties
@@ -44,9 +44,10 @@ protected:
 
 	/** Called when the player interact with the object */
 	UFUNCTION()
-	void OnInteract(class APlayerCharacter* _playerCharacter);
+	void OnInteractSuccess(class APlayerCharacter* _playerCharacter);
 
-
+	UFUNCTION()
+	void OnInteractBegin(class APlayerCharacter* _playerCharacter);
 
 public:	
 	// Called every frame

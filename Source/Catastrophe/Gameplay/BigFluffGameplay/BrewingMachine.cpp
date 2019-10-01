@@ -7,6 +7,9 @@
 #include "Components/BoxComponent.h"
 
 #include "Interactable/BaseClasses/InteractableComponent.h"
+#include "BrewingMachineAnimInstance.h"
+
+#include "DebugUtility/CatastropheDebug.h"
 
 // Sets default values
 ABrewingMachine::ABrewingMachine()
@@ -32,8 +35,10 @@ ABrewingMachine::ABrewingMachine()
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->RegisterTriggerVolume(InteractionTrigger);
-	InteractableComponent->OnInteract.RemoveDynamic(this, &ABrewingMachine::OnInteract);
-	InteractableComponent->OnInteract.AddDynamic(this, &ABrewingMachine::OnInteract);
+	InteractableComponent->OnInteractTickBegin.RemoveDynamic(this, &ABrewingMachine::OnInteractBegin);
+	InteractableComponent->OnInteractTickBegin.AddDynamic(this, &ABrewingMachine::OnInteractBegin);
+	InteractableComponent->OnInteractSuccess.RemoveDynamic(this, &ABrewingMachine::OnInteractSuccess);
+	InteractableComponent->OnInteractSuccess.AddDynamic(this, &ABrewingMachine::OnInteractSuccess);
 }
 
 // Called when the game starts or when spawned
@@ -41,10 +46,19 @@ void ABrewingMachine::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	BrewingMachineAnimInstance = Cast<UBrewingMachineAnimInstance>(BrewingMachineMesh->GetAnimInstance());
+	if (!BrewingMachineAnimInstance)
+		CatastropheDebug::OnScreenErrorMsg(TEXT("BrewingMachine: Invalid anim instance"));
+
 }
 
 // Called when the player interact with the brewing machine
-void ABrewingMachine::OnInteract(class APlayerCharacter* _playerCharacter)
+void ABrewingMachine::OnInteractSuccess(class APlayerCharacter* _playerCharacter)
+{
+
+}
+
+void ABrewingMachine::OnInteractBegin(class APlayerCharacter* _playerCharacter)
 {
 
 }

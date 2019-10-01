@@ -40,8 +40,8 @@ void ATomatoSack::UseItem()
 			Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
 				
 		// Set the parameter for spawning the tomato
-		FVector spawnLocation = playerCharacter->TomatoSpawnPoint->GetComponentLocation();
-		FRotator spawnRotation = playerCharacter->FollowCamera->GetComponentRotation();
+		FVector spawnLocation = playerCharacter->GetThrowableSpawnPoint()->GetComponentLocation();
+		FRotator spawnRotation = playerCharacter->GetCamera()->GetComponentRotation();
 		FActorSpawnParameters spawnParam;
 		spawnParam.Owner = this;
 		spawnParam.SpawnCollisionHandlingOverride = 
