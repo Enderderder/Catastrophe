@@ -3,3 +3,7 @@
 
 #include "ItemStack.h"
 
+UItemStack::UItemStack()
+{
+
+}

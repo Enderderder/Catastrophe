@@ -15,7 +15,6 @@ UItemComponent::UItemComponent()
 
 	// ...
 
-	GetOwner()->StaticClass();
 }
 
 
