@@ -131,12 +131,14 @@ void AGuard::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// Rotate the headshot target plane towards the camera
+	// As well as self rotating
 	{
 		FRotator headShotTargetRot = UKismetMathLibrary::FindLookAtRotation(
 			HeadShotTargetAnchor->GetComponentLocation(), 
 			UGameplayStatics::GetPlayerCameraManager(this, 0)->GetCameraLocation());
-		headShotTargetRot = UKismetMathLibrary::RotatorFromAxisAndAngle(headShotTargetRot.Euler(), DeltaTime);
 		HeadShotTargetAnchor->SetWorldRotation(headShotTargetRot);
+		const FRotator addingRotation = FRotator(0.0f, 0.0f, DeltaTime * 30.0f);
+		HeadShotTargetMesh->AddLocalRotation(addingRotation);
 	}
 
 	if (bPlayerInSleepDetectRange)
