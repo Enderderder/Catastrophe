@@ -379,8 +379,6 @@ void AGuard::LookAround_Implementation(float& out_montageTime)
 
 void AGuard::OnCatchPlayer_Implementation(APlayerCharacter* _player)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player caught"));
-
 	/// Should be implement in derived class
 }
 

@@ -126,7 +126,7 @@ void ACatastropheMainGameMode::OnGuardQteFailed()
 		{
 			FLoadStreamingLevelInfo info;
 			info.OriginalLevelName = guardLevelName;
-			info.LoadedLevelName = TEXT("ChrisJail");
+			info.LoadedLevelName = TEXT("Jail");
 			info.bUnloadCurrentLevel = true;
 			info.bTeleportPlayer = true;
 			info.DistrictType = EDISTRICT::JAIL;
