@@ -11,6 +11,8 @@
 
 #include "StreamingLevelInterface.h"
 
+#include "DebugUtility/CatastropheDebug.h"
+
 URespawnSubsystem::URespawnSubsystem() 
 	: UCatastropheGameInstanceSubsystem()
 {}
@@ -44,9 +46,16 @@ void URespawnSubsystem::LoadLevelStreaming(FLoadStreamingLevelInfo _loadLevelInf
 {
 	// Store the temp value
 	tempInfo = _loadLevelInfo;
+	
+	// If the names are same, then go to reset level
+	if (_loadLevelInfo.LoadingLevelName == _loadLevelInfo.OriginalLevelName)
+	{
+		ResetStreamingLevel(_loadLevelInfo);
+		return;
+	}
 
-	OnLevelStartLoad.Broadcast();
-
+	// Load the level normally
+	OnLevelTransitionStart.Broadcast();
 	FLatentActionInfo latenInfo;
 	latenInfo.CallbackTarget = this;
 	latenInfo.UUID = 1;
@@ -71,9 +80,24 @@ void URespawnSubsystem::ResetStreamingLevel(FLoadStreamingLevelInfo _loadLevelIn
 	// Store the temp value
 	tempInfo = _loadLevelInfo;
 
+	// If loading and unloading names are different, abort
+	if (_loadLevelInfo.LoadingLevelName != _loadLevelInfo.OriginalLevelName)
+	{
+		CatastropheDebug::OnScreenErrorMsg(TEXT("RespawnSystem: Cannot reset level, original name and loading name is different"));
+		return;
+	}
 
-
-
+	OnLevelTransitionStart.Broadcast();
+	FLatentActionInfo latenInfo;
+	latenInfo.CallbackTarget = this;
+	latenInfo.UUID = 3;
+	latenInfo.Linkage = 0;
+	latenInfo.ExecutionFunction = TEXT("OnStreamLevelResetUnloadFinish");
+	UGameplayStatics::UnloadStreamLevel(
+		this, 
+		_loadLevelInfo.OriginalLevelName,
+		latenInfo, 
+		false);
 }
 
 void URespawnSubsystem::RegisterRespawnLocation(EDISTRICT _districtType, FTransform _transform)
@@ -148,6 +172,8 @@ FName URespawnSubsystem::GetStreamingLevelNameFromActor(AActor* _actor)
 
 void URespawnSubsystem::OnStreamLevelLoaded()
 {
+	OnLevelLoaded.Broadcast(tempInfo);
+
 	if (tempInfo.bTeleportPlayer)
 	{
 		RespawnPlayerAtLocation(tempInfo.RespawnDistrictType);
@@ -160,23 +186,44 @@ void URespawnSubsystem::OnStreamLevelLoaded()
 		latenInfo.UUID = 2;
 		latenInfo.Linkage = 0;
 		latenInfo.ExecutionFunction = TEXT("OnStreamLevelUnloaded");
-
 		UGameplayStatics::UnloadStreamLevel(
 			this, 
 			tempInfo.OriginalLevelName, 
 			latenInfo, 
 			tempInfo.bBlockOnLoad);
 	}
-
-	OnLevelLoaded.Broadcast(tempInfo);
 }
 
 void URespawnSubsystem::OnStreamLevelUnloaded()
 {
-	OnLevelFinsihLoad.Broadcast();
+	OnLevelUnLoaded.Broadcast(tempInfo);
+	OnLevelTransitionFinish.Broadcast();
 }
 
 void URespawnSubsystem::OnStreamLevelResetUnloadFinish()
 {
+	OnLevelUnLoaded.Broadcast(tempInfo);
 
+	FLatentActionInfo latenInfo;
+	latenInfo.CallbackTarget = this;
+	latenInfo.UUID = 4;
+	latenInfo.Linkage = 0;
+	latenInfo.ExecutionFunction = TEXT("OnStreamLevelResetReloadFinish");
+	UGameplayStatics::LoadStreamLevel(
+		this,
+		tempInfo.LoadingLevelName,
+		true,
+		tempInfo.bBlockOnLoad,
+		latenInfo);
+}
+
+void URespawnSubsystem::OnStreamLevelResetReloadFinish()
+{
+	OnLevelLoaded.Broadcast(tempInfo);
+	OnLevelTransitionFinish.Broadcast();
+
+	if (tempInfo.bTeleportPlayer)
+	{
+		RespawnPlayerAtLocation(tempInfo.RespawnDistrictType);
+	}
 }

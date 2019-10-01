@@ -30,11 +30,11 @@ public:
 
 	/** Broadcast event called when a level transition start happening */
 	UPROPERTY(BlueprintAssignable, Category = "Respawn System")
-	FLevelTransitionSignature OnLevelStartLoad;
+	FLevelTransitionSignature OnLevelTransitionStart;
 
 	/** Broadcast event called when a level transition finish happening */
 	UPROPERTY(BlueprintAssignable, Category = "Respawn System")
-	FLevelTransitionSignature OnLevelFinsihLoad;
+	FLevelTransitionSignature OnLevelTransitionFinish;
 
 	UPROPERTY(BlueprintAssignable, Category = "Respawn System")
 	FLevelStreamSignatureOneParam OnLevelLoaded;
@@ -137,7 +137,9 @@ protected:
 	UFUNCTION()
 	void OnStreamLevelResetUnloadFinish();
 
-
+	/** Called when a level is reloaded during reset*/
+	UFUNCTION()
+	void OnStreamLevelResetReloadFinish();
 
 
 };
