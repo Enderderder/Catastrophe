@@ -54,7 +54,7 @@ void URespawnSubsystem::LoadLevelStreaming(FLoadStreamingLevelInfo _loadLevelInf
 	latenInfo.ExecutionFunction = TEXT("OnStreamLevelLoaded");
 	UGameplayStatics::LoadStreamLevel(
 		this,
-		_loadLevelInfo.LoadedLevelName,
+		_loadLevelInfo.LoadingLevelName,
 		true,
 		_loadLevelInfo.bBlockOnLoad,
 		latenInfo);
@@ -64,6 +64,16 @@ void URespawnSubsystem::UnloadStreamingLevel(FName _levelName)
 {
 	FLatentActionInfo latenInfo;
 	UGameplayStatics::UnloadStreamLevel(this, _levelName, latenInfo, false);
+}
+
+void URespawnSubsystem::ResetStreamingLevel(FLoadStreamingLevelInfo _loadLevelInfo)
+{
+	// Store the temp value
+	tempInfo = _loadLevelInfo;
+
+
+
+
 }
 
 void URespawnSubsystem::RegisterRespawnLocation(EDISTRICT _districtType, FTransform _transform)
@@ -140,10 +150,10 @@ void URespawnSubsystem::OnStreamLevelLoaded()
 {
 	if (tempInfo.bTeleportPlayer)
 	{
-		RespawnPlayerAtLocation(tempInfo.DistrictType);
+		RespawnPlayerAtLocation(tempInfo.RespawnDistrictType);
 	}
 
-	if (tempInfo.bUnloadCurrentLevel)
+	if (tempInfo.bUnloadOriginalLevel)
 	{
 		FLatentActionInfo latenInfo;
 		latenInfo.CallbackTarget = this;
@@ -157,13 +167,16 @@ void URespawnSubsystem::OnStreamLevelLoaded()
 			latenInfo, 
 			tempInfo.bBlockOnLoad);
 	}
-	else
-	{
-		OnLevelFinsihLoad.Broadcast();
-	}
+
+	OnLevelLoaded.Broadcast(tempInfo);
 }
 
 void URespawnSubsystem::OnStreamLevelUnloaded()
 {
 	OnLevelFinsihLoad.Broadcast();
+}
+
+void URespawnSubsystem::OnStreamLevelResetUnloadFinish()
+{
+
 }

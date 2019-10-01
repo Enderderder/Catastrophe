@@ -23,7 +23,6 @@ UBackPackComponent::UBackPackComponent()
 
 }
 
-
 // Called when the game starts
 void UBackPackComponent::BeginPlay()
 {
@@ -34,7 +33,6 @@ void UBackPackComponent::BeginPlay()
 		CatastropheDebug::OnScreenErrorMsg(
 			TEXT("BackPackComponent: The Owner is not Player"));
 }
-
 
 bool UBackPackComponent::HasValidData() const
 {
