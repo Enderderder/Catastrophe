@@ -7,68 +7,9 @@
 #include "RespawnSystemTypes.h"
 #include "RespawnSubsystem.generated.h"
 
-/**
- * 
- */
-USTRUCT(BlueprintType)
-struct FLoadStreamingLevelInfo
-{
-	GENERATED_BODY()
-
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName OriginalLevelName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName LoadedLevelName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bUnloadCurrentLevel;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bTeleportPlayer;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EDISTRICT DistrictType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bBlockOnLoad;
-
-	FLoadStreamingLevelInfo() :
-		OriginalLevelName(TEXT("DefaultName")),
-		LoadedLevelName(TEXT("DefaultName")),
-		bUnloadCurrentLevel(true),
-		bTeleportPlayer(true),
-		DistrictType(EDISTRICT::HUB),
-		bBlockOnLoad(false)
-	{}
-};
-
-/**
- *
- */
-USTRUCT(BlueprintType)
-struct FRespawnLocation
-{
-	GENERATED_BODY()
-
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EDISTRICT District;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FTransform> RespawnTransforms;
-
-	FRespawnLocation() :
-		District(EDISTRICT::HUB)
-	{}
-};
-
-
 /** Delegates */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLevelTransitionSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLevelStreamSignatureOneParam, const FLoadStreamingLevelInfo, _info);
 
 /**
  * This system controls the spawn of the player
@@ -89,12 +30,17 @@ public:
 
 	/** Broadcast event called when a level transition start happening */
 	UPROPERTY(BlueprintAssignable, Category = "Respawn System")
-	FLevelTransitionSignature OnLevelStartLoad;
+	FLevelTransitionSignature OnLevelTransitionStart;
 
 	/** Broadcast event called when a level transition finish happening */
 	UPROPERTY(BlueprintAssignable, Category = "Respawn System")
-	FLevelTransitionSignature OnLevelFinsihLoad;
+	FLevelTransitionSignature OnLevelTransitionFinish;
 
+	UPROPERTY(BlueprintAssignable, Category = "Respawn System")
+	FLevelStreamSignatureOneParam OnLevelLoaded;
+
+	UPROPERTY(BlueprintAssignable, Category = "Respawn System")
+	FLevelStreamSignatureOneParam OnLevelUnLoaded;
 
 protected:
 
@@ -129,6 +75,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
 	void UnloadStreamingLevel(FName _levelName);
+
+	UFUNCTION(BlueprintCallable, Category = "Respawn System")
+	void ResetStreamingLevel(FLoadStreamingLevelInfo _loadLevelInfo);
 
 	/**
 	 * Called to store spawn locations at certain district
@@ -176,12 +125,21 @@ public:
 
 protected:
 
-	/** Called when an level is loaded */
+	/** Called when a level is loaded */
 	UFUNCTION()
 	void OnStreamLevelLoaded();
 
-	/** Called when an level is unloaded */
+	/** Called when a level is unloaded */
 	UFUNCTION()
 	void OnStreamLevelUnloaded();
+
+	/** Called when a level is unloaded during reset*/
+	UFUNCTION()
+	void OnStreamLevelResetUnloadFinish();
+
+	/** Called when a level is reloaded during reset*/
+	UFUNCTION()
+	void OnStreamLevelResetReloadFinish();
+
 
 };
