@@ -60,19 +60,29 @@ void ABrewingMachine::BeginPlay()
 // Called when the player interact with the brewing machine
 void ABrewingMachine::OnInteractSuccess(class APlayerCharacter* _playerCharacter)
 {
-
-}
-
-void ABrewingMachine::OnInteractBegin(class APlayerCharacter* _playerCharacter)
-{
 	UBackPackComponent* playerBackpack = _playerCharacter->GetBackPack();
 	if (playerBackpack)
 	{
 		if (CheckRequiredItems(RequestCombineItems, playerBackpack))
 		{
+			// If player do have all these stuff
+			for (FRequestItemInfo request : RequestCombineItems)
+			{
+				playerBackpack->RemoveItem(request.ItemClass, request.Amount);
+			}
 
+			/// Do whatever the machine things
+		}
+		else
+		{
+			/// Do whatever the machine things if player dont have enough material
 		}
 	}
+}
+
+void ABrewingMachine::OnInteractBegin(class APlayerCharacter* _playerCharacter)
+{
+	
 }
 
 bool ABrewingMachine::CheckRequiredItems(const TArray<FRequestItemInfo> _requestItems, class UBackPackComponent* _backpack)
@@ -81,13 +91,9 @@ bool ABrewingMachine::CheckRequiredItems(const TArray<FRequestItemInfo> _request
 
 	for (FRequestItemInfo request : _requestItems)
 	{
-		UItemStack* stack = _backpack->FindItemStack(request.ItemClass);
-		if (!stack ||
-			stack->StackSize < request.Amount)
-		{
-			// Player missing the item
+		const TArray<UItemStack*> stacks = _backpack->FindAllItemStack(request.ItemClass);
+		if (_backpack->GetCombinedStackSize(stacks) < request.Amount)
 			return false;
-		}
 	}
 
 	// Player do have sufficient items

@@ -65,6 +65,24 @@ public:
 	class UItemStack* FindItemStack(TSubclassOf<class AItemBase> _itemClass) const;
 	
 	/**
+	 * Called to find item stacks from back pack using an item class
+	 * @author Richard Wulansari
+	 * @param _itemClass
+	 * @return Array of stacks that contains the item
+	 */
+	UFUNCTION(BlueprintCallable, Category = "BackPackComponent")
+	TArray<class UItemStack*> FindAllItemStack(TSubclassOf<class AItemBase> _itemClass) const;
+
+	/**
+	 * Called to find item stacks from back pack using an item class
+	 * @author Richard Wulansari
+	 * @param _stacks
+	 * @return The total stack size of all the stacks combine
+	 */
+	UFUNCTION(BlueprintCallable, Category = "BackPackComponent")
+	int32 GetCombinedStackSize(const TArray<class UItemStack*> _stacks);
+
+	/**
 	 * Called to try put an item into the backpack
 	 * @author Richard Wulansari
 	 * @param _itemActor: Actor based on AItemBase class
@@ -81,6 +99,17 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "BackPackComponent")
 	bool UseItem(TSubclassOf<class AItemBase> _itemClass);
+
+	/**
+	 * Called to try remove a type of item inside the backpack
+	 * @author Richard Wulansari
+	 * @param _itemClass: Class based on AItemBase class
+	 * @param 
+	 * @return The result of the action if the item actually can be remove
+	 */
+	UFUNCTION(BlueprintCallable, Category = "BackPackComponent")
+	bool RemoveItem(TSubclassOf<class AItemBase> _itemClass, int32 _amount);
+
 
 
 };
