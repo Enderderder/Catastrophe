@@ -52,7 +52,7 @@ struct FRequestItemInfo
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class AItem> ItemClass;
+	TSubclassOf<class AItemBase> ItemClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Amount;

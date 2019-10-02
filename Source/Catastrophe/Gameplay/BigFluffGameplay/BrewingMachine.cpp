@@ -11,8 +11,10 @@
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
 #include "Components/BackPackComponent.h"
 #include "Gameplay/Items/ItemBase.h"
+#include "Gameplay/Items/ItemStack.h"
 
 #include "DebugUtility/CatastropheDebug.h"
+
 
 // Sets default values
 ABrewingMachine::ABrewingMachine()
@@ -75,10 +77,21 @@ void ABrewingMachine::OnInteractBegin(class APlayerCharacter* _playerCharacter)
 
 bool ABrewingMachine::CheckRequiredItems(const TArray<FRequestItemInfo> _requestItems, class UBackPackComponent* _backpack)
 {
+	if (!IsValid(_backpack)) return false;
 
+	for (FRequestItemInfo request : _requestItems)
+	{
+		UItemStack* stack = _backpack->FindItemStack(request.ItemClass);
+		if (!stack ||
+			stack->StackSize < request.Amount)
+		{
+			// Player missing the item
+			return false;
+		}
+	}
 
-
-	return false;
+	// Player do have sufficient items
+	return true;
 }
 
 // Called every frame
