@@ -147,7 +147,6 @@ void AGuardAiController::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _st
 	{
 		// Make guard move to the yarn ball location
 		Blackboard->SetValueAsVector(TEXT("PointOfInterest"), _actor->GetActorLocation());
-		ControllingGuard->SetGuardState(EGuardState::INVESTATING);
 	}
 }
 
