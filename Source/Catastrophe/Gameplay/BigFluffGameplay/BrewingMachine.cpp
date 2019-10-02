@@ -8,6 +8,9 @@
 
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "BrewingMachineAnimInstance.h"
+#include "Characters/PlayerCharacter/PlayerCharacter.h"
+#include "Components/BackPackComponent.h"
+#include "Gameplay/Items/ItemBase.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -60,7 +63,22 @@ void ABrewingMachine::OnInteractSuccess(class APlayerCharacter* _playerCharacter
 
 void ABrewingMachine::OnInteractBegin(class APlayerCharacter* _playerCharacter)
 {
+	UBackPackComponent* playerBackpack = _playerCharacter->GetBackPack();
+	if (playerBackpack)
+	{
+		if (CheckRequiredItems(RequestCombineItems, playerBackpack))
+		{
 
+		}
+	}
+}
+
+bool ABrewingMachine::CheckRequiredItems(const TArray<FRequestItemInfo> _requestItems, class UBackPackComponent* _backpack)
+{
+
+
+
+	return false;
 }
 
 // Called every frame
