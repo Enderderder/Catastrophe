@@ -33,6 +33,12 @@ void ATomato::BeginPlay()
 
 void ATomato::OnTomatoHit(UPrimitiveComponent* _hitComp, AActor* _otherActor, UPrimitiveComponent* _otherComp, FVector _normalImpulse, const FHitResult& _hit)
 {
+	if (_otherActor == NULL)
+	{
+		Destroy();
+		return;
+	}
+
 	// If the tomato hits the head of a guard
 	if (_otherActor->IsA<AGuard>())
 	{
