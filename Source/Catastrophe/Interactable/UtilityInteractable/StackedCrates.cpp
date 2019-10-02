@@ -51,5 +51,5 @@ void AStackedCrates::OnPlayerInteract(class APlayerCharacter* _playerCharacter)
 
 	// Set collision boxes
 	CratesMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	BlockVolume->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	//BlockVolume->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
