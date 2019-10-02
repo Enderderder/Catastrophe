@@ -126,10 +126,10 @@ void ACatastropheMainGameMode::OnGuardQteFailed()
 		{
 			FLoadStreamingLevelInfo info;
 			info.OriginalLevelName = guardLevelName;
-			info.LoadedLevelName = TEXT("Jail");
-			info.bUnloadCurrentLevel = true;
+			info.LoadingLevelName = TEXT("Jail");
+			info.bUnloadOriginalLevel = true;
 			info.bTeleportPlayer = true;
-			info.DistrictType = EDISTRICT::JAIL;
+			info.RespawnDistrictType = EDISTRICT::JAIL;
 			info.bBlockOnLoad = false;
 			URespawnSubsystem::GetInst(this)->LoadLevelStreaming(info);
 		}
@@ -165,8 +165,8 @@ void ACatastropheMainGameMode::Cheat_Teleport(const FString& _levelName, const F
 	
 		FLoadStreamingLevelInfo info;
 		
-		info.DistrictType = district;
-		info.bUnloadCurrentLevel = true;
+		info.RespawnDistrictType = district;
+		info.bUnloadOriginalLevel = true;
 		URespawnSubsystem::GetInst(this)->LoadLevelStreaming(info);
 
 	}
