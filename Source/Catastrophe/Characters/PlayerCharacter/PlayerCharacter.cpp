@@ -227,9 +227,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 		CurrentThrowableLaunchVelocity =
 			ThrowingStrength * FollowCamera->GetForwardVector().RotateAngleAxis(
 				ThrowingAngle, FollowCamera->GetRightVector());
-		FString msg = "AimingVelo: " + CurrentThrowableLaunchVelocity.ToString();
-		CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Cyan, msg);
-
 		float projectileRadius = 20.0f;
 		TArray<AActor*> actorsToIgnore;
 		actorsToIgnore.Add(this);
