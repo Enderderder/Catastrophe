@@ -43,7 +43,10 @@ void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _NewItemType)
 	{
 		if (slot->IsA(_NewItemType))
 		{
-			slot->AddItem();
+			if (slot->CanPickup)
+			{
+				slot->AddItem();
+			}
 			return;
 		}
 	}
@@ -62,7 +65,10 @@ void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _NewItemType,
 	{
 		if (slot->IsA(_NewItemType))
 		{
-			slot->AddItems(_Amount);
+			if (slot->CanPickup)
+			{
+				slot->AddItems(_Amount);
+			}
 			return;
 		}
 	}
