@@ -89,7 +89,7 @@ void UMovementModifierComponent::ApplyWalkSpeedModifierWithDuration(float _modif
 	// Sets timer function to reverse the modifier change after given duration
 	FTimerHandle reverseModifyTimerHandle;
 	FTimerDelegate reverseModifierChangeDel;
-	reverseModifierChangeDel.BindUFunction(this, FName("ApplyWalkSpeedModifier"), _modifyValue);
+	reverseModifierChangeDel.BindUFunction(this, FName("ApplyWalkSpeedModifier"), -_modifyValue);
 	GetWorld()->GetTimerManager().SetTimer(reverseModifyTimerHandle, reverseModifierChangeDel, _duration, false);
 }
 
@@ -105,7 +105,7 @@ void UMovementModifierComponent::ApplyCrouchSpeedModifierWithDuration(float _mod
 	// Sets timer function to reverse the modifier change after given duration
 	FTimerHandle reverseModifyTimerHandle;
 	FTimerDelegate reverseModifierChangeDel;
-	reverseModifierChangeDel.BindUFunction(this, FName("ApplyCrouchSpeedModifier"), _modifyValue);
+	reverseModifierChangeDel.BindUFunction(this, FName("ApplyCrouchSpeedModifier"), -_modifyValue);
 	GetWorld()->GetTimerManager().SetTimer(reverseModifyTimerHandle, reverseModifierChangeDel, _duration, false);
 }
 
