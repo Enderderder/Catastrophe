@@ -43,6 +43,9 @@ public:
 	float WalkSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float JumpVelo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CameraFOV;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -50,6 +53,7 @@ public:
 
 	FPlayerDefaultValue() :
 		WalkSpeed(0.0f),
+		JumpVelo(450.0),
 		CameraFOV(100.0f),
 		CameraArmLength(650.0f)
 	{}

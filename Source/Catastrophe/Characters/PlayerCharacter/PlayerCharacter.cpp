@@ -148,6 +148,7 @@ void APlayerCharacter::BeginPlay()
 
 	// Store the default values
 	PlayerDefaultValues.WalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	PlayerDefaultValues.JumpVelo = GetCharacterMovement()->JumpZVelocity;
 	PlayerDefaultValues.CameraFOV = FollowCamera->FieldOfView;
 	PlayerDefaultValues.CameraArmLength = CameraBoom->TargetArmLength;
 
