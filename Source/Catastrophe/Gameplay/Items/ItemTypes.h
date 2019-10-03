@@ -43,3 +43,21 @@ public:
 		bCanDiscard(true)
 	{}
 };
+
+USTRUCT(BlueprintType)
+struct FRequestItemInfo
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class AItemBase> ItemClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Amount;
+
+	FRequestItemInfo() :
+		Amount(1)
+	{}
+};

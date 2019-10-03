@@ -75,6 +75,33 @@ class UItemStack* UBackPackComponent::FindItemStack(TSubclassOf<class AItemBase>
 	return nullptr;
 }
 
+// Scan through the backpack and find all the stacks that has the item type
+TArray<class UItemStack*> UBackPackComponent::FindAllItemStack(TSubclassOf<class AItemBase> _itemClass) const
+{
+	TArray<UItemStack*> resultStack;
+
+	for (UItemStack* stack : BackPack)
+	{
+		if (stack->ItemClass == _itemClass)
+		{
+			resultStack.Add(stack);
+		}
+	}
+
+	return resultStack;
+}
+
+int32 UBackPackComponent::GetCombinedStackSize(const TArray<class UItemStack*> _stacks)
+{
+	int32 resultSize = 0;
+	for (UItemStack* stack : _stacks)
+	{
+		resultSize += stack->StackSize;
+	}
+
+	return resultSize;
+}
+
 // Find similar stack, try put the item in
 bool UBackPackComponent::InsertItem(class AItemBase* _itemActor)
 {
@@ -173,5 +200,32 @@ bool UBackPackComponent::UseItem(TSubclassOf<class AItemBase> _itemClass)
 	}
 
 	return false;
+}
+
+bool UBackPackComponent::RemoveItem(TSubclassOf<class AItemBase> _itemClass, int32 _amount)
+{
+	const TArray<UItemStack*> stacksOfRemovingItem = FindAllItemStack(_itemClass);
+	if (GetCombinedStackSize(stacksOfRemovingItem) < _amount)
+		return false; // There are not enough item to remove
+
+	int32 remainingAmountToRemove = _amount;
+	while (remainingAmountToRemove > 0)
+	{
+		UItemStack* stack = FindItemStack(_itemClass);
+		if (stack)
+		{
+			while (stack->StackSize > 0)
+			{
+				RemoveItemFromStack(stack);
+				remainingAmountToRemove--;
+				if (remainingAmountToRemove == 0) return true;
+			}
+		}
+		else break;
+	}
+	if (remainingAmountToRemove > 0)
+		return false; // This shouldnt happen, something went wrong
+
+	return true;
 }
 

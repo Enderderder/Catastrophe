@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Gameplay/Items/ItemTypes.h"
 #include "BrewingMachine.generated.h"
 
 UCLASS()
@@ -34,6 +35,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "BrewingMachine")
 	class UBrewingMachineAnimInstance* BrewingMachineAnimInstance;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BrewingMachine")
+	TArray<FRequestItemInfo> RequestCombineItems;
+
 public:	
 	// Sets default values for this actor's properties
 	ABrewingMachine();
@@ -49,8 +53,16 @@ protected:
 	UFUNCTION()
 	void OnInteractBegin(class APlayerCharacter* _playerCharacter);
 
+	UFUNCTION(BlueprintCallable, Category = "BrewingMachine")
+	bool CheckRequiredItems(const TArray<FRequestItemInfo> _requestItems, class UBackPackComponent* _backpack);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+
+
+	
 
 };
