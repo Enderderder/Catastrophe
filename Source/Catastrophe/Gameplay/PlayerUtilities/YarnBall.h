@@ -22,6 +22,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Yarnball")
 	float LaunchForce;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Yarnball")
+	float LifeTime;
+
+	FTimerHandle LifeTimeHandle;
+
 public:	
 	// Sets default values for this actor's properties
 	AYarnBall();
@@ -34,7 +39,7 @@ protected:
 	 * Called to destroy the yarn ball
 	 * @author James Johnstone
 	 */
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Yarnball")
 	void DestroyYarnball();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Yarnball", meta = (DisplayName = "OnDestroyYarnball"))
 	void Receive_OnDestroyYarnball();
