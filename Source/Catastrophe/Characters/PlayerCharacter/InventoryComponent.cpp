@@ -29,6 +29,18 @@ void UInventoryComponent::AddItemType(class AItemSack* _NewItem)
 	Slots.Add(_NewItem);
 }
 
+void UInventoryComponent::InitialiseItemTypes(TArray<TSubclassOf<class AItemSack>> _Items)
+{
+	for (int i = 0; i < _Items.Num(); ++i)
+	{
+		AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_Items[i], FTransform::Identity);
+		if (newItemSack)
+		{
+			Slots.Add(newItemSack);
+		}
+	}
+}
+
 void UInventoryComponent::ReplaceItemTypeWith(int _Position, class AItemSack* _NewItem)
 {
 	if (Slots.Num() > _Position)
@@ -204,8 +216,8 @@ void UInventoryComponent::UseItem(bool _IsAiming)
 			// Deletes Slot if there is no items in the slot
 			if (Slots[CurrentSelection]->IsItemSackEmpty())
 			{
-				Slots[CurrentSelection]->Destroy();
-				Slots.RemoveAt(CurrentSelection);
+				//Slots[CurrentSelection]->Destroy();
+				//Slots.RemoveAt(CurrentSelection);
 				if (Slots.Num() == CurrentSelection && Slots.Num() > 0)
 				{
 					ChoosePreviousItem();
