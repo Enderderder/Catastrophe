@@ -17,7 +17,7 @@ private:
 	int8 CurrentSelection;
 
 	UPROPERTY()
-	TArray<class AItemSack*> Slots;
+	TArray<class AItemSack*> ItemSacks;
 
 public:
 	// Sets default values for this component's properties
