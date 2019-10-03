@@ -44,6 +44,9 @@ protected:
 	UFUNCTION()
 	void AddItemType(class AItemSack* _NewItem);
 
+	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
+	void InitialiseItemTypes(TArray<TSubclassOf<class AItemSack>> _NewItemType);
+
 public:
 	/**
 	 * Called to pick up an item and add it to a sack
