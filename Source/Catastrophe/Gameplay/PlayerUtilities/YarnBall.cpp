@@ -4,6 +4,8 @@
 #include "YarnBall.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
 
 // Sets default values
 AYarnBall::AYarnBall()
@@ -36,4 +38,7 @@ void AYarnBall::DestroyYarnball()
 void AYarnBall::LaunchYarnball(FVector _launchDirection)
 {
 	YarnballMesh->AddForce(_launchDirection * LaunchForce);
+	
+	// Setting life timer
+	GetWorld()->GetTimerManager().SetTimer(LifeTimeHandle, this, &AYarnBall::DestroyYarnball, LifeTime, false);
 }

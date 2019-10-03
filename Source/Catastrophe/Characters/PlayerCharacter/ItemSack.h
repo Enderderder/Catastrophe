@@ -12,6 +12,8 @@ class CATASTROPHE_API AItemSack : public AActor
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ItemSack")
+	FString ItemName;
 	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
 	uint8 ItemAmount;
 	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
@@ -22,6 +24,9 @@ protected:
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
 	bool IsAimingNeeded;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSack")
+	bool CanPickup;
 
 public:	
 	// Sets default values for this actor's properties

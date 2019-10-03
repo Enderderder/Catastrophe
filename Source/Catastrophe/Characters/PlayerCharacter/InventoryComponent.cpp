@@ -26,7 +26,7 @@ void UInventoryComponent::BeginPlay()
 
 void UInventoryComponent::AddItemType(class AItemSack* _NewItem)
 {
-	Slots.Add(_NewItem);
+	ItemSacks.Add(_NewItem);
 }
 
 void UInventoryComponent::InitialiseItemTypes(TArray<TSubclassOf<class AItemSack>> _Items)
@@ -36,60 +36,61 @@ void UInventoryComponent::InitialiseItemTypes(TArray<TSubclassOf<class AItemSack
 		AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_Items[i], FTransform::Identity);
 		if (newItemSack)
 		{
-			Slots.Add(newItemSack);
+			ItemSacks.Add(newItemSack);
 		}
 	}
 }
 
 void UInventoryComponent::ReplaceItemTypeWith(int _Position, class AItemSack* _NewItem)
 {
-	if (Slots.Num() > _Position)
+	if (ItemSacks.Num() > _Position)
 	{
-		Slots[_Position] = _NewItem;
+		ItemSacks[_Position] = _NewItem;
 	}
 }
 
 void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _NewItemType)
 {
-	for (auto& slot : Slots)
+	for (int i = 0; i < ItemSacks.Num(); ++i)
 	{
-		if (slot->IsA(_NewItemType))
+		if (ItemSacks[i]->IsA(_NewItemType))
 		{
-			slot->AddItem();
+			if (ItemSacks[i]->CanPickup)
+			{
+				ItemSacks[i]->AddItem();
+
+				// Set currently selected item to this one
+				CurrentSelection = i;
+			}
 			return;
 		}
 	}
 
-	AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_NewItemType, FTransform::Identity);
-	if (newItemSack)
-	{
-		newItemSack->AddItem();
-		Slots.Add(newItemSack);
-	}
+	
 }
 
 void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _NewItemType, int _Amount)
 {
-	for (auto& slot : Slots)
+	for (int i = 0; i < ItemSacks.Num(); ++i)
 	{
-		if (slot->IsA(_NewItemType))
+		if (ItemSacks[i]->IsA(_NewItemType))
 		{
-			slot->AddItems(_Amount);
+			if (ItemSacks[i]->CanPickup)
+			{
+				ItemSacks[i]->AddItems(_Amount);
+
+				CurrentSelection = i;
+			}
 			return;
 		}
 	}
 
-	AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_NewItemType->StaticClass(), FTransform::Identity);
-	if (newItemSack)
-	{
-		newItemSack->AddItems(_Amount);
-		Slots.Add(newItemSack);
-	}
+	
 }
 
 bool UInventoryComponent::IsInventoryEmpty()
 {
-	if (Slots.Num() > 0)
+	if (ItemSacks.Num() > 0)
 	{
 		return false;
 	}
@@ -98,21 +99,21 @@ bool UInventoryComponent::IsInventoryEmpty()
 
 int UInventoryComponent::GetNumOfSlots()
 {
-	return Slots.Num();
+	return ItemSacks.Num();
 }
 
 class AItemSack* UInventoryComponent::GetItemSack(int _SlotPosition)
 {
-	if (Slots.Num() > _SlotPosition)
+	if (ItemSacks.Num() > _SlotPosition)
 	{
-		return Slots[_SlotPosition];
+		return ItemSacks[_SlotPosition];
 	}
 	return nullptr;
 }
 
 class AItemSack* UInventoryComponent::GetItemSackOfType(TSubclassOf<class AItemSack> _ItemSackType)
 {
-	for (auto& slot : Slots)
+	for (auto& slot : ItemSacks)
 	{
 		if (slot->IsA(_ItemSackType))
 		{
@@ -126,9 +127,9 @@ class AItemSack* UInventoryComponent::GetCurrentItemSack()
 {
 	if (CurrentSelection >= 0)
 	{
-		if (Slots.Num() > CurrentSelection)
+		if (ItemSacks.Num() > CurrentSelection)
 		{
-			return Slots[CurrentSelection];
+			return ItemSacks[CurrentSelection];
 		}
 	}
 	CurrentSelection = 0;
@@ -139,15 +140,15 @@ class AItemSack* UInventoryComponent::GetPreviousItemSack()
 {
 	if (CurrentSelection >= 0)
 	{
-		if (Slots.Num() > CurrentSelection && CurrentSelection >= 0)
+		if (ItemSacks.Num() > CurrentSelection && CurrentSelection >= 0)
 		{
 			if (CurrentSelection == 0)
 			{
-				return Slots.Last();
+				return ItemSacks.Last();
 			}
 			else
 			{
-				return Slots[CurrentSelection - 1];
+				return ItemSacks[CurrentSelection - 1];
 			}
 		}
 	}
@@ -159,18 +160,18 @@ class AItemSack* UInventoryComponent::GetNextItemSack()
 {
 	if (CurrentSelection >= 0)
 	{
-		if (Slots.Num() > CurrentSelection)
+		if (ItemSacks.Num() > CurrentSelection)
 		{
-			if (CurrentSelection == Slots.Num() - 1)
+			if (CurrentSelection == ItemSacks.Num() - 1)
 			{
-				if (Slots.Num() > 0)
+				if (ItemSacks.Num() > 0)
 				{
-					return Slots[0];
+					return ItemSacks[0];
 				}
 			}
 			else
 			{
-				return Slots[CurrentSelection + 1];
+				return ItemSacks[CurrentSelection + 1];
 			}
 		}
 	}
@@ -180,48 +181,59 @@ class AItemSack* UInventoryComponent::GetNextItemSack()
 
 void UInventoryComponent::ChoosePreviousItem()
 {
-	if (CurrentSelection == 0)
+	for (int i = 0; i < ItemSacks.Num(); ++i)
 	{
-		CurrentSelection = Slots.Num() - 1;
-	}
-	else
-	{
-		CurrentSelection--;
+		if (CurrentSelection == 0)
+		{
+			CurrentSelection = ItemSacks.Num() - 1;
+		}
+		else
+		{
+			CurrentSelection--;
+		}
+
+		if (!ItemSacks[CurrentSelection]->IsItemSackEmpty())
+		{
+			return;
+		}
 	}
 }
 
 void UInventoryComponent::ChooseNextItem()
 {
-	if (CurrentSelection == Slots.Num() - 1)
+	for (int i = 0; i < ItemSacks.Num(); ++i)
 	{
-		CurrentSelection = 0;
-	}
-	else
-	{
-		CurrentSelection++;
+		if (CurrentSelection == ItemSacks.Num() - 1)
+		{
+			CurrentSelection = 0;
+		}
+		else
+		{
+			CurrentSelection++;
+		}
+
+		if (!ItemSacks[CurrentSelection]->IsItemSackEmpty())
+		{
+			return;
+		}
 	}
 }
 
 void UInventoryComponent::UseItem(bool _IsAiming)
 {
-	if (Slots.Num() > CurrentSelection)
+	if (ItemSacks.Num() > CurrentSelection)
 	{
-		if (Slots[CurrentSelection] != NULL)
+		if (ItemSacks[CurrentSelection] != NULL)
 		{
 			// Check if the player is aiming if aiming is needed
-			if (Slots[CurrentSelection]->IsAimingNeeded && !_IsAiming) return;
+			if (ItemSacks[CurrentSelection]->IsAimingNeeded && !_IsAiming) return;
 
-			Slots[CurrentSelection]->UseItem();
+			ItemSacks[CurrentSelection]->UseItem();
 			
-			// Deletes Slot if there is no items in the slot
-			if (Slots[CurrentSelection]->IsItemSackEmpty())
+			// Choose previous available slot if currently selected sack is empty
+			if (ItemSacks[CurrentSelection]->IsItemSackEmpty())
 			{
-				//Slots[CurrentSelection]->Destroy();
-				//Slots.RemoveAt(CurrentSelection);
-				if (Slots.Num() == CurrentSelection && Slots.Num() > 0)
-				{
-					ChoosePreviousItem();
-				}
+				ChoosePreviousItem();
 			}
 		}
 
