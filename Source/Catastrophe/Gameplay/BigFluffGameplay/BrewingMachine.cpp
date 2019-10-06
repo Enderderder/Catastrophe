@@ -8,8 +8,13 @@
 
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "BrewingMachineAnimInstance.h"
+#include "Characters/PlayerCharacter/PlayerCharacter.h"
+#include "Components/BackPackComponent.h"
+#include "Gameplay/Items/ItemBase.h"
+#include "Gameplay/Items/ItemStack.h"
 
 #include "DebugUtility/CatastropheDebug.h"
+
 
 // Sets default values
 ABrewingMachine::ABrewingMachine()
@@ -55,12 +60,46 @@ void ABrewingMachine::BeginPlay()
 // Called when the player interact with the brewing machine
 void ABrewingMachine::OnInteractSuccess(class APlayerCharacter* _playerCharacter)
 {
+	UBackPackComponent* playerBackpack = _playerCharacter->GetBackPack();
+	if (playerBackpack)
+	{
+		if (CheckRequiredItems(RequestCombineItems, playerBackpack))
+		{
+			// If player do have all these stuff
+			for (FRequestItemInfo request : RequestCombineItems)
+			{
+				playerBackpack->RemoveItem(request.ItemClass, request.Amount);
+			}
 
+			CatastropheDebug::OnScreenDebugMsg(-1, 10.f, FColor::Green, TEXT("Machine Worked"));
+			/// Do whatever the machine things
+		}
+		else
+		{
+			CatastropheDebug::OnScreenDebugMsg(-1, 10.f, FColor::Green, TEXT("NO U< YEET"));
+			/// Do whatever the machine things if player dont have enough material
+		}
+	}
 }
 
 void ABrewingMachine::OnInteractBegin(class APlayerCharacter* _playerCharacter)
 {
+	
+}
 
+bool ABrewingMachine::CheckRequiredItems(const TArray<FRequestItemInfo> _requestItems, class UBackPackComponent* _backpack)
+{
+	if (!IsValid(_backpack)) return false;
+
+	for (FRequestItemInfo request : _requestItems)
+	{
+		const TArray<UItemStack*> stacks = _backpack->FindAllItemStack(request.ItemClass);
+		if (_backpack->GetCombinedStackSize(stacks) < request.Amount)
+			return false;
+	}
+
+	// Player do have sufficient items
+	return true;
 }
 
 // Called every frame

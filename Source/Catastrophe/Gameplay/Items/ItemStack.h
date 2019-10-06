@@ -15,9 +15,11 @@ class CATASTROPHE_API UItemStack : public UObject
 	GENERATED_BODY()
 	
 public:
+	// Default Constructor
+	UItemStack();
 
 	UPROPERTY(BlueprintReadOnly, Category = "ItemStack")
-	TSubclassOf<class AActor> ItemClass;
+	TSubclassOf<class AItemBase> ItemClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = "ItemStack")
 	int32 StackSize = 0;

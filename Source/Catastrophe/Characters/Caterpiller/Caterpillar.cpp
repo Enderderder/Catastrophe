@@ -58,8 +58,7 @@ void ACaterpillar::BeginPlay()
 	}
 	else
 	{
-		const FString msg = TEXT("Insuffient amount of cave follow point, please check world");
-		CatastropheDebug::OnScreenDebugMsg(-1, 30.0f, FColor::Red, msg);
+		CatastropheDebug::OnScreenErrorMsg(TEXT("Insuffient amount of cave follow point, please check world"));
 	}
 }
 

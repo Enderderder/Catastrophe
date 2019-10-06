@@ -17,7 +17,7 @@ private:
 	int8 CurrentSelection;
 
 	UPROPERTY()
-	TArray<class AItemSack*> Slots;
+	TArray<class AItemSack*> ItemSacks;
 
 public:
 	// Sets default values for this component's properties
@@ -43,6 +43,9 @@ protected:
 	 */
 	UFUNCTION()
 	void AddItemType(class AItemSack* _NewItem);
+
+	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
+	void InitialiseItemTypes(TArray<TSubclassOf<class AItemSack>> _NewItemType);
 
 public:
 	/**

@@ -131,11 +131,14 @@ void AGuard::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// Rotate the headshot target plane towards the camera
+	// As well as self rotating
 	{
 		FRotator headShotTargetRot = UKismetMathLibrary::FindLookAtRotation(
 			HeadShotTargetAnchor->GetComponentLocation(), 
 			UGameplayStatics::GetPlayerCameraManager(this, 0)->GetCameraLocation());
 		HeadShotTargetAnchor->SetWorldRotation(headShotTargetRot);
+// 		const FRotator addingRotation = FRotator(0.0f, 0.0f, DeltaTime * 30.0f);
+// 		HeadShotTargetMesh->AddLocalRotation(addingRotation);
 	}
 
 	if (bPlayerInSleepDetectRange)
@@ -149,9 +152,14 @@ void AGuard::Tick(float DeltaTime)
 				if (PlayerRef->GetVelocity().Size() >= 50.0f
 					&& !PlayerRef->GetCharacterMovement()->IsCrouching())
 				{
-					SetGuardState(EGuardState::WAKEUP_STAGEONE);
-					float time;
-					LookAround(time);
+					GuardController->GetBlackboardComponent()->SetValueAsBool(TEXT("bHearingPlayer"), true);
+					//SetGuardState(EGuardState::WAKEUP_STAGEONE);
+					//float time;
+					//LookAround(time);
+				}
+				else
+				{
+					GuardController->GetBlackboardComponent()->SetValueAsBool(TEXT("bHearingPlayer"), false);
 				}
 			}
 
@@ -376,8 +384,6 @@ void AGuard::LookAround_Implementation(float& out_montageTime)
 
 void AGuard::OnCatchPlayer_Implementation(APlayerCharacter* _player)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Player caught"));
-
 	/// Should be implement in derived class
 }
 

@@ -60,11 +60,11 @@ void ALevelStreamingTrigger::OnPlayerEnterTrigger(class UPrimitiveComponent* Ove
 
 		FLoadStreamingLevelInfo loadLevelInfo;
 		loadLevelInfo.OriginalLevelName = CurrentLevelName;
-		loadLevelInfo.LoadedLevelName = DestinationLevelName;
+		loadLevelInfo.LoadingLevelName = DestinationLevelName;
 		loadLevelInfo.bBlockOnLoad = bShouldBlockOnLoad;
 		loadLevelInfo.bTeleportPlayer = bTeleportAfterLoaded;
-		loadLevelInfo.bUnloadCurrentLevel = bShouldUnloadThisLevelAfter;
-		loadLevelInfo.DistrictType = DestinationLevelDistrict;
+		loadLevelInfo.bUnloadOriginalLevel = bShouldUnloadThisLevelAfter;
+		loadLevelInfo.RespawnDistrictType = DestinationLevelDistrict;
 		URespawnSubsystem::GetInst(this)->LoadLevelStreaming(loadLevelInfo);
 
 // 		if (LoadingScreenClass)
