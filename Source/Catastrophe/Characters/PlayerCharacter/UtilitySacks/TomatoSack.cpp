@@ -68,11 +68,7 @@ void ATomatoSack::UseItem()
 		}
 		else
 		{
-			CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to spawn ATomato"), 10.0f);
+			CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to spawn ATomato"));
 		}
-	}
-	else
-	{
-		CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to spawn ATomato"), 10.0f);
 	}
 }
