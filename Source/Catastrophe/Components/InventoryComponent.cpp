@@ -3,7 +3,7 @@
 
 #include "InventoryComponent.h"
 
-#include "ItemSack.h"
+#include "Characters/PlayerCharacter/UtilitySacks/ItemSack.h"
 
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"

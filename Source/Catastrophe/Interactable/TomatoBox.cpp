@@ -8,10 +8,10 @@
 #include "Engine/CollisionProfile.h"
 
 #include "Interactable/BaseClasses/InteractableComponent.h"
-#include "Characters/PlayerCharacter/InventoryComponent.h"
+#include "Components/InventoryComponent.h"
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
 
-#include "Characters/PlayerCharacter/TomatoSack.h"
+#include "Characters/PlayerCharacter/UtilitySacks/TomatoSack.h"
 
 ATomatoBox::ATomatoBox()
 {

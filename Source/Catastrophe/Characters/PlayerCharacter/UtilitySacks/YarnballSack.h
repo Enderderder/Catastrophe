@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/PlayerCharacter/ItemSack.h"
+#include "ItemSack.h"
 #include "YarnballSack.generated.h"
 
 UCLASS()
