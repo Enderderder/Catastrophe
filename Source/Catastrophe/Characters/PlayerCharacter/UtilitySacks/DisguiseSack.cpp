@@ -23,9 +23,9 @@ void ADisguiseSack::UseItem()
 	if (GetWorld())
 	{
 		// Check if the player is already using a disguise
-		TArray<AActor*> FoundDisguises;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), DisguiseClass, FoundDisguises);
-		if (FoundDisguises.Num() > 0) return;
+		TArray<AActor*> foundDisguises;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), DisguiseClass, foundDisguises);
+		if (foundDisguises.Num() > 0) return;
 
 		// If the sack is not empty and is able to use disguise
 		if (IsAbleToUse())

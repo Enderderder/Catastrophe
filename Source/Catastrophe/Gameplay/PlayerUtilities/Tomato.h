@@ -18,9 +18,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Tomato")
-	float LaunchForce;
-
 public:
 	// Sets default values for this actor's properties
 	ATomato();
@@ -50,15 +47,6 @@ protected:
 	void Receive_OnTomatoSplash(class AActor* _otherActor);
 
 public:
-
-	/**
-	 * Called to launch the tomato in a certain direction
-	 * @author James Johnstone
-	 * @param _launchDirection The direction vector of where the tomato should travel towards
-	 * @param _launchForce The force of the throw
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Tomato")
-	void LaunchTomato(FVector _launchDirection);
 
 	/** Getter */
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return TomatoMesh; }

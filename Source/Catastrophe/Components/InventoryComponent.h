@@ -34,7 +34,7 @@ protected:
 	 * @param The new item to replace with
 	 */
 	UFUNCTION()
-	void ReplaceItemTypeWith(int _Position, class AItemSack* _NewItem);
+	void ReplaceItemTypeWith(int _position, class AItemSack* _newItem);
 
 	/**
 	 * Called to add a new item type
@@ -42,28 +42,28 @@ protected:
 	 * @param _newItem The new item to be added
 	 */
 	UFUNCTION()
-	void AddItemType(class AItemSack* _NewItem);
+	void AddItemType(class AItemSack* _newItem);
 
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	void InitialiseItemTypes(TArray<TSubclassOf<class AItemSack>> _NewItemType);
+	void InitialiseItemTypes(TArray<TSubclassOf<class AItemSack>> _newItemType);
 
 public:
 	/**
 	 * Called to pick up an item and add it to a sack
 	 * @author James Johnstone
-	 * @param _NewItemSack The item sack type to be added
+	 * @param _newItemSack The item sack type to be added
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	void PickupItem(TSubclassOf<class AItemSack> _NewItemSack);
+	void PickupItem(TSubclassOf<class AItemSack> _newItemSack);
 
 	/**
 	 * Called to pick up a set amount of items and add it to a sack
 	 * @author James Johnstone
-	 * @param _Amount The sack class type
+	 * @param _newItemSack The sack class type
 	 * @param _Amount The amount of items that are picked up
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	void PickupItems(TSubclassOf<class AItemSack> _NewItemSack, int _Amount);
+	void PickupItems(TSubclassOf<class AItemSack> _newItemSack, int _amount);
 
 	/**
 	 * Called to check if the inventory contains any item sacks
@@ -77,7 +77,7 @@ public:
 	 * @author James Johnstone
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	int GetNumOfSlots();
+	int32 GetNumOfSlots();
 
 	/**
 	 * Called to get the item sack at a given position in the list
@@ -85,7 +85,7 @@ public:
 	 * @param _SlotPosition The position of the sack you want to get
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	class AItemSack* GetItemSack(int _SlotPosition);
+	class AItemSack* GetItemSack(int _slotPosition);
 
 	/**
 	 * Called to get the item sack of a certain type
@@ -133,5 +133,5 @@ public:
 	 * @author James Johnstone
 	 */
 	UFUNCTION(BlueprintCallable, Category = "ItemUseSystem")
-	void UseItem(bool _IsAiming);
+	void UseItem(bool _bAiming);
 };

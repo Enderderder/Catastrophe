@@ -24,16 +24,16 @@ void UInventoryComponent::BeginPlay()
 	CurrentSelection = 0;
 }
 
-void UInventoryComponent::AddItemType(class AItemSack* _NewItem)
+void UInventoryComponent::AddItemType(class AItemSack* _newItem)
 {
-	ItemSacks.Add(_NewItem);
+	ItemSacks.Add(_newItem);
 }
 
-void UInventoryComponent::InitialiseItemTypes(TArray<TSubclassOf<class AItemSack>> _Items)
+void UInventoryComponent::InitialiseItemTypes(TArray<TSubclassOf<class AItemSack>> _items)
 {
-	for (int i = 0; i < _Items.Num(); ++i)
+	for (int i = 0; i < _items.Num(); ++i)
 	{
-		AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_Items[i], FTransform::Identity);
+		AItemSack* newItemSack = GetWorld()->SpawnActor<AItemSack>(_items[i], FTransform::Identity);
 		if (newItemSack)
 		{
 			ItemSacks.Add(newItemSack);
@@ -41,19 +41,19 @@ void UInventoryComponent::InitialiseItemTypes(TArray<TSubclassOf<class AItemSack
 	}
 }
 
-void UInventoryComponent::ReplaceItemTypeWith(int _Position, class AItemSack* _NewItem)
+void UInventoryComponent::ReplaceItemTypeWith(int _position, class AItemSack* _newItem)
 {
-	if (ItemSacks.Num() > _Position)
+	if (ItemSacks.Num() > _position)
 	{
-		ItemSacks[_Position] = _NewItem;
+		ItemSacks[_position] = _newItem;
 	}
 }
 
-void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _NewItemType)
+void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _newItemType)
 {
 	for (int i = 0; i < ItemSacks.Num(); ++i)
 	{
-		if (ItemSacks[i]->IsA(_NewItemType))
+		if (ItemSacks[i]->IsA(_newItemType))
 		{
 			if (ItemSacks[i]->CanPickup)
 			{
@@ -69,15 +69,15 @@ void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _NewItemType)
 	
 }
 
-void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _NewItemType, int _Amount)
+void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _newItemType, int _amount)
 {
 	for (int i = 0; i < ItemSacks.Num(); ++i)
 	{
-		if (ItemSacks[i]->IsA(_NewItemType))
+		if (ItemSacks[i]->IsA(_newItemType))
 		{
 			if (ItemSacks[i]->CanPickup)
 			{
-				ItemSacks[i]->AddItems(_Amount);
+				ItemSacks[i]->AddItems(_amount);
 
 				CurrentSelection = i;
 			}
@@ -97,7 +97,7 @@ bool UInventoryComponent::IsInventoryEmpty()
 	return true;
 }
 
-int UInventoryComponent::GetNumOfSlots()
+int32 UInventoryComponent::GetNumOfSlots()
 {
 	return ItemSacks.Num();
 }
@@ -219,14 +219,14 @@ void UInventoryComponent::ChooseNextItem()
 	}
 }
 
-void UInventoryComponent::UseItem(bool _IsAiming)
+void UInventoryComponent::UseItem(bool _bAiming)
 {
 	if (ItemSacks.Num() > CurrentSelection)
 	{
 		if (ItemSacks[CurrentSelection] != NULL)
 		{
 			// Check if the player is aiming if aiming is needed
-			if (ItemSacks[CurrentSelection]->IsAimingNeeded && !_IsAiming) return;
+			if (ItemSacks[CurrentSelection]->IsAimingNeeded && !_bAiming) return;
 
 			ItemSacks[CurrentSelection]->UseItem();
 			

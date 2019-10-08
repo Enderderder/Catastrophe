@@ -13,5 +13,13 @@ UCLASS()
 class CATASTROPHE_API ACatnipBallSack : public AItemSack
 {
 	GENERATED_BODY()
-	
+
+protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = "ItemSack")
+	TSubclassOf<class ACatnipBall> CatnipBallClass;
+
+public:
+	virtual void UseItem() override;
+
 };
