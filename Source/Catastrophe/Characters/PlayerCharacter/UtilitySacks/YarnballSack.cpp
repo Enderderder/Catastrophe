@@ -1,6 +1,6 @@
 #include "YarnballSack.h"
 #include "GameFramework/Actor.h"
-#include "PlayerCharacter.h"
+#include "Characters/PlayerCharacter/PlayerCharacter.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 #include "Camera/CameraComponent.h"
@@ -43,7 +43,7 @@ void AYarnballSack::UseItem()
 			if (SpawnedYarnball)
 			{
 				// Adds force to the yarnball to make it go flying
-				SpawnedYarnball->LaunchYarnball(Player->GetCamera()->GetForwardVector());
+				//SpawnedYarnball->LaunchYarnball(Player->GetCamera()->GetForwardVector());
 			}
 
 			// Lower the ammo

@@ -8,9 +8,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
-#include "PlayerCharacter.h"
 #include "Gameplay/PlayerUtilities/Tomato.h"
-#include "ThrowableProjectileIndicator.h"
+#include "Characters/PlayerCharacter/PlayerCharacter.h"
+#include "Characters/PlayerCharacter/ThrowableProjectileIndicator.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -68,11 +68,7 @@ void ATomatoSack::UseItem()
 		}
 		else
 		{
-			CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to spawn ATomato"), 10.0f);
+			CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to spawn ATomato"));
 		}
-	}
-	else
-	{
-		CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to spawn ATomato"), 10.0f);
 	}
 }

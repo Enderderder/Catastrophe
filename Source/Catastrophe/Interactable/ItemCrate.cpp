@@ -9,10 +9,10 @@
 #include "Engine/CollisionProfile.h"
 
 #include "Interactable/BaseClasses/InteractableComponent.h"
-#include "Characters/PlayerCharacter/InventoryComponent.h"
+#include "Components/InventoryComponent.h"
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
 
-#include "Characters/PlayerCharacter/ItemSack.h"
+#include "Characters/PlayerCharacter/UtilitySacks/ItemSack.h"
 
 // Sets default values
 AItemCrate::AItemCrate()

@@ -6,12 +6,15 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/BoxComponent.h"
 
+#include "Engine/World.h"
+
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "BrewingMachineAnimInstance.h"
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
 #include "Components/BackPackComponent.h"
 #include "Gameplay/Items/ItemBase.h"
 #include "Gameplay/Items/ItemStack.h"
+#include "Interactable/CatnipBallPickup.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -33,6 +36,9 @@ ABrewingMachine::ABrewingMachine()
 	MeshCollider->SetGenerateOverlapEvents(false);
 	MeshCollider->SetCollisionProfileName(TEXT("BlockAll"));
 	MeshCollider->SetupAttachment(BrewingMachineMesh);
+
+	CatnipBallPickupPoint = CreateDefaultSubobject<USceneComponent>(TEXT("CatnipBallPickupPoint"));
+	CatnipBallPickupPoint->SetupAttachment(BrewingMachineMesh);
 
 	InteractionTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionTrigger"));
 	InteractionTrigger->SetCollisionProfileName(TEXT("Trigger"));
@@ -72,7 +78,21 @@ void ABrewingMachine::OnInteractSuccess(class APlayerCharacter* _playerCharacter
 			}
 
 			CatastropheDebug::OnScreenDebugMsg(-1, 10.f, FColor::Green, TEXT("Machine Worked"));
-			/// Do whatever the machine things
+			
+			if (CatnipPickupClass &&
+				GetWorld())
+			{
+				Receive_OnBrewing();
+
+				/*FTransform spawnTransform = CatnipBallPickupPoint->GetComponentTransform();
+				FActorSpawnParameters spawnParam;
+				spawnParam.SpawnCollisionHandlingOverride =
+					ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+				ACatnipBallPickup* catnipPickup =
+					GetWorld()->SpawnActor<ACatnipBallPickup>(
+						CatnipPickupClass, spawnTransform, spawnParam);*/
+			}
 		}
 		else
 		{

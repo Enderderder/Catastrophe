@@ -31,8 +31,8 @@
 #include "Gameplay/PlayerUtilities/Tomato.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
 #include "ThrowableProjectileIndicator.h"
-#include "InventoryComponent.h"
-#include "TomatoSack.h"
+#include "Components/InventoryComponent.h"
+#include "UtilitySacks/TomatoSack.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
