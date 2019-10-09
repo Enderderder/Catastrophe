@@ -21,7 +21,12 @@ AThrowableUtility::AThrowableUtility()
 }
 
 // Called when the mesh has hit an non "ThrowableAffected" object
-void AThrowableUtility::OnThrowableHit_Implementation(AActor* _hitActor, FVector _normalImpulse, const FHitResult& _hit)
+void AThrowableUtility::OnThrowableHit_Implementation(AActor* _hitActor, UPrimitiveComponent* _hitComp, FVector _normalImpulse, const FHitResult& _hit)
+{
+
+}
+
+void AThrowableUtility::OnThrowableHitEffect_Implementation(AActor* _hitActor, FVector _normalImpulse, const FHitResult& _hit)
 {
 
 }
@@ -32,6 +37,7 @@ void AThrowableUtility::OnThrowableMeshHit(UPrimitiveComponent* _hitComp, AActor
 		!_otherActor->ActorHasTag(TEXT("ThrowablesUnaffected")) &&
 		!_otherActor->ActorHasTag(TEXT("Player")))
 	{
-		OnThrowableHit(_otherActor, _normalImpulse, _hit);
+		OnThrowableHitEffect(_otherActor, _normalImpulse, _hit);
+		OnThrowableHit(_otherActor, _otherComp, _normalImpulse, _hit);
 	}
 }

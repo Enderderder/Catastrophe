@@ -18,7 +18,7 @@ AYarnBall::AYarnBall()
 }
 
 // Called when the yarn ball hit something
-void AYarnBall::OnThrowableHit_Implementation(AActor* _hitActor, FVector _normalImpulse, const FHitResult& _hit)
+void AYarnBall::OnThrowableHit_Implementation(AActor* _hitActor, UPrimitiveComponent* _hitComp, FVector _normalImpulse, const FHitResult& _hit)
 {
 	GetWorldTimerManager().SetTimer(LifeTimeHandle, this, &AYarnBall::OnYarnBallLifeExpire, Lifetime);
 }

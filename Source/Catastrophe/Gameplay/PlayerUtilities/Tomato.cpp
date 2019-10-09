@@ -3,8 +3,7 @@
 
 #include "Tomato.h"
 
-#include "Components/StaticMeshComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/PrimitiveComponent.h"
 
 #include "Characters/GuardCharacter/Guard.h"
 
@@ -14,48 +13,24 @@ ATomato::ATomato()
  	// Set this actor to not call Tick() every frame.
 	PrimaryActorTick.bCanEverTick = false;
 
-	TomatoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoMesh"));
-	TomatoMesh->SetCollisionProfileName(TEXT("Throwable"));
-	TomatoMesh->OnComponentHit.RemoveDynamic(this, &ATomato::OnTomatoHit);
-	TomatoMesh->OnComponentHit.AddDynamic(this, &ATomato::OnTomatoHit);
-	RootComponent = TomatoMesh;
-
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 }
 
-// Called when the game starts or when spawned
-void ATomato::BeginPlay()
+void ATomato::OnThrowableHit_Implementation(AActor* _hitActor, UPrimitiveComponent* _hitComp, FVector _normalImpulse, const FHitResult& _hit)
 {
-	Super::BeginPlay();
-
-	
-}
-
-void ATomato::OnTomatoHit(UPrimitiveComponent* _hitComp, AActor* _otherActor, UPrimitiveComponent* _otherComp, FVector _normalImpulse, const FHitResult& _hit)
-{
-	if (_otherActor == NULL)
-	{
-		Destroy();
-		return;
-	}
-
 	// If the tomato hits the head of a guard
-	if (_otherActor->IsA<AGuard>())
+	if (_hitActor->IsA<AGuard>())
 	{
-		if (_otherComp->ComponentHasTag(TEXT("Head")))
+		if (_hitComp->ComponentHasTag(TEXT("Head")))
 		{
-			AGuard* guard = Cast<AGuard>(_otherActor);
+			AGuard* guard = Cast<AGuard>(_hitActor);
 			guard->SetGuardState(EGuardState::STUNED);
 		}
 	}
-	if (!_otherComp->ComponentHasTag("ThrowablesUnaffected"))
-	{
-		DestroyTomato(_otherActor);
-	}
+
+	Destroy();
 }
 
-void ATomato::DestroyTomato(class AActor* _otherActor)
+void ATomato::OnThrowableHitEffect_Implementation(AActor* _hitActor, FVector _normalImpulse, const FHitResult& _hit)
 {
-	Receive_OnTomatoSplash(_otherActor);
-	Destroy();
+	
 }

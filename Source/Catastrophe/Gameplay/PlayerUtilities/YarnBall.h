@@ -31,7 +31,7 @@ public:
 protected:
 
 	/** AThrowableUtility override */
-	virtual void OnThrowableHit_Implementation(AActor* _hitActor, FVector _normalImpulse, const FHitResult& _hit) override;
+	virtual void OnThrowableHit_Implementation(AActor* _hitActor, UPrimitiveComponent* _hitComp, FVector _normalImpulse, const FHitResult& _hit) override;
 	/** AThrowableUtility override end */
 
 
