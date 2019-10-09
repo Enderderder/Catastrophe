@@ -48,6 +48,7 @@ private:
 public:
 
 	/** Getter */
+	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return ThrowableMesh; }
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const {
 		return ProjectileMovement;
 	}
