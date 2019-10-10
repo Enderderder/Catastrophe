@@ -71,10 +71,6 @@ private:
 public:
 	// Sets default values for this character's properties
 	AGuard();
-
-	/** The default state of the guard when it spawns in to the world */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | General")
-	EGuardState DefaultGuardState = EGuardState::STATIONARY;
 	
 	/** The default state of the guard when it spawns in to the world */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Guard | Behaviour | General")

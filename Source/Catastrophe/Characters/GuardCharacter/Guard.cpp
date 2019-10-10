@@ -394,7 +394,6 @@ void AGuard::ResetGuard()
 	GuardController->StopMovement();
 	bPlayerWasInSight = false;
 	bPlayerInSight = false;
-	SetGuardState(DefaultGuardState);
 	StopAllMontages();
 	//SetActorTransform(DefaultTransform, false, nullptr, ETeleportType::ResetPhysics
 	SetActorLocationAndRotation(DefaultTransform.GetLocation(), DefaultTransform.GetRotation());
