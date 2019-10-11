@@ -24,11 +24,13 @@ private:
 	class UBoxComponent* MeshCollider;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BrewingMachine", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* CatnipBallPickupPoint;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BrewingMachine", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* InteractionTrigger;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BrewingMachine", meta = (AllowPrivateAccess = "true"))
 	class UInteractableComponent* InteractableComponent;
-
 
 protected:
 
@@ -37,6 +39,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BrewingMachine")
 	TArray<FRequestItemInfo> RequestCombineItems;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BrewingMachine")
+	TSubclassOf<class ACatnipBallPickup> CatnipPickupClass;
 
 public:	
 	// Sets default values for this actor's properties
@@ -53,16 +58,26 @@ protected:
 	UFUNCTION()
 	void OnInteractBegin(class APlayerCharacter* _playerCharacter);
 
+	/**
+	 * Check if the player has sufficient amount of required items
+	 * @author Richard Wulansari
+	 * @param _requestItems Array of requirement items
+	 * @param _backpack The backpack component to check
+	 */
 	UFUNCTION(BlueprintCallable, Category = "BrewingMachine")
 	bool CheckRequiredItems(const TArray<FRequestItemInfo> _requestItems, class UBackPackComponent* _backpack);
+
+	/**
+	 * Called when the machine is brewing
+	 * @author Richard Wulansari
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "BrewingMachine", meta = (DisplayName = "OnBrewing"))
+	void Receive_OnBrewing();
+
+
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-private:
-
-
-	
 
 };

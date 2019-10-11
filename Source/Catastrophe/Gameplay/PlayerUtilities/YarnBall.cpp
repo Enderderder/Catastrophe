@@ -4,41 +4,28 @@
 #include "YarnBall.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+
 #include "Engine/World.h"
 #include "TimerManager.h"
 
 // Sets default values
 AYarnBall::AYarnBall()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	YarnballMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("YarnballMesh"));
-	YarnballMesh->SetGenerateOverlapEvents(false);
-	YarnballMesh->SetCollisionProfileName(TEXT("Yarnball"));
-	RootComponent = YarnballMesh;
-
-	// Create stimuli so guards can see yarn ball
 	PerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("PerceptionStimuliSource"));
 }
 
-// Called when the game starts or when spawned
-void AYarnBall::BeginPlay()
+// Called when the yarn ball hit something
+void AYarnBall::OnThrowableHit_Implementation(AActor* _hitActor, UPrimitiveComponent* _hitComp, FVector _normalImpulse, const FHitResult& _hit)
 {
-	Super::BeginPlay();
-	
+	GetWorldTimerManager().SetTimer(LifeTimeHandle, this, &AYarnBall::OnYarnBallLifeExpire, Lifetime);
 }
 
-void AYarnBall::DestroyYarnball()
+void AYarnBall::OnYarnBallLifeExpire()
 {
-	Receive_OnDestroyYarnball();
+	Receive_OnYarnBallLifeExpire();
+	
 	Destroy();
-}
-
-void AYarnBall::LaunchYarnball(FVector _launchDirection)
-{
-	YarnballMesh->AddForce(_launchDirection * LaunchForce);
-	
-	// Setting life timer
-	GetWorld()->GetTimerManager().SetTimer(LifeTimeHandle, this, &AYarnBall::DestroyYarnball, LifeTime, false);
 }
