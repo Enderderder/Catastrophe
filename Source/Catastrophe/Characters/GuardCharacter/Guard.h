@@ -197,6 +197,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Called  when actor is detroyed
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	/** Called to get the eye view point of the character */
 	virtual void GetActorEyesViewPoint(FVector& Location, FRotator& Rotation) const override;
 

@@ -125,6 +125,18 @@ void AGuard::BeginPlay()
 	}
 }
 
+// Called  when actor is detroyed
+void AGuard::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	ACatastropheMainGameMode* gameMode = ACatastropheMainGameMode::GetGameModeInst(this);
+	if (gameMode)
+	{
+		gameMode->RemoveOneChasingGuard(this);
+	}
+}
+
 // Called every frame
 void AGuard::Tick(float DeltaTime)
 {
