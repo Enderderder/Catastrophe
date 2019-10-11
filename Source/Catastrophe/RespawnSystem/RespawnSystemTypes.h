@@ -13,9 +13,9 @@ enum class EDISTRICT : uint8
 	MARKET,
 	HOLDINGCELL,
 	JAIL,
-	JAIL2,
 	CAVE,
 	HIDEOUT,
+	BIGFLUFF,
 
 	LOCATIONCOUNT // This should always be the last
 };

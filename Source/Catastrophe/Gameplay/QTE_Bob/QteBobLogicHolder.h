@@ -28,10 +28,10 @@ public:
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "QTE_Bob")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "QTE_Bob")
 	float TimeDilationDuringEvent = 0.1f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "QTE_Bob")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "QTE_Bob")
 	float DelayBeforeEventStart = 1.0f;
 
 	UPROPERTY(BlueprintReadWrite, Category = "QTE_Bob")
