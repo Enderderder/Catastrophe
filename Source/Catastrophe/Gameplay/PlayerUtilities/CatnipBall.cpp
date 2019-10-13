@@ -10,40 +10,21 @@
 // Sets default values
 ACatnipBall::ACatnipBall()
 {
- 	// Set this actor to call Tick() every frame.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
-	CatnipBallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CatnipBallMesh"));
-	CatnipBallMesh->SetGenerateOverlapEvents(false);
-	CatnipBallMesh->SetCollisionProfileName(TEXT("Throwable"));
-	CatnipBallMesh->OnComponentHit.RemoveDynamic(this, &ACatnipBall::OnCatnipBallHit);
-	CatnipBallMesh->OnComponentHit.AddDynamic(this, &ACatnipBall::OnCatnipBallHit);
-	RootComponent = CatnipBallMesh;
-
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 }
 
-// Called when the game starts or when spawned
-void ACatnipBall::BeginPlay()
+void ACatnipBall::OnThrowableHit_Implementation(AActor* _hitActor, UPrimitiveComponent* _hitComp, FVector _normalImpulse, const FHitResult& _hit)
 {
-	Super::BeginPlay();
-	
-}
-
-// Called when the catnip ball has hit something
-void ACatnipBall::OnCatnipBallHit(UPrimitiveComponent* _hitComp, AActor* _otherActor, UPrimitiveComponent* _otherComp, FVector _normalImpulse, const FHitResult& _hit)
-{
-	if (_otherActor->ActorHasTag(TEXT("BigFluff")))
+	if (_hitActor->ActorHasTag(TEXT("BigFluff")))
 	{
 		CatastropheDebug::OnScreenDebugMsg(-1, 10.0f, FColor::Cyan, TEXT("U WIN!!!!!"));
-
-
-
-		Destroy();
 	}
-	else if (!_otherActor->ActorHasTag(TEXT("ThrowablesUnaffected")))
-	{
-		Destroy();
-	}
+	Destroy();
+}
+
+void ACatnipBall::OnThrowableHitEffect_Implementation(AActor* _hitActor, FVector _normalImpulse, const FHitResult& _hit)
+{
+	
 }
 
