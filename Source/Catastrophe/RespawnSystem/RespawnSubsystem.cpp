@@ -8,7 +8,11 @@
 #include "Engine/GameInstance.h"
 #include "Engine/LevelStreaming.h"
 #include "Engine/Level.h"
+#include "GameFramework/SpringArmComponent.h"
 
+#include "Kismet/KismetMathLibrary.h"
+
+#include "Characters/PlayerCharacter/PlayerCharacter.h"
 #include "StreamingLevelInterface.h"
 
 #include "DebugUtility/CatastropheDebug.h"
@@ -145,8 +149,23 @@ void URespawnSubsystem::RespawnPlayerAtLocation(EDISTRICT _districtType)
 	ACharacter* player = UGameplayStatics::GetPlayerCharacter(this, 0);
 	if (IsValid(player))
 	{
-		FTransform location = GetFirstRespawnLocationAtDistrict(_districtType);
-		player->SetActorTransform(location);
+		FTransform transform = GetFirstRespawnLocationAtDistrict(_districtType);
+		player->SetActorLocation(transform.GetLocation());
+		player->SetActorRotation(transform.GetRotation());
+		
+		const FRotator cameraRotation =
+			UKismetMathLibrary::FindLookAtRotation(transform.GetLocation(), player->GetActorLocation());
+		UGameplayStatics::GetPlayerController(this, 0)->SetControlRotation(cameraRotation);
+
+		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(player);
+		if (playerCharacter)
+		{
+			
+			//playerCharacter->GetCameraBoom()->SetWorldRotation(cameraRotation);
+
+			
+
+		}
 	}
 }
 
