@@ -211,6 +211,10 @@ void URespawnSubsystem::OnStreamLevelLoaded()
 			latenInfo, 
 			tempInfo.bBlockOnLoad);
 	}
+	else 
+	{
+		OnLevelTransitionFinish.Broadcast();
+	}
 }
 
 void URespawnSubsystem::OnStreamLevelUnloaded()
