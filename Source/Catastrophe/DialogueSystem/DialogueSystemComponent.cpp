@@ -50,15 +50,22 @@ void UDialogueSystemComponent::DialogueInteract(class APlayerCharacter* _PlayerC
 			if (Conversations[CurrentConversationIndex].Sentences.Num() - 1 <= CurrentSentenceIndex)
 			{
 				DisableDialogue(true);
+				OnSentenceDisappear.Broadcast();
 				return;
 			}
 
 			CurrentSentenceIndex++;
+
 			UpdateBindingToDialogueWidget();
+
+			// Call the delegate for when a sentence disappears
+			OnSentenceChange.Broadcast();
 		}
 		else
 		{
 			StartConversation(_ConversationIndex);
+			// Call the delegate for when a sentence appears
+			OnSentenceAppear.Broadcast();
 		}
 	}
 }
@@ -113,7 +120,7 @@ void UDialogueSystemComponent::DisableDialogue(bool _bHasFinishedConversation)
 
 	if (Conversations.Num() > CurrentConversationIndex && _bHasFinishedConversation)
 	{
-		OnConversationEnd.Broadcast();
+		OnConversationEnd.Broadcast(CurrentConversationIndex);
 
 		// If an objective has been set, then complete it
 		UQuestObjectiveComponent* objective = Conversations[CurrentConversationIndex].QuestObjectiveToComplete;
