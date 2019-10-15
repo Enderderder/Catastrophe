@@ -149,43 +149,24 @@ void AGuard::Tick(float DeltaTime)
 			HeadShotTargetAnchor->GetComponentLocation(), 
 			UGameplayStatics::GetPlayerCameraManager(this, 0)->GetCameraLocation());
 		HeadShotTargetAnchor->SetWorldRotation(headShotTargetRot);
-// 		const FRotator addingRotation = FRotator(0.0f, 0.0f, DeltaTime * 30.0f);
-// 		HeadShotTargetMesh->AddLocalRotation(addingRotation);
+
 	}
 
-	if (bPlayerInSleepDetectRange)
+	// Guard Hearing detection tick
 	{
-		switch (GuardState)
+		if (bPlayerInSleepDetectRange &&
+			IsValid(PlayerRef) &&
+			PlayerRef->GetVelocity().Size() >= 50.0f &&
+			!PlayerRef->GetCharacterMovement()->IsCrouching())
 		{
-		case EGuardState::SLEEPING:
-		{
-			if (PlayerRef && bPlayerInSleepDetectRange)
-			{
-				if (PlayerRef->GetVelocity().Size() >= 50.0f
-					&& !PlayerRef->GetCharacterMovement()->IsCrouching())
-				{
-					GuardController->GetBlackboardComponent()->SetValueAsBool(TEXT("bHearingPlayer"), true);
-					//SetGuardState(EGuardState::WAKEUP_STAGEONE);
-					//float time;
-					//LookAround(time);
-				}
-				else
-				{
-					GuardController->GetBlackboardComponent()->SetValueAsBool(TEXT("bHearingPlayer"), false);
-				}
-			}
-
-			break;
+			GuardController->GetBlackboardComponent()->SetValueAsBool(TEXT("bHearingPlayer"), true);
 		}
-		case EGuardState::WAKEUP_STAGEONE:
-			break;
-
-		case EGuardState::WAKEUP_STAGETWO:
-			break;
-
-		default: break;
+		else
+		{
+			GuardController->GetBlackboardComponent()->SetValueAsBool(TEXT("bHearingPlayer"), false);
 		}
 	}
+
 }
 
 void AGuard::GetPerceptionLocRot_Implementation(FVector& Location, FRotator& Rotation) const

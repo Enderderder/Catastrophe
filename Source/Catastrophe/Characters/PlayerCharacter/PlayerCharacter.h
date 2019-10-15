@@ -205,6 +205,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "HHU | Throwable")
 	TSubclassOf<class AThrowableProjectileIndicator> ThrowableProjectilIndicatorClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "HHU | Throwable")
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "HHU | Throwable")
 	bool bShowingProjectileIndicator;
 
@@ -419,6 +422,7 @@ public:
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
 	FORCEINLINE class UPlayerWidget* GetPlayerHudWidget() const { return PlayerWidget; }
 	FORCEINLINE class UCameraComponent* GetCamera() const { return FollowCamera; }
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE UCharacterSprintMovementComponent* GetSprintMovementComponent() const { 
 		return SprintMovementComponent; }
 	FORCEINLINE class AThrowableProjectileIndicator* GetProjectileIndicator() const {
