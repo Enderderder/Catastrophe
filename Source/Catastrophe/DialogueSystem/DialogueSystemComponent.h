@@ -8,7 +8,10 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDisableDialogueSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConversationStartSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConversationEndSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConversationEndSignature, int, ConversationIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSentenceAppearSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSentenceDisappearSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSentenceChangeSignature);
 
 // The types of characters that can talk in a conversation
 UENUM(BlueprintType)
@@ -62,7 +65,7 @@ private:
 	bool CanInteract;
 
 	// The stored dialogue widget which is presented on screen
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = "Dialogue System", meta = (AllowPrivateAccess = "true"))
 	class UDialogueWidget* DialogueWidget;
 
 	// Stores the player character
@@ -103,6 +106,18 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
 	FOnConversationEndSignature OnConversationEnd;
 
+	// The delegate which contains functionality for when the sentence appears
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
+	FOnSentenceAppearSignature OnSentenceAppear;
+
+	// The delegate which contains functionality for when the sentence disappears
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
+	FOnSentenceDisappearSignature OnSentenceDisappear;
+
+	// The delegate which contains functionality for when the sentence changes
+	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
+	FOnSentenceChangeSignature OnSentenceChange;
+
 public:	
 	// Sets default values for this component's properties
 	UDialogueSystemComponent();
@@ -142,7 +157,6 @@ public:
 	 * @author James Johnstone
 	 * @param _ConversationIndex The index of the conversation that is to be started
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
 	void StartConversation(int _ConversationIndex);
 
 	/**
