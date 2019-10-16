@@ -91,13 +91,13 @@ struct FDistrictInfo
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		EDISTRICT RespawnDistrictType;
+	EDISTRICT RespawnDistrictType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FName> LevelsToLoad;
+	TArray<FName> LevelsToLoad;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FRespawnLocationInfo> RespawnLocations;
+	TArray<FRespawnLocationInfo> RespawnLocations;
 
 	FDistrictInfo() :
 		RespawnDistrictType(EDISTRICT::HUB)

@@ -24,6 +24,29 @@ private:
 	/** This is a temporary info store */
 	FLoadStreamingLevelInfo tempInfo;
 
+
+	/** Multi level loading support */
+
+	FDistrictInfo tempLoadingDistrictInfo;
+
+	FString tempRespawnLocationName = TEXT("DefaultName");
+
+	bool bShouldBlockDuringEachLoad = true;
+
+	int32 tempTotalUnLoadingLevel = 0;
+
+	int32 tempCurrentUnLoadingLevel = 0;
+
+	int32 tempTotalLoadingLevel = 0;
+
+	int32 tempCurrentLoadingLevel = 0;
+
+	TArray<FName> tempLevelsToLoad;
+
+	TArray<FName> tempLevelsToUnload;
+
+	/** =============================== */
+
 public:
 	/** Default constructor */
 	URespawnSubsystem();
@@ -48,6 +71,9 @@ protected:
 	UPROPERTY()
 	TArray<FDistrictInfo> Districts;
 
+	UPROPERTY()
+	TArray<FName> StreamingLevels;
+
 public:
 	/* Implement this for initialization of instances of the system */
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -57,6 +83,14 @@ public:
 
 	/* Implement this for deinitialization of instances of the system */
 	virtual void Deinitialize() override;
+
+	/**
+	 * Register levels that will be stored inside this respawn system
+	 * @author Richard Wulansari
+	 * @param _levelNames: Array of name of levels thats gonna be registered
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Respawn System")
+	void RegisterStreamingLevels(const TArray<FName> _levelNames);
 
 	/**
 	 * Register the district with its required level names
@@ -85,6 +119,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
 	void UnloadStreamingLevel(FName _levelName);
 
+	/**
+	 * Called to unload a level and reload it
+	 * @author Richard Wulansari
+	 * @param _loadLevelInfo: The level loading information
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
 	void ResetStreamingLevel(FLoadStreamingLevelInfo _loadLevelInfo);
 
@@ -93,9 +132,10 @@ public:
 	 * @author Richard Wulansari
 	 * @param _districtType
 	 * @param _transform
+	 * @param _locationName
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
-	void RegisterRespawnLocation(EDISTRICT _districtType, FTransform _transform);
+	void RegisterRespawnLocation(EDISTRICT _districtType, FTransform _transform, FString _locationName);
 
 	/**
 	 * Gets the first respawn location at provided district type
@@ -116,7 +156,10 @@ public:
 	void RespawnPlayerAtLocation(EDISTRICT _districtType);
 
 	/**
-	 * 
+	 * Teleport the player to the certain district while also load all the level required
+	 * @author Richard Wulansari
+	 * @param _district: District that needs to be loaded
+	 * @param _locationName: The respawn location name
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
 	void RespawnPlayerAtDistrict(EDISTRICT _district, FString _locationName);
@@ -156,5 +199,26 @@ protected:
 	UFUNCTION()
 	void OnStreamLevelResetReloadFinish();
 
+
+	// Multiple Level loading support
+
+	UFUNCTION()
+	void OnDistrictRequireLevelLoaded();
+
+	UFUNCTION()
+	void OnDistrictRequireLevelUnloaded();
+
+	void OnDisctrictLoaded(FDistrictInfo _loadingDistrictInfo, FString _respawnLocationName);
+
+
+private:
+
+	/**
+	 * Gets the respawn transform by location name
+	 * @author Richard Wulansari
+	 * @param _loadingDistrictInfo: The district info
+	 * @param _respawnLocationName: Location name
+	 */
+	FTransform GetRespawnTransform(FDistrictInfo _loadingDistrictInfo, FString _respawnLocationName) const;
 
 };
