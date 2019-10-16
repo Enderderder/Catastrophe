@@ -25,12 +25,12 @@ void URespawnSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	
-	// Add all the locations to the map
-	for (int32 i = (int32)EDISTRICT::HUB; i < (int32)EDISTRICT::LOCATIONCOUNT; ++i)
+	// Initialize all the disctricts
+	for (int32 i = 0; i < (int32)EDISTRICT::COUNT; ++i)
 	{
-		EDISTRICT districtType = static_cast<EDISTRICT>(i);
-		RespawnPoints.Add(districtType);
-		RespawnPoints[districtType].District = districtType;
+		FDistrictInfo districtInfo;
+		districtInfo.RespawnDistrictType = static_cast<EDISTRICT>(i);
+		Districts.Add(districtInfo);
 	}
 }
 
@@ -44,6 +44,18 @@ void URespawnSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
 	
+}
+
+void URespawnSubsystem::RegisterDistrict(EDISTRICT _district, TArray<FName> _levelRequired)
+{
+	for (int32 i = 0; i < (int32)EDISTRICT::COUNT; ++i)
+	{
+		if (static_cast<EDISTRICT>(i) == _district)
+		{
+			Districts[i].LevelsToLoad.Append(_levelRequired);
+			break;
+		}
+	}
 }
 
 void URespawnSubsystem::LoadLevelStreaming(FLoadStreamingLevelInfo _loadLevelInfo)
@@ -107,7 +119,7 @@ void URespawnSubsystem::ResetStreamingLevel(FLoadStreamingLevelInfo _loadLevelIn
 void URespawnSubsystem::RegisterRespawnLocation(EDISTRICT _districtType, FTransform _transform)
 {
 	// Check if the district is valid
-	if ((int32)_districtType < 0 || (int32)_districtType >= (int32)EDISTRICT::LOCATIONCOUNT)
+	if ((int32)_districtType < 0 || (int32)_districtType >= (int32)EDISTRICT::COUNT)
 	{
 		UE_LOG(LogTemp, Error, 
 			TEXT("Failed to register respawn point because the district type is invalid"));
@@ -124,7 +136,7 @@ void URespawnSubsystem::RegisterRespawnLocation(EDISTRICT _districtType, FTransf
 FTransform URespawnSubsystem::GetFirstRespawnLocationAtDistrict(EDISTRICT _districtType)
 {
 	// Check if the district is valid
-	if ((int32)_districtType < 0 || (int32)_districtType >= (int32)EDISTRICT::LOCATIONCOUNT)
+	if ((int32)_districtType < 0 || (int32)_districtType >= (int32)EDISTRICT::COUNT)
 	{
 		UE_LOG(LogTemp, Error,
 			TEXT("Unable to find respawn location cause the district type is invalid"));

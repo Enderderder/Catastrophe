@@ -46,7 +46,7 @@ protected:
 
 	/** All the respawn locations that gets registered */
 	UPROPERTY()
-	TMap<EDISTRICT, FRespawnLocation> RespawnPoints;
+	TArray<FDistrictInfo> Districts;
 
 public:
 	/* Implement this for initialization of instances of the system */
@@ -57,6 +57,15 @@ public:
 
 	/* Implement this for deinitialization of instances of the system */
 	virtual void Deinitialize() override;
+
+	/**
+	 * Register the district with its required level names
+	 * @author Richard Wulansari
+	 * @param _district: The district that it is register under
+	 * @param _levelRequired: The levels that required to load when loading the district
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Respawn System")
+	void RegisterDistrict(EDISTRICT _district, TArray<FName> _levelRequired);
 
 	/**
 	 * Load the level inside the level streaming world
@@ -107,6 +116,12 @@ public:
 	void RespawnPlayerAtLocation(EDISTRICT _districtType);
 
 	/**
+	 * 
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Respawn System")
+	void RespawnPlayerAtDistrict(EDISTRICT _district, FString _locationName);
+
+	/**
 	 * Gets the instance without going through the GameInstance
 	 * @author Richard Wulansari
 	 * @param _worldContextObject The context object of the world
@@ -133,11 +148,11 @@ protected:
 	UFUNCTION()
 	void OnStreamLevelUnloaded();
 
-	/** Called when a level is unloaded during reset*/
+	/** Called when a level is unloaded during reset */
 	UFUNCTION()
 	void OnStreamLevelResetUnloadFinish();
 
-	/** Called when a level is reloaded during reset*/
+	/** Called when a level is reloaded during reset */
 	UFUNCTION()
 	void OnStreamLevelResetReloadFinish();
 
