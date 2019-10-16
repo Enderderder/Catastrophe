@@ -153,10 +153,11 @@ void AGuard::Tick(float DeltaTime)
 	}
 
 	// Guard Hearing detection tick
+	if (bPlayerInSleepDetectRange)
 	{
-		if (bPlayerInSleepDetectRange &&
+		if (
 			IsValid(PlayerRef) &&
-			PlayerRef->GetVelocity().Size() >= 50.0f &&
+			PlayerRef->GetVelocity().Size() >= 100.0f &&
 			!PlayerRef->GetCharacterMovement()->IsCrouching())
 		{
 			GuardController->GetBlackboardComponent()->SetValueAsBool(TEXT("bHearingPlayer"), true);
