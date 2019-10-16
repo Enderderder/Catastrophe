@@ -47,10 +47,15 @@ void UDialogueSystemComponent::DialogueInteract(class APlayerCharacter* _PlayerC
 	{
 		if (bInConversation)
 		{
+			// If at the end of the conversation
 			if (Conversations[CurrentConversationIndex].Sentences.Num() - 1 <= CurrentSentenceIndex)
 			{
+				// Disable the widget
+				if (DialogueWidget)
+				{
+					DialogueWidget->OnSentenceDisappear();
+				}
 				DisableDialogue(true);
-				OnSentenceDisappear.Broadcast();
 				return;
 			}
 
@@ -58,14 +63,15 @@ void UDialogueSystemComponent::DialogueInteract(class APlayerCharacter* _PlayerC
 
 			UpdateBindingToDialogueWidget();
 
-			// Call the delegate for when a sentence disappears
-			OnSentenceChange.Broadcast();
+			if (DialogueWidget)
+			{
+				DialogueWidget->OnSentenceChange();
+			}
 		}
 		else
 		{
+			// Start the conversation
 			StartConversation(_ConversationIndex);
-			// Call the delegate for when a sentence appears
-			OnSentenceAppear.Broadcast();
 		}
 	}
 }
@@ -99,6 +105,11 @@ void UDialogueSystemComponent::StartConversation(int _ConversationIndex)
 
 		// Calls the function which updates all the dialogue
 		UpdateBindingToDialogueWidget();
+
+		if (DialogueWidget)
+		{
+			DialogueWidget->OnSentenceAppear();
+		}
 	}
 }
 
