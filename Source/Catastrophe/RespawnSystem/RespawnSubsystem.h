@@ -74,6 +74,15 @@ protected:
 	UPROPERTY()
 	TArray<FName> StreamingLevels;
 
+private:
+
+	/**
+	 * Internal function resume point for the respawn player at district
+	 * @author Richard Wulansari
+	 */
+	UFUNCTION()
+	void RespawnPlayerAtDistrict_Internal(EDISTRICT _district, FString _locationName);
+
 public:
 	/* Implement this for initialization of instances of the system */
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
