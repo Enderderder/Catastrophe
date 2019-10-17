@@ -19,6 +19,10 @@ void ACatastropheMainGameMode::StartPlay()
 {
 	Super::StartPlay();
 	
+	// Store player character reference
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	if (!IsValid(PlayerCharacter))
+		CatastropheDebug::OnScreenErrorMsg(TEXT("Gamemode: Cannot get APlayerCharacter"));
 }
 
 void ACatastropheMainGameMode::Tick(float DeltaSeconds)
@@ -80,12 +84,20 @@ void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* 
 
 void ACatastropheMainGameMode::StartCaveGameplay()
 {
+	Receive_OnCaveGameplayBegin();
 	OnCaveGameplayBegin.Broadcast();
 }
 
 void ACatastropheMainGameMode::EndCaveGameplay()
 {
+	Receive_OnCaveGameplayEnd();
 	OnCaveGameplayEnd.Broadcast();
+}
+
+void ACatastropheMainGameMode::ResetCaveGameplay()
+{
+	Receive_OnCaveGameplayReset();
+	OnCaveGameplayReset.Broadcast();
 }
 
 void ACatastropheMainGameMode::OnGuardQteEventComplete(EQteEventState _eventState)

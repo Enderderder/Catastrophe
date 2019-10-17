@@ -40,6 +40,9 @@ public:
 
 protected:
 
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay | General")
+	class APlayerCharacter* PlayerCharacter;
+
 	/** Array of guards thats chasing the player */
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | General")
 	TArray<AActor*> ChasingGuards;
@@ -76,6 +79,15 @@ protected:
 	/** Actor reference to the cave gameplay camera track */
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | Cave")
 	class ACaveCameraTrack* CaveCameraTrack;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay | Cave")
+	float CaveAdditionSpeedMultiplier = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay | Cave")
+	float CaveJumpVeloOverride = 1500.0f;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | Cave")
+	float CaveJumpVeloOrigin;
 
 public:
 
@@ -119,6 +131,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
 	void EndCaveGameplay();
 
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
+	void ResetCaveGameplay();
 
 	/** Setter */
 	void SetCaveCameraTrack(class ACaveCameraTrack* _cameraTrackActor) {
@@ -132,6 +146,17 @@ public:
 		return CaveCameraTrack; }
 
 	/** Getter End */
+
+protected:
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplayBegin"))
+	void Receive_OnCaveGameplayBegin();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplayEnd"))
+	void Receive_OnCaveGameplayEnd();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplayReset"))
+	void Receive_OnCaveGameplayReset();
 
 private:
 
