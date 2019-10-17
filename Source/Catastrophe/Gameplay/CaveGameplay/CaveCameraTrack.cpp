@@ -8,9 +8,11 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "DebugUtility/CatastropheDebug.h"
+#include "../GameMode/CatastropheMainGameMode.h"
 
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
+
+#include "DebugUtility/CatastropheDebug.h"
 
 // Sets default values
 ACaveCameraTrack::ACaveCameraTrack()
@@ -33,13 +35,18 @@ void ACaveCameraTrack::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Set self reference to the game mode
+	ACatastropheMainGameMode* gameMode = ACatastropheMainGameMode::GetGameModeInst(this);
+	if (gameMode)
+		gameMode->SetCaveCameraTrack(this);
+
 	// Get and store the player character
 	ACharacter* character = UGameplayStatics::GetPlayerCharacter(this, 0);
 	PlayerCharacter = Cast<APlayerCharacter>(character);
 	if (!PlayerCharacter)
 	{
 		const FString msg = GetName() + " error: Cannot get player character.";
-		CatastropheDebug::OnScreenDebugMsg(-1, 30.0f, FColor::Red, msg);
+		CatastropheDebug::OnScreenErrorMsg(msg);
 	}
 }
 

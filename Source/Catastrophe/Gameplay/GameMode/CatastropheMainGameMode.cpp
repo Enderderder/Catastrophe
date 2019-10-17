@@ -19,17 +19,6 @@ void ACatastropheMainGameMode::StartPlay()
 {
 	Super::StartPlay();
 	
-	TArray<AActor*> cameraTrackActors;
-	UGameplayStatics::GetAllActorsOfClass(this, ACaveCameraTrack::StaticClass(), cameraTrackActors);
-	if (cameraTrackActors.Num() == 1)
-	{
-		CaveCameraTrack = Cast<ACaveCameraTrack>(cameraTrackActors[0]);
-	}
-	else
-	{
-		const FString msg = "Insufficient amount of Cave camera track.";
-		CatastropheDebug::OnScreenErrorMsg(msg, 30.0f);
-	}
 }
 
 void ACatastropheMainGameMode::Tick(float DeltaSeconds)
@@ -89,6 +78,16 @@ void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* 
 	}
 }
 
+void ACatastropheMainGameMode::StartCaveGameplay()
+{
+	OnCaveGameplayBegin.Broadcast();
+}
+
+void ACatastropheMainGameMode::EndCaveGameplay()
+{
+	OnCaveGameplayEnd.Broadcast();
+}
+
 void ACatastropheMainGameMode::OnGuardQteEventComplete(EQteEventState _eventState)
 {
 	if (_eventState == EQteEventState::Success)
@@ -115,6 +114,7 @@ void ACatastropheMainGameMode::OnGuardQteSuccess()
 		QteGuard->SetGuardState(EGuardState::STUNED);
 }
 
+// Called when player failed to finished a guard QTE event
 void ACatastropheMainGameMode::OnGuardQteFailed()
 {
 	// Reset the success counter and sends player to the jail
@@ -122,19 +122,6 @@ void ACatastropheMainGameMode::OnGuardQteFailed()
 	if (QteGuard)
 	{
 		QteGuard->OnCatchPlayerSuccess();
-
-		/*const FName guardLevelName = URespawnSubsystem::GetStreamingLevelNameFromActor(QteGuard);
-		if (guardLevelName != NAME_None)
-		{
-			FLoadStreamingLevelInfo info;
-			info.OriginalLevelName = guardLevelName;
-			info.LoadingLevelName = TEXT("Jail");
-			info.bUnloadOriginalLevel = true;
-			info.bTeleportPlayer = true;
-			info.RespawnDistrictType = EDISTRICT::JAIL;
-			info.bBlockOnLoad = false;
-			URespawnSubsystem::GetInst(this)->LoadLevelStreaming(info);
-		}*/
 	}
 }
 

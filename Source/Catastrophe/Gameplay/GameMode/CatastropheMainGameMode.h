@@ -10,6 +10,7 @@
 
 /** Delegates */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerAimingSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCaveGameplaySignature);
 
 /**
  * This is the main gameplay gamemode of the game
@@ -19,6 +20,7 @@ class CATASTROPHE_API ACatastropheMainGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+/** Delegate events */
 public:
 
 	UPROPERTY(BlueprintAssignable)
@@ -26,6 +28,15 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FPlayerAimingSignature OnPlayerAimingEnd;
+
+	UPROPERTY(BlueprintAssignable)
+	FCaveGameplaySignature OnCaveGameplayBegin;
+
+	UPROPERTY(BlueprintAssignable)
+	FCaveGameplaySignature OnCaveGameplayEnd;
+
+	UPROPERTY(BlueprintAssignable)
+	FCaveGameplaySignature OnCaveGameplayReset;
 
 protected:
 
@@ -101,21 +112,36 @@ public:
 	void InitiateQteBobEvent(class AGuard* _guard);
 	virtual void InitiateQteBobEvent_Implementation(class AGuard* _guard);
 
-	/**
-	 * Binded event. Called when a qte that initiated by guard completed
-	 * @author Richard Wulansari
-	 * @param _qteGuard The guard that initiated this qte event
-	 */
-	UFUNCTION()
-	void OnGuardQteEventComplete(EQteEventState _eventState);
 
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
+	void StartCaveGameplay();
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
+	void EndCaveGameplay();
+
+
+	/** Setter */
+	void SetCaveCameraTrack(class ACaveCameraTrack* _cameraTrackActor) {
+		CaveCameraTrack = _cameraTrackActor;
+	}
+
+	/** Setter End */
 
 	/** Getter */
-	FORCEINLINE class ACaveCameraTrack* GetCaveCameraTrack() const { return CaveCameraTrack; }
+	FORCEINLINE class ACaveCameraTrack* GetCaveCameraTrack() const { 
+		return CaveCameraTrack; }
 
 	/** Getter End */
 
 private:
+
+	/**
+	 * Binded event. Called when a qte that initiated by guard completed
+	 * @author Richard Wulansari
+	 * @param _eventState The state of the event when complete
+	 */
+	UFUNCTION()
+	void OnGuardQteEventComplete(EQteEventState _eventState);
 
 	/**
 	 * Called when player successfully finished a guard QTE event
@@ -136,10 +162,6 @@ public:
 	 * @note If the current gamemode if not ACatastropheMainGameMode, this function will return nullptr
 	 */
 	static ACatastropheMainGameMode* GetGameModeInst(const UObject* _worldContextObject);
-
-
-
-
 
 
 
