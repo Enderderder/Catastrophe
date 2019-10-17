@@ -121,7 +121,9 @@ void ACatastropheMainGameMode::OnGuardQteFailed()
 	GuardQteSuccessCounter = 0;
 	if (QteGuard)
 	{
-		const FName guardLevelName = URespawnSubsystem::GetStreamingLevelNameFromActor(QteGuard);
+		QteGuard->OnCatchPlayerSuccess();
+
+		/*const FName guardLevelName = URespawnSubsystem::GetStreamingLevelNameFromActor(QteGuard);
 		if (guardLevelName != NAME_None)
 		{
 			FLoadStreamingLevelInfo info;
@@ -132,7 +134,7 @@ void ACatastropheMainGameMode::OnGuardQteFailed()
 			info.RespawnDistrictType = EDISTRICT::JAIL;
 			info.bBlockOnLoad = false;
 			URespawnSubsystem::GetInst(this)->LoadLevelStreaming(info);
-		}
+		}*/
 	}
 }
 
@@ -156,7 +158,7 @@ void ACatastropheMainGameMode::Cheat_Teleport(const FString& _levelName, const F
 	if (enumPtr)
 	{
 		int32 index = enumPtr->GetIndexByName(FName(*_districtName));
-		if (index == INDEX_NONE || (EDISTRICT)index >= EDISTRICT::LOCATIONCOUNT)
+		if (index == INDEX_NONE || (EDISTRICT)index >= EDISTRICT::COUNT)
 		{
 			CatastropheDebug::OnScreenErrorMsg(TEXT("Invalid district type"), 10.0f);
 			return;
@@ -171,7 +173,7 @@ void ACatastropheMainGameMode::Cheat_Teleport(const FString& _levelName, const F
 
 	}
 
-	if (!enumPtr) district = EDISTRICT::LOCATIONCOUNT;
+	if (!enumPtr) district = EDISTRICT::COUNT;
 	else
 	{
 		
