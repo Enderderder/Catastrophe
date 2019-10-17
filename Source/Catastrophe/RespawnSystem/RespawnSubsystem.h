@@ -150,7 +150,7 @@ public:
 	/**
 	 * Relocate the player to a district
 	 * @author Richard Wulansari
-	 * @param _districtType The location player is going to move to
+	 * @param _districtType: The location player is going to move to
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
 	void RespawnPlayerAtLocation(EDISTRICT _districtType);
@@ -167,14 +167,15 @@ public:
 	/**
 	 * Gets the instance without going through the GameInstance
 	 * @author Richard Wulansari
-	 * @param _worldContextObject The context object of the world
+	 * @param _worldContextObject: The context object of the world
 	 */
 	static URespawnSubsystem* GetInst(const UObject* _worldContextObject);
 
 	/**
 	 * Gets the streaming level name given from an actor
 	 * @author Richard Wulansari
-	 * @param _actor The context actor
+	 * @param _actor: The context actor
+	 * @return The name of the stream level that actor is in
 	 * @note This function may return NAME_None
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Respawn System")
@@ -218,6 +219,7 @@ private:
 	 * @author Richard Wulansari
 	 * @param _loadingDistrictInfo: The district info
 	 * @param _respawnLocationName: Location name
+	 * @return The respawn transform
 	 */
 	FTransform GetRespawnTransform(FDistrictInfo _loadingDistrictInfo, FString _respawnLocationName) const;
 
