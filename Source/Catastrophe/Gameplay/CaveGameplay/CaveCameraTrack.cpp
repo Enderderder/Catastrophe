@@ -74,8 +74,8 @@ void ACaveCameraTrack::Tick(float DeltaTime)
 
 		// Debug message
 		{
-			const FString msg = FString::SanitizeFloat(distanceOnKey);
-			CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Blue, msg);
+// 			const FString msg = FString::SanitizeFloat(distanceOnKey);
+// 			CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Blue, msg);
 		}
 
 // 		FVector previousLocation = CameraTrackSpline->GetLocationAtDistanceAlongSpline(
