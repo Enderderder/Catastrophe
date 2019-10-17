@@ -10,6 +10,8 @@
 #include "Engine/Level.h"
 #include "GameFramework/SpringArmComponent.h"
 
+#include "Engine/World.h"
+#include "TimerManager.h"
 #include "Kismet/KismetMathLibrary.h"
 
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
@@ -17,9 +19,79 @@
 
 #include "DebugUtility/CatastropheDebug.h"
 
+
 URespawnSubsystem::URespawnSubsystem() 
 	: UCatastropheGameInstanceSubsystem()
 {}
+
+void URespawnSubsystem::RespawnPlayerAtDistrict_Internal(EDISTRICT _district, FString _locationName)
+{
+	FDistrictInfo districtInfo = Districts[(int32)_district];
+
+	// Set the temp values
+	tempLoadingDistrictInfo = districtInfo;
+	tempRespawnLocationName = _locationName;
+	tempCurrentLoadingLevel = 0;
+	tempCurrentUnLoadingLevel = 0;
+	tempLevelsToLoad.Empty();
+	tempLevelsToUnload.Empty();
+
+	// Allocate task for levels needs to be unloaded and	loaded
+	{
+		for (FName levelToLoad : districtInfo.LevelsToLoad)
+		{
+			ULevelStreaming* streamLevel =
+				UGameplayStatics::GetStreamingLevel(this, levelToLoad);
+			if (streamLevel)
+			{
+				tempLevelsToLoad.Add(levelToLoad);
+			}
+		}
+
+		for (FName levelName : StreamingLevels)
+		{
+			ULevelStreaming* streamLevel =
+				UGameplayStatics::GetStreamingLevel(this, levelName);
+			if (streamLevel && streamLevel->IsLevelLoaded())
+			{
+				tempLevelsToUnload.Add(levelName);
+			}
+		}
+	}
+
+	// Start the unloading and loading task
+	if (tempCurrentUnLoadingLevel < tempLevelsToUnload.Num())
+	{
+		FLatentActionInfo latenInfo;
+		latenInfo.CallbackTarget = this;
+		latenInfo.UUID = 0;
+		latenInfo.Linkage = 0;
+		latenInfo.ExecutionFunction = TEXT("OnDistrictRequireLevelUnloaded");
+		UGameplayStatics::UnloadStreamLevel(
+			this,
+			tempLevelsToUnload[tempCurrentUnLoadingLevel],
+			latenInfo,
+			bShouldBlockDuringEachLoad);
+	}
+	else if (tempCurrentLoadingLevel < tempLevelsToLoad.Num())
+	{
+		FLatentActionInfo latenInfo;
+		latenInfo.CallbackTarget = this;
+		latenInfo.UUID = 0;
+		latenInfo.Linkage = 0;
+		latenInfo.ExecutionFunction = TEXT("OnDistrictRequireLevelLoaded");
+		UGameplayStatics::LoadStreamLevel(
+			this,
+			tempLevelsToLoad[tempCurrentLoadingLevel],
+			true,
+			bShouldBlockDuringEachLoad,
+			latenInfo);
+	}
+	else
+	{
+		OnDisctrictLoaded(tempLoadingDistrictInfo, tempRespawnLocationName);
+	}
+}
 
 void URespawnSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -210,71 +282,11 @@ void URespawnSubsystem::RespawnPlayerAtDistrict(EDISTRICT _district, FString _lo
 {
 	OnLevelTransitionStart.Broadcast();
 
-	FDistrictInfo districtInfo = Districts[(int32)_district];
-
-	// Set the temp values
-	tempLoadingDistrictInfo = districtInfo;
-	tempRespawnLocationName = _locationName;
-	tempCurrentLoadingLevel = 0;
-	tempCurrentUnLoadingLevel = 0;
-	tempLevelsToLoad.Empty();
-	tempLevelsToUnload.Empty();
-
-	// Allocate task for levels needs to be unloaded and	loaded
-	{
-		for (FName levelToLoad : districtInfo.LevelsToLoad)
-		{
-			ULevelStreaming* streamLevel =
-				UGameplayStatics::GetStreamingLevel(this, levelToLoad);
-			if (streamLevel)
-			{
-				tempLevelsToLoad.Add(levelToLoad);
-			}
-		}
-
-		for (FName levelName : StreamingLevels)
-		{
-			ULevelStreaming* streamLevel =
-				UGameplayStatics::GetStreamingLevel(this, levelName);
-			if (streamLevel && streamLevel->IsLevelLoaded())
-			{
-				tempLevelsToUnload.Add(levelName);
-			}
-		}
-	}
-
-	// Start the unloading and loading task
-	if (tempCurrentUnLoadingLevel < tempLevelsToUnload.Num())
-	{
-		FLatentActionInfo latenInfo;
-		latenInfo.CallbackTarget = this;
-		latenInfo.UUID = 0;
-		latenInfo.Linkage = 0;
-		latenInfo.ExecutionFunction = TEXT("OnDistrictRequireLevelUnloaded");
-		UGameplayStatics::UnloadStreamLevel(
-			this,
-			tempLevelsToUnload[tempCurrentUnLoadingLevel],
-			latenInfo,
-			bShouldBlockDuringEachLoad);
-	}
-	else if (tempCurrentLoadingLevel < tempLevelsToLoad.Num())
-	{
-		FLatentActionInfo latenInfo;
-		latenInfo.CallbackTarget = this;
-		latenInfo.UUID = 0;
-		latenInfo.Linkage = 0;
-		latenInfo.ExecutionFunction = TEXT("OnDistrictRequireLevelLoaded");
-		UGameplayStatics::LoadStreamLevel(
-			this,
-			tempLevelsToLoad[tempCurrentLoadingLevel],
-			true,
-			bShouldBlockDuringEachLoad,
-			latenInfo);
-	}
-	else
-	{
-		OnDisctrictLoaded(tempLoadingDistrictInfo, tempRespawnLocationName);
-	}
+	FTimerHandle timerHandle;
+	FTimerDelegate timerDele;
+	timerDele.BindUFunction(this, FName("RespawnPlayerAtDistrict_Internal"), _district, _locationName);
+	float timeDilation = UGameplayStatics::GetGlobalTimeDilation(this);
+	GetWorld()->GetTimerManager().SetTimer(timerHandle, timerDele, 1.0f * timeDilation, false);
 }
 
 URespawnSubsystem* URespawnSubsystem::GetInst(const UObject* _worldContextObject)
