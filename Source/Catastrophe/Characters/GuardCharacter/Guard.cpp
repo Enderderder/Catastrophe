@@ -381,6 +381,12 @@ void AGuard::OnCatchPlayer_Implementation(APlayerCharacter* _player)
 	/// Should be implement in derived class
 }
 
+// Called the guard successfully caught a player
+void AGuard::OnCatchPlayerSuccess_Implementation()
+{
+
+}
+
 void AGuard::ResetGuard()
 {
 	GetCharacterMovement()->DisableMovement();
@@ -389,7 +395,6 @@ void AGuard::ResetGuard()
 	bPlayerWasInSight = false;
 	bPlayerInSight = false;
 	StopAllMontages();
-	//SetActorTransform(DefaultTransform, false, nullptr, ETeleportType::ResetPhysics
 	SetActorLocationAndRotation(DefaultTransform.GetLocation(), DefaultTransform.GetRotation());
 
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);

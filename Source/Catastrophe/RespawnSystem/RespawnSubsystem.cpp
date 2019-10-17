@@ -25,12 +25,12 @@ void URespawnSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	
-	// Add all the locations to the map
-	for (int32 i = (int32)EDISTRICT::HUB; i < (int32)EDISTRICT::LOCATIONCOUNT; ++i)
+	// Initialize all the disctricts
+	for (int32 i = 0; i < (int32)EDISTRICT::COUNT; ++i)
 	{
-		EDISTRICT districtType = static_cast<EDISTRICT>(i);
-		RespawnPoints.Add(districtType);
-		RespawnPoints[districtType].District = districtType;
+		FDistrictInfo districtInfo;
+		districtInfo.RespawnDistrictType = static_cast<EDISTRICT>(i);
+		Districts.Add(districtInfo);
 	}
 }
 
@@ -44,6 +44,39 @@ void URespawnSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
 	
+}
+
+// Register level names, only valid level name will be registered
+void URespawnSubsystem::RegisterStreamingLevels(const TArray<FName> _levelNames)
+{
+	for (FName levelName : _levelNames)
+	{
+		if (ULevelStreaming* streamLevel = 
+			UGameplayStatics::GetStreamingLevel(this, levelName))
+		{
+			StreamingLevels.Add(levelName);
+		}
+	}
+}
+
+void URespawnSubsystem::RegisterDistrict(EDISTRICT _district, TArray<FName> _levelRequired)
+{
+	for (int32 i = 0; i < (int32)EDISTRICT::COUNT; ++i)
+	{
+		if (static_cast<EDISTRICT>(i) == _district)
+		{
+			for (FName levelName : _levelRequired)
+			{
+				ULevelStreaming* streamLevel =
+					UGameplayStatics::GetStreamingLevel(this, levelName);
+				if (streamLevel)
+				{
+					Districts[i].LevelsToLoad.Add(levelName);
+				}
+			}
+			break;
+		}
+	}
 }
 
 void URespawnSubsystem::LoadLevelStreaming(FLoadStreamingLevelInfo _loadLevelInfo)
@@ -104,11 +137,12 @@ void URespawnSubsystem::ResetStreamingLevel(FLoadStreamingLevelInfo _loadLevelIn
 		false);
 }
 
-void URespawnSubsystem::RegisterRespawnLocation(EDISTRICT _districtType, FTransform _transform)
+void URespawnSubsystem::RegisterRespawnLocation(EDISTRICT _districtType, FTransform _transform, FString _locationName)
 {
 	// Check if the district is valid
-	if ((int32)_districtType < 0 || (int32)_districtType >= (int32)EDISTRICT::LOCATIONCOUNT)
+	if ((int32)_districtType < 0 || (int32)_districtType >= (int32)EDISTRICT::COUNT)
 	{
+		CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to register respawn point because the district type is invalid"));
 		UE_LOG(LogTemp, Error, 
 			TEXT("Failed to register respawn point because the district type is invalid"));
 		return;
@@ -118,13 +152,16 @@ void URespawnSubsystem::RegisterRespawnLocation(EDISTRICT _districtType, FTransf
 	_transform.SetScale3D(FVector::OneVector);
 
 	// Store the location
-	RespawnPoints[_districtType].RespawnTransforms.Add(_transform);
+	FRespawnLocationInfo respawnLocationInfo;
+	respawnLocationInfo.LocationName = _locationName;
+	respawnLocationInfo.RespawnTransform = _transform;
+	Districts[(int32)_districtType].RespawnLocations.Add(respawnLocationInfo);
 }
 
 FTransform URespawnSubsystem::GetFirstRespawnLocationAtDistrict(EDISTRICT _districtType)
 {
 	// Check if the district is valid
-	if ((int32)_districtType < 0 || (int32)_districtType >= (int32)EDISTRICT::LOCATIONCOUNT)
+	if ((int32)_districtType < 0 || (int32)_districtType >= (int32)EDISTRICT::COUNT)
 	{
 		UE_LOG(LogTemp, Error,
 			TEXT("Unable to find respawn location cause the district type is invalid"));
@@ -132,13 +169,13 @@ FTransform URespawnSubsystem::GetFirstRespawnLocationAtDistrict(EDISTRICT _distr
 	}
 
 	// Check if there is any locations registered
-	TArray<FTransform> respawnPointsInDistrict = RespawnPoints[_districtType].RespawnTransforms;
-	if (respawnPointsInDistrict.Num() <= 0)
-	{
-		UE_LOG(LogTemp, Error,
-			TEXT("Unable to find respawn location cause there is no location in district"));
-		return FTransform::Identity;
-	}
+	TArray<FTransform> respawnPointsInDistrict; //= RespawnPoints[_districtType].RespawnTransforms;
+// 	if (respawnPointsInDistrict.Num() <= 0)
+// 	{
+// 		UE_LOG(LogTemp, Error,
+// 			TEXT("Unable to find respawn location cause there is no location in district"));
+// 		return FTransform::Identity;
+// 	}
 
 	// Give the transform
 	return respawnPointsInDistrict[0];
@@ -166,6 +203,77 @@ void URespawnSubsystem::RespawnPlayerAtLocation(EDISTRICT _districtType)
 			
 
 		}
+	}
+}
+
+void URespawnSubsystem::RespawnPlayerAtDistrict(EDISTRICT _district, FString _locationName)
+{
+	OnLevelTransitionStart.Broadcast();
+
+	FDistrictInfo districtInfo = Districts[(int32)_district];
+
+	// Set the temp values
+	tempLoadingDistrictInfo = districtInfo;
+	tempRespawnLocationName = _locationName;
+	tempCurrentLoadingLevel = 0;
+	tempCurrentUnLoadingLevel = 0;
+	tempLevelsToLoad.Empty();
+	tempLevelsToUnload.Empty();
+
+	// Allocate task for levels needs to be unloaded and	loaded
+	{
+		for (FName levelToLoad : districtInfo.LevelsToLoad)
+		{
+			ULevelStreaming* streamLevel =
+				UGameplayStatics::GetStreamingLevel(this, levelToLoad);
+			if (streamLevel)
+			{
+				tempLevelsToLoad.Add(levelToLoad);
+			}
+		}
+
+		for (FName levelName : StreamingLevels)
+		{
+			ULevelStreaming* streamLevel =
+				UGameplayStatics::GetStreamingLevel(this, levelName);
+			if (streamLevel && streamLevel->IsLevelLoaded())
+			{
+				tempLevelsToUnload.Add(levelName);
+			}
+		}
+	}
+
+	// Start the unloading and loading task
+	if (tempCurrentUnLoadingLevel < tempLevelsToUnload.Num())
+	{
+		FLatentActionInfo latenInfo;
+		latenInfo.CallbackTarget = this;
+		latenInfo.UUID = 0;
+		latenInfo.Linkage = 0;
+		latenInfo.ExecutionFunction = TEXT("OnDistrictRequireLevelUnloaded");
+		UGameplayStatics::UnloadStreamLevel(
+			this,
+			tempLevelsToUnload[tempCurrentUnLoadingLevel],
+			latenInfo,
+			bShouldBlockDuringEachLoad);
+	}
+	else if (tempCurrentLoadingLevel < tempLevelsToLoad.Num())
+	{
+		FLatentActionInfo latenInfo;
+		latenInfo.CallbackTarget = this;
+		latenInfo.UUID = 0;
+		latenInfo.Linkage = 0;
+		latenInfo.ExecutionFunction = TEXT("OnDistrictRequireLevelLoaded");
+		UGameplayStatics::LoadStreamLevel(
+			this,
+			tempLevelsToLoad[tempCurrentLoadingLevel],
+			true,
+			bShouldBlockDuringEachLoad,
+			latenInfo);
+	}
+	else
+	{
+		OnDisctrictLoaded(tempLoadingDistrictInfo, tempRespawnLocationName);
 	}
 }
 
@@ -249,4 +357,101 @@ void URespawnSubsystem::OnStreamLevelResetReloadFinish()
 	{
 		RespawnPlayerAtLocation(tempInfo.RespawnDistrictType);
 	}
+}
+
+void URespawnSubsystem::OnDistrictRequireLevelLoaded()
+{
+	tempCurrentLoadingLevel++;
+	if (tempCurrentLoadingLevel < tempLevelsToLoad.Num())
+	{
+		FLatentActionInfo latenInfo;
+		latenInfo.CallbackTarget = this;
+		latenInfo.UUID = 0;
+		latenInfo.Linkage = 0;
+		latenInfo.ExecutionFunction = TEXT("OnDistrictRequireLevelUnloaded");
+		UGameplayStatics::LoadStreamLevel(
+			this,
+			tempLevelsToLoad[tempCurrentLoadingLevel],
+			true,
+			bShouldBlockDuringEachLoad,
+			latenInfo);
+	}
+	else
+	{
+		OnDisctrictLoaded(tempLoadingDistrictInfo, tempRespawnLocationName);
+	}
+}
+
+void URespawnSubsystem::OnDistrictRequireLevelUnloaded()
+{
+	tempCurrentUnLoadingLevel++;
+	if (tempCurrentUnLoadingLevel < tempLevelsToUnload.Num())
+	{
+		FLatentActionInfo latenInfo;
+		latenInfo.CallbackTarget = this;
+		latenInfo.UUID = 0;
+		latenInfo.Linkage = 0;
+		latenInfo.ExecutionFunction = TEXT("OnDistrictRequireLevelUnloaded");
+		UGameplayStatics::UnloadStreamLevel(
+			this,
+			tempLevelsToUnload[tempCurrentUnLoadingLevel],
+			latenInfo,
+			bShouldBlockDuringEachLoad);
+	}
+	else if (tempCurrentLoadingLevel < tempLevelsToLoad.Num())
+	{
+		FLatentActionInfo latenInfo;
+		latenInfo.CallbackTarget = this;
+		latenInfo.UUID = 0;
+		latenInfo.Linkage = 0;
+		latenInfo.ExecutionFunction = TEXT("OnDistrictRequireLevelLoaded");
+		UGameplayStatics::LoadStreamLevel(
+			this,
+			tempLevelsToLoad[tempCurrentLoadingLevel],
+			true,
+			bShouldBlockDuringEachLoad,
+			latenInfo);
+	}
+	else
+	{
+		OnDisctrictLoaded(tempLoadingDistrictInfo, tempRespawnLocationName);
+	}
+}
+
+void URespawnSubsystem::OnDisctrictLoaded(FDistrictInfo _loadingDistrictInfo, FString _respawnLocationName)
+{
+	FTransform respawnTransform = GetRespawnTransform(_loadingDistrictInfo, _respawnLocationName);
+	ACharacter* player = UGameplayStatics::GetPlayerCharacter(this, 0);
+	if (IsValid(player))
+	{
+		player->SetActorLocation(respawnTransform.GetLocation());
+		player->SetActorRotation(respawnTransform.GetRotation());
+
+		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(player);
+		if (playerCharacter)
+			playerCharacter->GetCameraBoom()->SetRelativeRotation(FRotator::ZeroRotator);
+	}
+
+	OnLevelTransitionFinish.Broadcast();
+}
+
+// Gets the respawn transform by location name
+FTransform URespawnSubsystem::GetRespawnTransform(FDistrictInfo _loadingDistrictInfo, FString _respawnLocationName) const
+{
+	TArray<FRespawnLocationInfo> respawnLocations = _loadingDistrictInfo.RespawnLocations;
+	for (int32 i = 0; i < respawnLocations.Num(); ++i)
+	{
+		if (respawnLocations[i].LocationName == _respawnLocationName)
+		{
+			return respawnLocations[i].RespawnTransform;
+		}
+	}
+
+	// If cannot find the transform specified
+	// either return the first in the array or otherwise return identity transform
+	if (respawnLocations.Num() > 0)
+	{
+		return respawnLocations[0].RespawnTransform;
+	}
+	else return FTransform::Identity;
 }

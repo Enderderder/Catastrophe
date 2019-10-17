@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "RespawnSystem")
 	EDISTRICT District;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "RespawnSystem")
+	FString LocationName = "DefaultName";
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
