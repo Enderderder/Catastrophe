@@ -196,10 +196,5 @@ void ACatastropheMainGameMode::Cheat_Teleport(const FString& _levelName, const F
 	{
 		
 	}
-
-
-
-
-
 	//CatastropheDebug::OnScreenDebugMsg(-1, 10.0f, FColor::Cyan, enumName);
 }
