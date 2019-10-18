@@ -4,6 +4,7 @@
 #include "Caterpillar.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
@@ -24,12 +25,13 @@ ACaterpillar::ACaterpillar()
 
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
-	CatchTriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CatchTriggerBox"));
-	CatchTriggerBox->SetGenerateOverlapEvents(true);
-	CatchTriggerBox->SetCollisionProfileName(TEXT("Trigger"));
-	CatchTriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
-	CatchTriggerBox->OnComponentBeginOverlap.AddDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
-	CatchTriggerBox->SetupAttachment(GetMesh());
+	CatchTriggerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CatchTriggerMesh"));
+	CatchTriggerMesh->SetGenerateOverlapEvents(true);
+	CatchTriggerMesh->SetCollisionProfileName(TEXT("Trigger"));
+	CatchTriggerMesh->OnComponentBeginOverlap.RemoveDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
+	CatchTriggerMesh->OnComponentBeginOverlap.AddDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
+	CatchTriggerMesh->SetupAttachment(GetMesh());
+
 }
 
 // Called when the game starts or when spawned
@@ -70,7 +72,10 @@ void ACaterpillar::OnCathchPlayerTrigger(UPrimitiveComponent* OverlappedComponen
 	{
 		ACatastropheMainGameMode* gameMode = ACatastropheMainGameMode::GetGameModeInst(this);
 		if (gameMode)
+		{
+			bChaseActive = false;
 			gameMode->ResetCaveGameplay();
+		}
 	}
 }
 

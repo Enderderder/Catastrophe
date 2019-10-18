@@ -7,6 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/MovementModifierComponent.h"
 
+#include "DebugUtility/CatastropheDebug.h"
+
 // Sets default values for this component's properties
 UCharacterSprintMovementComponent::UCharacterSprintMovementComponent()
 {
@@ -45,7 +47,7 @@ void UCharacterSprintMovementComponent::TickComponent(float DeltaTime, ELevelTic
 
 	// Validate data within this class
 	if (!HasValidData()) return;
-
+	
 	if (bSprinting)
 	{
 		// If player either dont want to sprint anymore or dont meet the requirement to sprint
@@ -115,10 +117,19 @@ bool UCharacterSprintMovementComponent::HasValidData() const
 
 bool UCharacterSprintMovementComponent::IsAbleToSprint() const
 {
-	const bool bAbleToSprint =
-		CharacterMovementComponent->MovementMode == MOVE_Walking
-		&& GetOwner()->GetVelocity().Size() > 0.0f;
 
-	return bAbleToSprint;
+	if (bSprinting)
+	{
+		return 
+			(CharacterMovementComponent->MovementMode == MOVE_Walking 
+				|| CharacterMovementComponent->MovementMode == MOVE_Falling)
+			&& GetOwner()->GetVelocity().Size() > 0.0f;
+	}
+	else
+	{
+		return
+			CharacterMovementComponent->MovementMode == MOVE_Walking
+			&& GetOwner()->GetVelocity().Size() > 0.0f;
+	}
 }
 
