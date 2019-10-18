@@ -68,7 +68,7 @@ void ACaterpillar::BeginPlay()
 void ACaterpillar::OnCathchPlayerTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// Reset the cave gameplay as it caught the player
-	if (OtherActor->ActorHasTag("Player"))
+	if (OtherActor->ActorHasTag("Player") && bChaseActive)
 	{
 		ACatastropheMainGameMode* gameMode = ACatastropheMainGameMode::GetGameModeInst(this);
 		if (gameMode)
