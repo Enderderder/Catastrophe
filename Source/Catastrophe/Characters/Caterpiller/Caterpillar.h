@@ -21,9 +21,8 @@ class CATASTROPHE_API ACaterpillar : public ACharacter
 
 private:
 
-	/** The trigger box that detect overlap with player character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UBoxComponent* CatchTriggerBox;
+	class UStaticMeshComponent* CatchTriggerMesh;
 
 public:
 	// Sets default values for this character's properties
@@ -40,6 +39,9 @@ protected:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gameplay | Cave")
 	FTransform OriginalTransform;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | Cave")
+	bool bChaseActive = false;
 
 protected:
 	// Called when the game starts or when spawned

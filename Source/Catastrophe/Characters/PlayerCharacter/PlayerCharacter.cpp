@@ -202,7 +202,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		if (CurrentStamina <= 0.0f) 
 			UnSprint();
 	}
-	else
+	else if (!GetCharacterMovement()->IsFalling()) // Regen the stamina only when player is on ground
 	{
 		CurrentStamina = FMath::Min(TotalStamina, CurrentStamina + (StaminaDrainPerSec * DeltaTime));
 	}
