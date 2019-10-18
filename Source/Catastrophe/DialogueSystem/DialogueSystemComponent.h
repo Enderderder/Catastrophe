@@ -9,9 +9,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDisableDialogueSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConversationStartSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConversationEndSignature, int, ConversationIndex);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSentenceAppearSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSentenceDisappearSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSentenceChangeSignature);
 
 // The types of characters that can talk in a conversation
 UENUM(BlueprintType)
@@ -105,18 +102,6 @@ public:
 	// The delegate which contains functionality for when the conversation ends
 	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
 	FOnConversationEndSignature OnConversationEnd;
-
-	// The delegate which contains functionality for when the sentence appears
-	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
-	FOnSentenceAppearSignature OnSentenceAppear;
-
-	// The delegate which contains functionality for when the sentence disappears
-	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
-	FOnSentenceDisappearSignature OnSentenceDisappear;
-
-	// The delegate which contains functionality for when the sentence changes
-	UPROPERTY(BlueprintAssignable, Category = "Dialogue System")
-	FOnSentenceChangeSignature OnSentenceChange;
 
 public:	
 	// Sets default values for this component's properties

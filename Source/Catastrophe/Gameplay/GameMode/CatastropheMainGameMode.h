@@ -124,6 +124,14 @@ public:
 	void InitiateQteBobEvent(class AGuard* _guard);
 	virtual void InitiateQteBobEvent_Implementation(class AGuard* _guard);
 
+	/**
+	 * Called when a quest objective is completed
+	 * @author James Johnstone
+	 * @param _CurrentObjective The objective that has just been completed
+	 * @param _bUnlocksNewQuest Bool which determines if a new quest is unlocked or not
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | QuestObjectives")
+	void OnQuestObjectiveCompletion(class UQuestObjectiveComponent* _CurrentObjective, bool _bUnlocksNewQuest);
 
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
 	void StartCaveGameplay();
