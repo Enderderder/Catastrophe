@@ -141,6 +141,11 @@ void UQuest::RegisterObjective(class UQuestObjectiveComponent* _objective)
 	_objective->SetOwningQuest(this);
 }
 
+class UQuestObjectiveComponent* UQuest::GetObjectiveByID(int32 _ID) const
+{
+	return QuestObjectives[_ID];
+}
+
 UQuestSubsystem* UQuest::GetQuestSystem() const
 {
 	return Cast<UQuestSubsystem>(GetOuter());

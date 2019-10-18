@@ -11,7 +11,12 @@
 #include "Gameplay/QTE_Bob/QteBobLogicHolder.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
 
+#include "QuestSystem/Quest.h"
+#include "QuestSystem/QuestObjectiveComponent.h"
+#include "QuestSystem/QuestWidget.h"
+
 #include "RespawnSystem/RespawnSubsystem.h"
+#include "QuestSystem/QuestSubsystem.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -79,6 +84,20 @@ void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* 
 			float qteRange = InitialGaurdQteRange / (float)(GuardQteSuccessCounter + 1);
 			CurrentGuardQteEvent->InitiateEventWithRange(qteRange);
 		}
+	}
+}
+
+void ACatastropheMainGameMode::OnQuestObjectiveCompletion(class UQuestObjectiveComponent* _CurrentObjective, bool _bUnlocksNewQuest)
+{
+	UQuest* CurrentQuest = UQuestSubsystem::GetInst(this)->GetQuestByID(_CurrentObjective->GetQuestOwner()->GetQuestInfo().QuestID);
+
+	if (_CurrentObjective->GetOrder() < CurrentQuest->GetObjectives().Num() - 1)
+	{
+		PlayerCharacter->GetQuestWidget()->NewQuestObjective(CurrentQuest->GetObjectiveByID(_CurrentObjective->GetOrder() + 1)->GetDescription());
+	}
+	else
+	{
+		PlayerCharacter->GetQuestWidget()->QuestCompleted(_bUnlocksNewQuest);
 	}
 }
 
