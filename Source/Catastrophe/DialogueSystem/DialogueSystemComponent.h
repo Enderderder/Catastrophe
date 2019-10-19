@@ -8,7 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDisableDialogueSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConversationStartSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConversationEndSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConversationEndSignature, int, ConversationIndex);
 
 // The types of characters that can talk in a conversation
 UENUM(BlueprintType)
@@ -62,7 +62,7 @@ private:
 	bool CanInteract;
 
 	// The stored dialogue widget which is presented on screen
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = "Dialogue System", meta = (AllowPrivateAccess = "true"))
 	class UDialogueWidget* DialogueWidget;
 
 	// Stores the player character
@@ -142,7 +142,6 @@ public:
 	 * @author James Johnstone
 	 * @param _ConversationIndex The index of the conversation that is to be started
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Dialogue System")
 	void StartConversation(int _ConversationIndex);
 
 	/**

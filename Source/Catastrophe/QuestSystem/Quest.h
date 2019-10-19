@@ -117,6 +117,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
 	void RegisterObjective(class UQuestObjectiveComponent* _objective);
 
+	/**
+	 * Call to get the quest objective class
+	 * @param The ID of the quest objective
+	 * @return The UQuestObjectiveComponent class object
+	 */
+	UFUNCTION(BlueprintCallable, Category = "QuestSystem")
+	class UQuestObjectiveComponent* GetObjectiveByID(int32 _ID) const;
+
 	/** Getter */
 	FORCEINLINE TArray<class UQuestObjectiveComponent*> GetObjectives() const { return QuestObjectives; }
 	FORCEINLINE FQuestInfo GetQuestInfo() const { return QuestInfo; }

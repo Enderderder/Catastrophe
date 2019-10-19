@@ -11,7 +11,6 @@ ARespawnPoint::ARespawnPoint()
 	PrimaryActorTick.bCanEverTick = false;
 
 	EditorOnlyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EditorOnlyMesh"));
-	//EditorOnlyMesh->bIsEditorOnly = true;
 	EditorOnlyMesh->bTickInEditor = false;
 	EditorOnlyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	EditorOnlyMesh->SetGenerateOverlapEvents(false);
@@ -34,6 +33,6 @@ void ARespawnPoint::PostInitializeComponents()
 	URespawnSubsystem* respawnSystem = URespawnSubsystem::GetInst(this);
 	if (respawnSystem)
 	{
-		respawnSystem->RegisterRespawnLocation(District, GetTransform());
+		respawnSystem->RegisterRespawnLocation(District, GetTransform(), LocationName);
 	}
 }

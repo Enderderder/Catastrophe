@@ -202,7 +202,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		if (CurrentStamina <= 0.0f) 
 			UnSprint();
 	}
-	else
+	else if (!GetCharacterMovement()->IsFalling()) // Regen the stamina only when player is on ground
 	{
 		CurrentStamina = FMath::Min(TotalStamina, CurrentStamina + (StaminaDrainPerSec * DeltaTime));
 	}
@@ -245,6 +245,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 		predictParam.MaxSimTime = 2.0f;
 		predictParam.bTraceWithChannel = true;
 		predictParam.bTraceWithCollision = true;
+		predictParam.ObjectTypes = ObjectTypes;
+		predictParam.TraceChannel = ECollisionChannel::ECC_Visibility;
 		predictParam.OverrideGravityZ = ThrowableGravityOverwrite;
 		UGameplayStatics::PredictProjectilePath(this, predictParam, predictResult);
 

@@ -137,13 +137,16 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player | General")
 	FPlayerDefaultValue PlayerDefaultValues;
 	
-	/** The main hud for the player */
+	/** The main HUD for the player */
 	UPROPERTY(BlueprintReadOnly, Category = "Player | General")
 	class UPlayerWidget* PlayerWidget;
 
-	/** The hud class */
+	/** The HUD class */
 	UPROPERTY(EditDefaultsOnly, Category = "Player | General")
 	TSubclassOf<UPlayerWidget> PlayerWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player | General")
+	class UQuestWidget* QuestWidget;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
@@ -153,15 +156,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate = 45.0f;
 
-	/** Maximun angle the player camera can look up */
+	/** Maximum angle the player camera can look up */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float CameraPitchConstrainMax = 60.0f;
 
-	/** Maximun angle the player camera can look down */
+	/** Maximum angle the player camera can look down */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float CameraPitchConstrainMin = -60.0f;
 
-	/** The current interacble target */
+	/** The current interactable target */
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
 	class AActor* InteractingTarget;
 
@@ -204,6 +207,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "HHU | Throwable")
 	TSubclassOf<class AThrowableProjectileIndicator> ThrowableProjectilIndicatorClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HHU | Throwable")
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "HHU | Throwable")
 	bool bShowingProjectileIndicator;
@@ -418,7 +424,9 @@ public:
 	FORCEINLINE class UAIPerceptionStimuliSourceComponent* GetStimulusSourceComponent() const { return PerceptionStimuliSourceComponent; }
 	FORCEINLINE float GetTotalStamina() const { return TotalStamina; }
 	FORCEINLINE class UPlayerWidget* GetPlayerHudWidget() const { return PlayerWidget; }
+	FORCEINLINE class UQuestWidget* GetQuestWidget() const { return QuestWidget; }
 	FORCEINLINE class UCameraComponent* GetCamera() const { return FollowCamera; }
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE UCharacterSprintMovementComponent* GetSprintMovementComponent() const { 
 		return SprintMovementComponent; }
 	FORCEINLINE class AThrowableProjectileIndicator* GetProjectileIndicator() const {

@@ -47,17 +47,30 @@ void UDialogueSystemComponent::DialogueInteract(class APlayerCharacter* _PlayerC
 	{
 		if (bInConversation)
 		{
+			// If at the end of the conversation
 			if (Conversations[CurrentConversationIndex].Sentences.Num() - 1 <= CurrentSentenceIndex)
 			{
+				// Disable the widget
+				if (DialogueWidget)
+				{
+					DialogueWidget->OnSentenceDisappear();
+				}
 				DisableDialogue(true);
 				return;
 			}
 
 			CurrentSentenceIndex++;
+
 			UpdateBindingToDialogueWidget();
+
+			if (DialogueWidget)
+			{
+				DialogueWidget->OnSentenceChange();
+			}
 		}
 		else
 		{
+			// Start the conversation
 			StartConversation(_ConversationIndex);
 		}
 	}
@@ -92,6 +105,11 @@ void UDialogueSystemComponent::StartConversation(int _ConversationIndex)
 
 		// Calls the function which updates all the dialogue
 		UpdateBindingToDialogueWidget();
+
+		if (DialogueWidget)
+		{
+			DialogueWidget->OnSentenceAppear();
+		}
 	}
 }
 
@@ -113,7 +131,7 @@ void UDialogueSystemComponent::DisableDialogue(bool _bHasFinishedConversation)
 
 	if (Conversations.Num() > CurrentConversationIndex && _bHasFinishedConversation)
 	{
-		OnConversationEnd.Broadcast();
+		OnConversationEnd.Broadcast(CurrentConversationIndex);
 
 		// If an objective has been set, then complete it
 		UQuestObjectiveComponent* objective = Conversations[CurrentConversationIndex].QuestObjectiveToComplete;

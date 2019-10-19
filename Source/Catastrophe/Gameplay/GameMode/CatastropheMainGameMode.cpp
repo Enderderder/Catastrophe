@@ -11,7 +11,12 @@
 #include "Gameplay/QTE_Bob/QteBobLogicHolder.h"
 #include "Gameplay/CaveGameplay/CaveCameraTrack.h"
 
+#include "QuestSystem/Quest.h"
+#include "QuestSystem/QuestObjectiveComponent.h"
+#include "QuestSystem/QuestWidget.h"
+
 #include "RespawnSystem/RespawnSubsystem.h"
+#include "QuestSystem/QuestSubsystem.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -19,17 +24,10 @@ void ACatastropheMainGameMode::StartPlay()
 {
 	Super::StartPlay();
 	
-	TArray<AActor*> cameraTrackActors;
-	UGameplayStatics::GetAllActorsOfClass(this, ACaveCameraTrack::StaticClass(), cameraTrackActors);
-	if (cameraTrackActors.Num() == 1)
-	{
-		CaveCameraTrack = Cast<ACaveCameraTrack>(cameraTrackActors[0]);
-	}
-	else
-	{
-		const FString msg = "Insufficient amount of Cave camera track.";
-		CatastropheDebug::OnScreenErrorMsg(msg, 30.0f);
-	}
+	// Store player character reference
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	if (!IsValid(PlayerCharacter))
+		CatastropheDebug::OnScreenErrorMsg(TEXT("Gamemode: Cannot get APlayerCharacter"));
 }
 
 void ACatastropheMainGameMode::Tick(float DeltaSeconds)
@@ -89,6 +87,38 @@ void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* 
 	}
 }
 
+void ACatastropheMainGameMode::OnQuestObjectiveCompletion(class UQuestObjectiveComponent* _CurrentObjective, bool _bUnlocksNewQuest)
+{
+	UQuest* CurrentQuest = UQuestSubsystem::GetInst(this)->GetQuestByID(_CurrentObjective->GetQuestOwner()->GetQuestInfo().QuestID);
+
+	if (_CurrentObjective->GetOrder() < CurrentQuest->GetObjectives().Num() - 1)
+	{
+		PlayerCharacter->GetQuestWidget()->NewQuestObjective(CurrentQuest->GetObjectiveByID(_CurrentObjective->GetOrder() + 1)->GetDescription());
+	}
+	else
+	{
+		PlayerCharacter->GetQuestWidget()->QuestCompleted(_bUnlocksNewQuest);
+	}
+}
+
+void ACatastropheMainGameMode::StartCaveGameplay()
+{
+	Receive_OnCaveGameplayBegin();
+	OnCaveGameplayBegin.Broadcast();
+}
+
+void ACatastropheMainGameMode::EndCaveGameplay()
+{
+	Receive_OnCaveGameplayEnd();
+	OnCaveGameplayEnd.Broadcast();
+}
+
+void ACatastropheMainGameMode::ResetCaveGameplay()
+{
+	Receive_OnCaveGameplayReset();
+	OnCaveGameplayReset.Broadcast();
+}
+
 void ACatastropheMainGameMode::OnGuardQteEventComplete(EQteEventState _eventState)
 {
 	if (_eventState == EQteEventState::Success)
@@ -115,24 +145,14 @@ void ACatastropheMainGameMode::OnGuardQteSuccess()
 		QteGuard->SetGuardState(EGuardState::STUNED);
 }
 
+// Called when player failed to finished a guard QTE event
 void ACatastropheMainGameMode::OnGuardQteFailed()
 {
 	// Reset the success counter and sends player to the jail
 	GuardQteSuccessCounter = 0;
 	if (QteGuard)
 	{
-		const FName guardLevelName = URespawnSubsystem::GetStreamingLevelNameFromActor(QteGuard);
-		if (guardLevelName != NAME_None)
-		{
-			FLoadStreamingLevelInfo info;
-			info.OriginalLevelName = guardLevelName;
-			info.LoadingLevelName = TEXT("Jail");
-			info.bUnloadOriginalLevel = true;
-			info.bTeleportPlayer = true;
-			info.RespawnDistrictType = EDISTRICT::JAIL;
-			info.bBlockOnLoad = false;
-			URespawnSubsystem::GetInst(this)->LoadLevelStreaming(info);
-		}
+		QteGuard->OnCatchPlayerSuccess();
 	}
 }
 
@@ -156,7 +176,7 @@ void ACatastropheMainGameMode::Cheat_Teleport(const FString& _levelName, const F
 	if (enumPtr)
 	{
 		int32 index = enumPtr->GetIndexByName(FName(*_districtName));
-		if (index == INDEX_NONE || (EDISTRICT)index >= EDISTRICT::LOCATIONCOUNT)
+		if (index == INDEX_NONE || (EDISTRICT)index >= EDISTRICT::COUNT)
 		{
 			CatastropheDebug::OnScreenErrorMsg(TEXT("Invalid district type"), 10.0f);
 			return;
@@ -171,15 +191,10 @@ void ACatastropheMainGameMode::Cheat_Teleport(const FString& _levelName, const F
 
 	}
 
-	if (!enumPtr) district = EDISTRICT::LOCATIONCOUNT;
+	if (!enumPtr) district = EDISTRICT::COUNT;
 	else
 	{
 		
 	}
-
-
-
-
-
 	//CatastropheDebug::OnScreenDebugMsg(-1, 10.0f, FColor::Cyan, enumName);
 }

@@ -17,7 +17,29 @@ enum class EDISTRICT : uint8
 	HIDEOUT,
 	BIGFLUFF,
 
-	LOCATIONCOUNT // This should always be the last
+	COUNT // This should always be the last
+};
+
+/**
+ *
+ */
+USTRUCT(BlueprintType)
+struct FRespawnLocationInfo
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString LocationName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform RespawnTransform;
+
+	FRespawnLocationInfo() :
+		LocationName(TEXT("DefaultName")),
+		RespawnTransform(FTransform::Identity)
+	{}
 };
 
 /**
@@ -62,20 +84,22 @@ public:
  *
  */
 USTRUCT(BlueprintType)
-struct FRespawnLocation
+struct FDistrictInfo
 {
 	GENERATED_BODY()
 
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EDISTRICT District;
+	EDISTRICT RespawnDistrictType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FTransform> RespawnTransforms;
+	TArray<FName> LevelsToLoad;
 
-	FRespawnLocation() :
-		District(EDISTRICT::HUB)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FRespawnLocationInfo> RespawnLocations;
+
+	FDistrictInfo() :
+		RespawnDistrictType(EDISTRICT::HUB)
 	{}
 };
-

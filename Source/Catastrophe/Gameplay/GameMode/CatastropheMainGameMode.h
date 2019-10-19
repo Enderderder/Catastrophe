@@ -10,6 +10,7 @@
 
 /** Delegates */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerAimingSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCaveGameplaySignature);
 
 /**
  * This is the main gameplay gamemode of the game
@@ -19,6 +20,7 @@ class CATASTROPHE_API ACatastropheMainGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+/** Delegate events */
 public:
 
 	UPROPERTY(BlueprintAssignable)
@@ -27,7 +29,19 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FPlayerAimingSignature OnPlayerAimingEnd;
 
+	UPROPERTY(BlueprintAssignable)
+	FCaveGameplaySignature OnCaveGameplayBegin;
+
+	UPROPERTY(BlueprintAssignable)
+	FCaveGameplaySignature OnCaveGameplayEnd;
+
+	UPROPERTY(BlueprintAssignable)
+	FCaveGameplaySignature OnCaveGameplayReset;
+
 protected:
+
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay | General")
+	class APlayerCharacter* PlayerCharacter;
 
 	/** Array of guards thats chasing the player */
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | General")
@@ -66,6 +80,15 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | Cave")
 	class ACaveCameraTrack* CaveCameraTrack;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay | Cave")
+	float CaveAdditionSpeedMultiplier = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay | Cave")
+	float CaveJumpVeloOverride = 1500.0f;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | Cave")
+	float CaveJumpVeloOrigin;
+
 public:
 
 	/** Transition to all actors beginplay */
@@ -102,20 +125,56 @@ public:
 	virtual void InitiateQteBobEvent_Implementation(class AGuard* _guard);
 
 	/**
-	 * Binded event. Called when a qte that initiated by guard completed
-	 * @author Richard Wulansari
-	 * @param _qteGuard The guard that initiated this qte event
+	 * Called when a quest objective is completed
+	 * @author James Johnstone
+	 * @param _CurrentObjective The objective that has just been completed
+	 * @param _bUnlocksNewQuest Bool which determines if a new quest is unlocked or not
 	 */
-	UFUNCTION()
-	void OnGuardQteEventComplete(EQteEventState _eventState);
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | QuestObjectives")
+	void OnQuestObjectiveCompletion(class UQuestObjectiveComponent* _CurrentObjective, bool _bUnlocksNewQuest);
 
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
+	void StartCaveGameplay();
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
+	void EndCaveGameplay();
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
+	void ResetCaveGameplay();
+
+	/** Setter */
+	void SetCaveCameraTrack(class ACaveCameraTrack* _cameraTrackActor) {
+		CaveCameraTrack = _cameraTrackActor;
+	}
+
+	/** Setter End */
 
 	/** Getter */
-	FORCEINLINE class ACaveCameraTrack* GetCaveCameraTrack() const { return CaveCameraTrack; }
+	FORCEINLINE class ACaveCameraTrack* GetCaveCameraTrack() const { 
+		return CaveCameraTrack; }
 
 	/** Getter End */
 
+protected:
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplayBegin"))
+	void Receive_OnCaveGameplayBegin();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplayEnd"))
+	void Receive_OnCaveGameplayEnd();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplayReset"))
+	void Receive_OnCaveGameplayReset();
+
 private:
+
+	/**
+	 * Binded event. Called when a qte that initiated by guard completed
+	 * @author Richard Wulansari
+	 * @param _eventState The state of the event when complete
+	 */
+	UFUNCTION()
+	void OnGuardQteEventComplete(EQteEventState _eventState);
 
 	/**
 	 * Called when player successfully finished a guard QTE event
@@ -136,10 +195,6 @@ public:
 	 * @note If the current gamemode if not ACatastropheMainGameMode, this function will return nullptr
 	 */
 	static ACatastropheMainGameMode* GetGameModeInst(const UObject* _worldContextObject);
-
-
-
-
 
 
 

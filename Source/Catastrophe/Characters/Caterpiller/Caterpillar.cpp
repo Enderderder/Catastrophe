@@ -4,12 +4,14 @@
 #include "Caterpillar.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Gameplay/GameMode/CatastropheMainGameMode.h"
 #include "RespawnSystem/RespawnSubsystem.h"
 #include "Gameplay/CaveGameplay/CaterpillarCaveFollowPoint.h"
 
@@ -18,17 +20,18 @@
 // Sets default values
 ACaterpillar::ACaterpillar()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	// Set this character to call Tick() every frame.
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
-	CatchTriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CatchTriggerBox"));
-	CatchTriggerBox->SetGenerateOverlapEvents(true);
-	CatchTriggerBox->SetCollisionProfileName(TEXT("Trigger"));
-	CatchTriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
-	CatchTriggerBox->OnComponentBeginOverlap.AddDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
-	CatchTriggerBox->SetupAttachment(GetMesh());
+	CatchTriggerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CatchTriggerMesh"));
+	CatchTriggerMesh->SetGenerateOverlapEvents(true);
+	CatchTriggerMesh->SetCollisionProfileName(TEXT("Trigger"));
+	CatchTriggerMesh->OnComponentBeginOverlap.RemoveDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
+	CatchTriggerMesh->OnComponentBeginOverlap.AddDynamic(this, &ACaterpillar::OnCathchPlayerTrigger);
+	CatchTriggerMesh->SetupAttachment(GetMesh());
+
 }
 
 // Called when the game starts or when spawned
@@ -64,14 +67,15 @@ void ACaterpillar::BeginPlay()
 
 void ACaterpillar::OnCathchPlayerTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// Sends itself back to the original transform and broadcast the signature
-	if (OtherActor->ActorHasTag("Player"))
+	// Reset the cave gameplay as it caught the player
+	if (OtherActor->ActorHasTag("Player") && bChaseActive)
 	{
-		SetActorTransform(OriginalTransform);
-		
-		URespawnSubsystem::GetInst(this)->RespawnPlayerAtLocation(EDISTRICT::CAVE);
-		GetController()->StopMovement();
-		OnCaterpillarCatchPlayer.Broadcast();
+		ACatastropheMainGameMode* gameMode = ACatastropheMainGameMode::GetGameModeInst(this);
+		if (gameMode)
+		{
+			bChaseActive = false;
+			gameMode->ResetCaveGameplay();
+		}
 	}
 }
 
