@@ -104,7 +104,7 @@ public:
 	 * Called to try remove a type of item inside the backpack
 	 * @author Richard Wulansari
 	 * @param _itemClass: Class based on AItemBase class
-	 * @param 
+	 * @param _amount: The number of item try to remove
 	 * @return The result of the action if the item actually can be remove
 	 */
 	UFUNCTION(BlueprintCallable, Category = "BackPackComponent")
