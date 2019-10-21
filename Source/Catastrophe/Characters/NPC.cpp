@@ -24,6 +24,7 @@ ANPC::ANPC()
 	TriggerBox->SetupAttachment(root);
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
+	InteractableComponent->InteractionDescriptionText = TEXT("Talk");
 	InteractableComponent->RegisterTriggerVolume(TriggerBox);
 	InteractableComponent->OnInteractSuccess.AddDynamic(this, &ANPC::Interact);
 
