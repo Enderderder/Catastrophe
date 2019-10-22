@@ -121,6 +121,11 @@ void UInteractableComponent::Interact(class APlayerCharacter* _playerCharacter, 
 	}
 }
 
+void UInteractableComponent::StopInteract()
+{
+	HoldingTime = 0.0f;
+}
+
 void UInteractableComponent::RegisterTriggerVolume(class UPrimitiveComponent* _registeringComponent)
 {
 	// Force the component to generate overlap events

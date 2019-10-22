@@ -487,10 +487,11 @@ void APlayerCharacter::InteractionTick(float _deltaTime)
 	{
 		InteractionTimeHold += _deltaTime;
 		InteractingTargetComponent->Interact(this, InteractionTimeHold);
-
-		// Debug message
-		const FString msg = "Interaction hold: " + FString::SanitizeFloat(InteractionTimeHold);
-		CatastropheDebug::OnScreenDebugMsg(-1, 0.0f, FColor::Green, msg);
+	}
+	else if (!bInteracting &&
+		IsValid(InteractingTargetComponent))
+	{
+		InteractingTargetComponent->StopInteract();
 	}
 }
 

@@ -112,6 +112,13 @@ public:
 	 */
 	void Interact(class APlayerCharacter* _playerCharacter, float _holdTime);
 
+
+	/**
+	 * Stop the interaction
+	 * @author Richard Wulasnsari
+	 */
+	void StopInteract();
+
 	/**
 	 * Register a component that has some trigger volume
 	 * @author Richard Wulansari
