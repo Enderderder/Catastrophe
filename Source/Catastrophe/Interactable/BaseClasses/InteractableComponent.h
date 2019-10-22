@@ -22,6 +22,14 @@ public:
 	// Sets default values for this component's properties
 	UInteractableComponent();
 
+	/** Event called when the player enters within the interaction range */
+	UPROPERTY(BlueprintAssignable)
+	FInteractSingature OnPlayerEnterInteractRange;
+
+	/** Event called when the player exits the interaction range */
+	UPROPERTY(BlueprintAssignable)
+	FInteractSingature OnPlayerExitInteractRange;
+
 	/** Event called when the player begin to interact with this component */
 	UPROPERTY(BlueprintAssignable)
 	FInteractSingature OnInteractTickBegin;
