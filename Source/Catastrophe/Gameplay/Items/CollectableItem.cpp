@@ -27,6 +27,7 @@ ACollectableItem::ACollectableItem()
 	TriggerVolume->SetupAttachment(RootComponent);
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
+	InteractableComponent->bAutoInteract = false;
 	InteractableComponent->RegisterTriggerVolume(TriggerVolume);
 	InteractableComponent->OnInteractSuccess.RemoveDynamic(this, &ACollectableItem::OnInteractSuccess);
 	InteractableComponent->OnInteractSuccess.AddDynamic(this, &ACollectableItem::OnInteractSuccess);

@@ -40,9 +40,10 @@ void UInteractableComponent::OnTriggerWithPlayer(class UPrimitiveComponent* Over
 
 		if (IsValid(PlayerRef))
 		{
+			PlayerHudRef = PlayerRef->GetPlayerHudWidget();
 			TriggerCounter++;
 
-			PlayerHudRef = PlayerRef->GetPlayerHudWidget();
+			OnPlayerEnterInteractRange.Broadcast(PlayerRef);
 
 			if (bCanInteract)
 			{
@@ -71,6 +72,7 @@ void UInteractableComponent::OnTriggerEndWithPlayer(class UPrimitiveComponent* O
 			PlayerRef->ResetInteractionAction();
 			PlayerRef->RemoveInteractionTarget(this);
 			SetInteractionUiVisible(false);
+			OnPlayerExitInteractRange.Broadcast(PlayerRef);
 		}
 	}
 }
@@ -117,6 +119,11 @@ void UInteractableComponent::Interact(class APlayerCharacter* _playerCharacter, 
 			}
 		}	
 	}
+}
+
+void UInteractableComponent::StopInteract()
+{
+	HoldingTime = 0.0f;
 }
 
 void UInteractableComponent::RegisterTriggerVolume(class UPrimitiveComponent* _registeringComponent)
