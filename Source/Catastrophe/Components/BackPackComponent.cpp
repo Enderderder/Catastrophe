@@ -93,13 +93,21 @@ TArray<class UItemStack*> UBackPackComponent::FindAllItemStack(TSubclassOf<class
 
 int32 UBackPackComponent::GetCombinedStackSize(const TArray<class UItemStack*> _stacks)
 {
+	if (_stacks.Num() <= 0)
+		return 0;
+
 	int32 resultSize = 0;
 	for (UItemStack* stack : _stacks)
 	{
 		resultSize += stack->StackSize;
 	}
-
 	return resultSize;
+}
+
+int32 UBackPackComponent::GetItemCount(TSubclassOf<class AItemBase> _itemClass)
+{
+	const TArray<UItemStack*> itemStacks = FindAllItemStack(_itemClass);
+	return GetCombinedStackSize(itemStacks);
 }
 
 // Find similar stack, try put the item in

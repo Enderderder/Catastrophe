@@ -83,6 +83,15 @@ public:
 	int32 GetCombinedStackSize(const TArray<class UItemStack*> _stacks);
 
 	/**
+	 * Called to get the size of item stack within the backpack
+	 * @author Richard Wulansari
+	 * @param _itemClass: The item type
+	 * @return The amount of the item in backpack
+	 */
+	UFUNCTION(BlueprintCallable, Category = "BackPackComponent")
+	int32 GetItemCount(TSubclassOf<class AItemBase> _itemClass);
+
+	/**
 	 * Called to try put an item into the backpack
 	 * @author Richard Wulansari
 	 * @param _itemActor: Actor based on AItemBase class

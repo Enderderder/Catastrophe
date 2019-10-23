@@ -22,6 +22,14 @@ public:
 	// Sets default values for this component's properties
 	UInteractableComponent();
 
+	/** Event called when the player enters within the interaction range */
+	UPROPERTY(BlueprintAssignable)
+	FInteractSingature OnPlayerEnterInteractRange;
+
+	/** Event called when the player exits the interaction range */
+	UPROPERTY(BlueprintAssignable)
+	FInteractSingature OnPlayerExitInteractRange;
+
 	/** Event called when the player begin to interact with this component */
 	UPROPERTY(BlueprintAssignable)
 	FInteractSingature OnInteractTickBegin;
@@ -103,6 +111,13 @@ public:
 	 * @param _holdTime: How long has the player been holding interact
 	 */
 	void Interact(class APlayerCharacter* _playerCharacter, float _holdTime);
+
+
+	/**
+	 * Stop the interaction
+	 * @author Richard Wulasnsari
+	 */
+	void StopInteract();
 
 	/**
 	 * Register a component that has some trigger volume
