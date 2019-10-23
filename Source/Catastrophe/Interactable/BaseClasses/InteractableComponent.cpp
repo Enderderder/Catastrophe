@@ -27,6 +27,11 @@ void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 	if (HasValidData() && bShowingUi)
 	{
 		PlayerHudRef->UpdateInteractionUi(this);
+
+		if (bCanInteract == false)
+		{
+			SetInteractionUiVisible(false);
+		}
 	}
 }
 
@@ -40,6 +45,7 @@ void UInteractableComponent::OnTriggerWithPlayer(class UPrimitiveComponent* Over
 
 		if (IsValid(PlayerRef))
 		{
+			PlayerRef->ResetInteractionAction();
 			PlayerHudRef = PlayerRef->GetPlayerHudWidget();
 			TriggerCounter++;
 
@@ -69,9 +75,14 @@ void UInteractableComponent::OnTriggerEndWithPlayer(class UPrimitiveComponent* O
 		if (TriggerCounter <= 0)
 		{
 			HoldingTime = 0.0f;
-			PlayerRef->ResetInteractionAction();
+			
+			if (PlayerRef->GetInteractingTargetComponent() == this)
+			{
+				PlayerRef->ResetInteractionAction();
+				SetInteractionUiVisible(false);
+			}
+
 			PlayerRef->RemoveInteractionTarget(this);
-			SetInteractionUiVisible(false);
 			OnPlayerExitInteractRange.Broadcast(PlayerRef);
 		}
 	}
@@ -93,31 +104,27 @@ void UInteractableComponent::Interact(class APlayerCharacter* _playerCharacter, 
 			OnInteractTickBegin.Broadcast(_playerCharacter);
 		}
 
-		UPlayerWidget* playerWidget = _playerCharacter->GetPlayerHudWidget();
-		if (playerWidget)
+		// Check if player has completed the holding time requirement
+		if (_holdTime >= RequiredHoldTime)
 		{
-			// Check if player has completed the holding time requirement
-			if (_holdTime >= RequiredHoldTime)
-			{
-				OnInteractSuccess.Broadcast(_playerCharacter);
+			OnInteractSuccess.Broadcast(_playerCharacter);
 
-				// After a successful interaction
-				HoldingTime = 0.0f;
-				bInteracting = false;
-				_playerCharacter->ResetInteractionAction();
+			// After a successful interaction
+			HoldingTime = 0.0f;
+			bInteracting = false;
+			_playerCharacter->ResetInteractionAction();
 
-				// If the component has set to one time use, disable after interaction
-				if (bOneTimeUse)
-				{
-					bCanInteract = false;
-					SetInteractionUiVisible(false);
-				}
-			}
-			else // If not, then broadcast the holding event
+			// If the component has set to one time use, disable after interaction
+			if (bOneTimeUse)
 			{
-				OnInteractTick.Broadcast(_playerCharacter, _holdTime);
+				bCanInteract = false;
+				SetInteractionUiVisible(false);
 			}
-		}	
+		}
+		else // If not, then broadcast the holding event
+		{
+			OnInteractTick.Broadcast(_playerCharacter, _holdTime);
+		}
 	}
 }
 
