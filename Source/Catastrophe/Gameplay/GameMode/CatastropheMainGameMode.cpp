@@ -93,7 +93,7 @@ void ACatastropheMainGameMode::OnQuestObjectiveCompletion(class UQuestObjectiveC
 
 	if (_CurrentObjective->GetOrder() < CurrentQuest->GetObjectives().Num() - 1)
 	{
-		PlayerCharacter->GetQuestWidget()->NewQuestObjective(CurrentQuest->GetObjectiveByID(_CurrentObjective->GetOrder() + 1)->GetDescription());
+		PlayerCharacter->GetQuestWidget()->NewQuestObjective(CurrentQuest->GetObjectiveByID(_CurrentObjective->GetOrder() + 1)->GetPopupText());
 	}
 	else
 	{

@@ -435,6 +435,7 @@ public:
 	FORCEINLINE class UBackPackComponent* GetBackPack() const { return BackPackComponent; }
 	FORCEINLINE FVector GetCurrentThrowingVelocity() const { return CurrentThrowableLaunchVelocity; }
 	FORCEINLINE float GetThrowingGravity() const { return ThrowableGravityOverwrite; }
+	FORCEINLINE class UInteractableComponent* GetInteractingTargetComponent() const { return InteractingTargetComponent; }
 	/** Getter End */
 
 };
