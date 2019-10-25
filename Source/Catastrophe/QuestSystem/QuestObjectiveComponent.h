@@ -65,6 +65,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "QuestSystem")
 	FString ShortDescription = "Default Description";
 
+	/** Text shown when objective pop up */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "QuestSystem")
+	FString QuestPopupText = "Default Text";
+
 	/** The state of the objective */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	EObjectiveState ObjectiveState = EObjectiveState::Inactive;
@@ -105,6 +109,7 @@ public:
 	/** Getter */
 	FORCEINLINE int32 GetOrder() const { return ObjectiveOrder; }
 	FORCEINLINE FString GetDescription() const { return ShortDescription; }
+	FORCEINLINE FString GetPopupText() const { return QuestPopupText; }
 	FORCEINLINE class UQuest* GetQuestOwner() const { return OwningQuest; }
 	/** Getter End */
 };
