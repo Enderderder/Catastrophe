@@ -346,6 +346,13 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/**
+	 * Called to play the grab animation
+	 * @author Richard Wulansari
+	 */
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Player | Animation", meta = (DisplayName = "OnPlayGrabAnim"))
+	void Receive_PlayGrabAnim();
+
+	/**
 	 * Set the target to interact for the player
 	 * @author Richard Wulansari
 	 * @param _interactTargetComponent: The target component where the player will be interact with

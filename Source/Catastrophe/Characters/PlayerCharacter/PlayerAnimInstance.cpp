@@ -32,8 +32,15 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (UCharacterMovementComponent* PlayerMovementComponent 
 		= CustomPlayerCharacter->GetCharacterMovement())
 	{
-		Speed = PlayerMovementComponent->Velocity.Size();
+		FVector playerVelocity = PlayerMovementComponent->Velocity;
+		FRotator playerRotation = CustomPlayerCharacter->GetActorRotation();
+		FVector unrotatedVelocity = playerRotation.UnrotateVector(playerVelocity);
+		
+		Speed = playerVelocity.Size();
+		RightSpeed = unrotatedVelocity.Y;
+		ForwardSpeed = unrotatedVelocity.X;
 		bInAir = PlayerMovementComponent->IsFalling();
 		bCrouch = PlayerMovementComponent->IsCrouching();
+
 	}
 }

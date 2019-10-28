@@ -26,6 +26,12 @@ public:
 	float Speed;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
+	float RightSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
+	float ForwardSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
 	bool bAiming;
 
 protected:

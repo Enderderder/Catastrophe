@@ -50,6 +50,8 @@ void AItemCrate::BeginPlay()
 
 void AItemCrate::PickupItem(class APlayerCharacter* _playerCharacter)
 {
+	_playerCharacter->Receive_PlayGrabAnim();
+
 	Receive_PickupItem();
 
 	UInventoryComponent* inventoryComp = _playerCharacter->GetInventoryComponent();
