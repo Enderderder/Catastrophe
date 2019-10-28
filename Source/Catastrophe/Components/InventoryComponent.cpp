@@ -55,7 +55,7 @@ void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _newItemType)
 	{
 		if (ItemSacks[i]->IsA(_newItemType))
 		{
-			if (ItemSacks[i]->CanPickup)
+			if (ItemSacks[i]->bCanPickup)
 			{
 				ItemSacks[i]->AddItem();
 
@@ -75,7 +75,7 @@ void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _newItemType,
 	{
 		if (ItemSacks[i]->IsA(_newItemType))
 		{
-			if (ItemSacks[i]->CanPickup)
+			if (ItemSacks[i]->bCanPickup)
 			{
 				ItemSacks[i]->AddItems(_amount);
 
@@ -226,7 +226,7 @@ void UInventoryComponent::UseItem(bool _bAiming)
 		if (ItemSacks[CurrentSelection] != NULL)
 		{
 			// Check if the player is aiming if aiming is needed
-			if (ItemSacks[CurrentSelection]->IsAimingNeeded && !_bAiming) return;
+			if (ItemSacks[CurrentSelection]->bAimingNeeded && !_bAiming) return;
 
 			ItemSacks[CurrentSelection]->UseItem();
 			

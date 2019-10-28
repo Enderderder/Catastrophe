@@ -131,18 +131,20 @@ void APlayerCharacter::BeginPlay()
 		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerCharacter: Invalid anim instance"));
 
 	// Construct the zoom in timeline
-	if (!ZoomInCurve) UE_LOG(LogTemp, Error, TEXT("Player zoom in curve is nullptr!"));
-	ZoomInTimeline = NewObject<UTimelineComponent>(this, TEXT("ZoomInTimeline"));
-	ZoomInTimeline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
-	this->BlueprintCreatedComponents.Add(ZoomInTimeline);
-	ZoomInTimeline->SetLooping(false);
-	ZoomInTimeline->SetTimelineLength(0.3f);
-	ZoomInTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
-	FOnTimelineFloat onTimelineCallback;
-	onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineSetCameraZoomValue") });
-	ZoomInTimeline->AddInterpFloat(ZoomInCurve, onTimelineCallback);
-	ZoomInTimeline->RegisterComponent();
-
+	{
+		if (!ZoomInCurve) UE_LOG(LogTemp, Error, TEXT("Player zoom in curve is nullptr!"));
+		ZoomInTimeline = NewObject<UTimelineComponent>(this, TEXT("ZoomInTimeline"));
+		ZoomInTimeline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+		this->BlueprintCreatedComponents.Add(ZoomInTimeline);
+		ZoomInTimeline->SetLooping(false);
+		ZoomInTimeline->SetTimelineLength(0.3f);
+		ZoomInTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
+		FOnTimelineFloat onTimelineCallback;
+		onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineSetCameraZoomValue") });
+		ZoomInTimeline->AddInterpFloat(ZoomInCurve, onTimelineCallback);
+		ZoomInTimeline->RegisterComponent();
+	}
+	
 	// Set the stamina to full
 	SetStamina(TotalStamina);
 
@@ -180,7 +182,6 @@ void APlayerCharacter::BeginPlay()
 		{
 			PlayerWidget->AddToViewport();
 			PlayerWidget->ToggleStamina(true);
-			PlayerWidget->ToggleCrosshair(false);
 		}
 	}
 	else
@@ -215,8 +216,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	// Do the interaction tick
 	InteractionTick(DeltaTime);
-
-	
 
 	// Calculate the projectile prediction and update the projectile spline 
 	// if it should be shown
@@ -278,15 +277,15 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::UnSprint);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::CrouchBegin);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::CrouchEnd);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::PlayerJump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::PlayerStopJump);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
 
 	// Interaction actions
@@ -315,7 +314,7 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 void APlayerCharacter::Sprint()
 {
 	if (bAllowMovementInput
-		&& CurrentStamina >= TotalStamina // Only sprint player has stamina
+		&& CurrentStamina >= TotalStamina // Only sprint player has full stamina
 		&& !bHHUSecondaryActive) // Cant sprint while aiming lol
 	{
 		SprintMovementComponent->Sprint();
@@ -341,7 +340,8 @@ void APlayerCharacter::OnSprintEnd()
 
 void APlayerCharacter::CrouchBegin()
 {
-	if (bAllowMovementInput)
+	if (bAllowMovementInput ||
+		bForceCrouch)
 	{
 		Crouch();
 		HidingPostProcess->bEnabled = true;
@@ -354,8 +354,11 @@ void APlayerCharacter::CrouchBegin()
 
 void APlayerCharacter::CrouchEnd()
 {
-	UnCrouch();
-	HidingPostProcess->bEnabled = false;
+	if (!bForceCrouch)
+	{
+		UnCrouch();
+		HidingPostProcess->bEnabled = false;
+	}
 }
 
 void APlayerCharacter::CheckTomatoInHand()
@@ -455,6 +458,19 @@ void APlayerCharacter::MoveRight(float Value)
 	}
 }
 
+void APlayerCharacter::PlayerJump()
+{
+	if (bAllowMovementInput)
+	{
+		Jump();
+	}
+}
+
+void APlayerCharacter::PlayerStopJump()
+{
+	StopJumping();
+}
+
 void APlayerCharacter::TimelineSetCameraZoomValue(float _alpha)
 {
 	float resultLength =
@@ -513,15 +529,7 @@ void APlayerCharacter::HHUPrimaryActionEnd()
 	// Only end if the action is already activated
 	if (bHHUPrimaryActive)
 	{
-		switch (ActiveHHUType)
-		{
-		case EHHUType::TOMATO:
-			break;
-		case EHHUType::LASER:
-			break;
-
-		default: break;
-		}
+		
 
 		// Flip the activation state
 		bHHUPrimaryActive = false;
@@ -531,15 +539,18 @@ void APlayerCharacter::HHUPrimaryActionEnd()
 void APlayerCharacter::HHUSecondaryActionBegin()
 {
 	// If cannot use HHU, just don't then
-	if (!bCanUseHHU) return;
+	if (!bCanUseHHU ||
+		!IsValid(InventoryComponent) ||
+		!IsValid(ThrowableProjectilIndicator)) return;
 
-	// Set the activation state to true
-	bHHUSecondaryActive = true;
+	AItemSack* currentSack = InventoryComponent->GetCurrentItemSack();
+	if (currentSack &&
+		currentSack->IsAbleToUse() &&
+		currentSack->bAimingNeeded)
+	{
+		// Set the activation state to true
+		bHHUSecondaryActive = true;
 
-	switch (ActiveHHUType)
-	{
-	case EHHUType::TOMATO:
-	{
 		// Let the character follow camera rotation
 		if (SprintMovementComponent->IsSprinting())
 			UnSprint();
@@ -547,19 +558,9 @@ void APlayerCharacter::HHUSecondaryActionBegin()
 		CameraBoom->bEnableCameraLag = false;
 		PlayerAnimInstance->bAiming = true;
 		bShowingProjectileIndicator = true;
-		if (ThrowableProjectilIndicator)
-			ThrowableProjectilIndicator->SetIndicatorEnabled(true);
+
+		ThrowableProjectilIndicator->SetIndicatorEnabled(true);
 		ACatastropheMainGameMode::GetGameModeInst(this)->OnPlayerAimingBegin.Broadcast();
-		break;
-	}
-
-	case EHHUType::LASER:
-	{
-
-		break;
-	}
-
-	default: break;
 	}
 }
 
@@ -568,38 +569,19 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 	// Only end if the action is already activated
 	if (bHHUSecondaryActive)
 	{
-		switch (ActiveHHUType)
-		{
-		case EHHUType::TOMATO:
-		{
-			// Let the character not follow camera rotation
-			bUseControllerRotationYaw = false;
-			CameraBoom->bEnableCameraLag = true;
-			PlayerAnimInstance->bAiming = false;
-			bShowingProjectileIndicator = false;
-			if (ThrowableProjectilIndicator)
-				ThrowableProjectilIndicator->SetIndicatorEnabled(false);
-			ACatastropheMainGameMode::GetGameModeInst(this)->OnPlayerAimingEnd.Broadcast();
-			break;
-		}
+		// Let the character not follow camera rotation
+		bUseControllerRotationYaw = false;
+		CameraBoom->bEnableCameraLag = true;
+		PlayerAnimInstance->bAiming = false;
+		bShowingProjectileIndicator = false;
 
-		case EHHUType::LASER:
-		{
-
-			break;
-		}
-
-		default: break;
-		}
+		if (ThrowableProjectilIndicator)
+			ThrowableProjectilIndicator->SetIndicatorEnabled(false);
+		ACatastropheMainGameMode::GetGameModeInst(this)->OnPlayerAimingEnd.Broadcast();
 
 		// Flip the activation state
 		bHHUSecondaryActive = false;
 	}
-}
-
-UInventoryComponent* APlayerCharacter::GetInventoryComponent()
-{
-	return InventoryComponent;
 }
 
 // Setting the currently interacting component
@@ -630,30 +612,24 @@ void APlayerCharacter::SetStamina(float _value)
 	CurrentStamina = FMath::Min(_value, TotalStamina);
 }
 
-void APlayerCharacter::BlockMovementAction(bool _bBlockMovementInput)
+void APlayerCharacter::SetMovementActionEnable(bool _bEnable)
 {
-	// Reset the sprint and crouch state
 	UnSprint();
-	//ForceSprintEnd();
 	CrouchEnd();
+	bAllowMovementInput = _bEnable;
+}
 
-	// If choose to block input as well
-	if (_bBlockMovementInput)
+void APlayerCharacter::SetForceCrouchEnable(bool _bEnable)
+{
+	bForceCrouch = _bEnable;
+	if (_bEnable)
 	{
-		bAllowMovementInput = false;
+		CrouchBegin();
 	}
-}
-
-void APlayerCharacter::UnblockMovementInput()
-{
-	bAllowMovementInput = true;
-}
-
-void APlayerCharacter::ForceUnSprint()
-{
-	UnSprint();
-	FollowCamera->SetFieldOfView(PlayerDefaultValues.CameraFOV);
-	GetCharacterMovement()->MaxWalkSpeed = PlayerDefaultValues.WalkSpeed;
+	else
+	{
+		CrouchEnd();
+	}
 }
 
 void APlayerCharacter::TogglePlayerHUD(bool _bEnable)
@@ -662,12 +638,14 @@ void APlayerCharacter::TogglePlayerHUD(bool _bEnable)
 	{
 		if (_bEnable)
 		{
-			PlayerWidget->RemoveFromParent();
-			PlayerWidget->AddToViewport(0);
+			PlayerWidget->SetVisibility(ESlateVisibility::Visible);
+			//PlayerWidget->RemoveFromParent();
+			//PlayerWidget->AddToViewport(0);
 		}
 		else
 		{
-			PlayerWidget->RemoveFromParent();
+			PlayerWidget->SetVisibility(ESlateVisibility::Hidden);
+			//PlayerWidget->RemoveFromParent();
 		}
 	}
 }
