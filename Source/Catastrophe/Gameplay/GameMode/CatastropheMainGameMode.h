@@ -38,6 +38,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FCaveGameplaySignature OnCaveGameplayReset;
 
+	UPROPERTY(BlueprintAssignable)
+	FCaveGameplaySignature OnCaveGameplaySuccess;
+
 protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Gameplay | General")
@@ -133,14 +136,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | QuestObjectives")
 	void OnQuestObjectiveCompletion(class UQuestObjectiveComponent* _CurrentObjective, bool _bUnlocksNewQuest);
 
+	/** Cave gameplay handler */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
 	void StartCaveGameplay();
-
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
 	void EndCaveGameplay();
-
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
 	void ResetCaveGameplay();
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
+	void SuccessCaveGameplay();
+	/** Cave gameplay end */
 
 	/** Setter */
 	void SetCaveCameraTrack(class ACaveCameraTrack* _cameraTrackActor) {
@@ -157,14 +162,16 @@ public:
 
 protected:
 
+	/** Cave gameplay blueprint events */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplayBegin"))
 	void Receive_OnCaveGameplayBegin();
-
 	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplayEnd"))
 	void Receive_OnCaveGameplayEnd();
-
 	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplayReset"))
 	void Receive_OnCaveGameplayReset();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCaveGameplaySuccess"))
+	void Receive_OnCaveGameplaySuccess();
+	/** Cave gameplay blueprint events end */
 
 private:
 
