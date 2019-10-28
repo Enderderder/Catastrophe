@@ -39,6 +39,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ventilation")
 	FString HintTextWhenLocked = "Its locked";
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ventilation")
+	float VentPopForce = 1000.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ventilation")
+	float VentPopUpDegree = -30.0f;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ventilation")
 	bool bLocked = true;
 
@@ -68,7 +74,11 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Ventilation", meta = (DisplayName = "OnShowHint"))
 	void Receive_ShowHint(class APlayerCharacter* _playerCharacter, const FString& _hintText);
 
+public:
 
-
+	UFUNCTION(BlueprintCallable, Category = "Ventilation")
+	void PopVentCap();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Ventilation", meta = (DisplayName = "OnPopVentCap"))
+	void Receive_PopVentCap();
 
 };
