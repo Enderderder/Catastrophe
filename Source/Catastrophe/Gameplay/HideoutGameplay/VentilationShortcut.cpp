@@ -69,3 +69,17 @@ void AVentilationShortcut::BeginPlay()
 	Super::BeginPlay();
 	
 }
+
+void AVentilationShortcut::PopVentCap()
+{
+	bLocked = false;
+
+	PopVentMesh->SetSimulatePhysics(true);
+
+	FVector forceDirection =
+		PopVentMesh->GetForwardVector().RotateAngleAxis(VentPopUpDegree, FVector(0.0f, 1.0f, 0.0f));
+	FVector forceVector = forceDirection * VentPopForce * (PopVentMesh->GetMass());
+	PopVentMesh->AddImpulseAtLocation(forceVector, PopVentMesh->GetComponentLocation() + FVector(0.0f, 0.0f, 10.0f));
+
+	Receive_PopVentCap();
+}
