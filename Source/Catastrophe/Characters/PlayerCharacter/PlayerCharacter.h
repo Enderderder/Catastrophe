@@ -235,6 +235,9 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Movement")
 	bool bAllowMovementInput = true;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Camera")
+	bool bAllowCameraInput = true;
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Movement")
 	bool bForceCrouch = false;
 
@@ -266,6 +269,10 @@ protected:
 	void PlayerJump();
 
 	void PlayerStopJump();
+
+	void PlayerTurn(float _value);
+
+	void PlayerLookUp(float _value);
 
 	/**
 	 * Called via input to turn at a given rate.
@@ -392,6 +399,14 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void SetMovementActionEnable(bool _bEnable);
+
+	/**
+	 * Called to set if player can control the camera rotation
+	 * @author Richard Wulansari
+	 * @param _bEnable
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void SetCameraInputEnable(bool _bEnable);
 
 	/**
 	 * Called to set if player is forced to crouch
