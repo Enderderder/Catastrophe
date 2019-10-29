@@ -95,7 +95,7 @@ AGuard::AGuard()
 	HeadLight->SetRelativeLocation(FVector(16.0f, 0.0f, 0.0f));
 	HeadLight->InnerConeAngle = 10.0f;
 	HeadLight->OuterConeAngle = 30.0f;
-	HeadLight->SetupAttachment(GetMesh(), TEXT("HeadSocket"));
+	HeadLight->SetupAttachment(GetMesh(), TEXT("FlashLightSocket"));
 }
 
 // Called when the game starts or when spawned
