@@ -283,9 +283,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &APlayerCharacter::PlayerTurn);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::PlayerLookUp);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
 
 	// Interaction actions
@@ -471,6 +471,22 @@ void APlayerCharacter::PlayerStopJump()
 	StopJumping();
 }
 
+void APlayerCharacter::PlayerTurn(float _value)
+{
+	if (bAllowCameraInput)
+	{
+		AddControllerYawInput(_value);
+	}
+}
+
+void APlayerCharacter::PlayerLookUp(float _value)
+{
+	if (bAllowCameraInput)
+	{
+		AddControllerPitchInput(_value);
+	}
+}
+
 void APlayerCharacter::TimelineSetCameraZoomValue(float _alpha)
 {
 	float resultLength =
@@ -617,6 +633,11 @@ void APlayerCharacter::SetMovementActionEnable(bool _bEnable)
 	UnSprint();
 	CrouchEnd();
 	bAllowMovementInput = _bEnable;
+}
+
+void APlayerCharacter::SetCameraInputEnable(bool _bEnable)
+{
+	bAllowCameraInput = _bEnable;
 }
 
 void APlayerCharacter::SetForceCrouchEnable(bool _bEnable)
