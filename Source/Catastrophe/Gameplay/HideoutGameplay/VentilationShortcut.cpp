@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
+#include "GameFramework/Controller.h"
 
 #include "Interactable/BaseClasses/InteractableComponent.h"
 #include "Characters/PlayerCharacter/PlayerCharacter.h"
@@ -60,6 +61,7 @@ void AVentilationShortcut::OnInteractSuccess(class APlayerCharacter* _playerChar
 		FVector teleportLocation = TeleportTransformComponent->GetComponentLocation();
 		FRotator teleportRotation = TeleportTransformComponent->GetComponentRotation();
 		_playerCharacter->SetActorLocationAndRotation(teleportLocation, teleportRotation);
+		_playerCharacter->GetController()->SetControlRotation(teleportRotation);
 	}
 }
 
