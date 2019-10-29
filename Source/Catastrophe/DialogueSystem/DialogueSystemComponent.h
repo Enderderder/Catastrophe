@@ -78,10 +78,6 @@ private:
 	int CurrentSentenceIndex;
 
 protected:
-	// The NPC icon which is used in the dialogue widget
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue System")
-	class UTexture* NPCIcon;
-
 	// The dialogue widget class type
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System")
 	TSubclassOf<class UUserWidget> DialogueWidgetRef;
