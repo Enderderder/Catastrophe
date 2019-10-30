@@ -360,6 +360,14 @@ public:
 	void Receive_PlayGrabAnim();
 
 	/**
+	 * Called to set the T pose state
+	 * @author Richard Wulansari
+	 * @param _bEnable
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Player | Animation")
+	void SetPlayerTPoseEable(bool _bEnable);
+
+	/**
 	 * Set the target to interact for the player
 	 * @author Richard Wulansari
 	 * @param _interactTargetComponent: The target component where the player will be interact with
