@@ -600,6 +600,12 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 	}
 }
 
+// Set the player T pose state
+void APlayerCharacter::SetPlayerTPoseEable(bool _bEnable)
+{
+	PlayerAnimInstance->bT = _bEnable;
+}
+
 // Setting the currently interacting component
 void APlayerCharacter::SetInteractionTarget(class UInteractableComponent* _interactTargetComponent)
 {

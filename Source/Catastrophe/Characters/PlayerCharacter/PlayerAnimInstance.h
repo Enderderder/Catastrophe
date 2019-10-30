@@ -34,6 +34,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
 	bool bAiming;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
+	bool bT = false;
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
