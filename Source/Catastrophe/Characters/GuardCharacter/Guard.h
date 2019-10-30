@@ -54,7 +54,7 @@ private:
 	class UBoxComponent* CatchHitBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GuardComponents", meta = (AllowPrivateAccess = "true"))
-	class USphereComponent* StupidFakeBsHearingSphere;
+	class UStaticMeshComponent* HearingTrigger;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GuardComponents", meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* AlertMarkMesh;
