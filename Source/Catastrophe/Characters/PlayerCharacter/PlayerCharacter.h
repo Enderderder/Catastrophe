@@ -8,17 +8,6 @@
 
 
 /**
- * HHU (Hand Hold Utility) types
- * This is the player skill set on which will cast through hand
- */
-UENUM(BlueprintType)
-enum class EHHUType : uint8
-{
-	TOMATO,
-	LASER,
-};
-
-/**
  * Player movement sets
  * This determind how the character reacts to the controller inputs at different situations
  */
@@ -178,10 +167,6 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Interaction")
 	float InteractionTimeHold = 0.0f;
 
-	/** Currently activated HHU(Hand Hold Utility) */
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "HHU | General")
-	EHHUType ActiveHHUType = EHHUType::TOMATO;
-
 	/** Is HHU(Hand Hold Utility) primary action active */
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "HHU | General")
 	bool bHHUPrimaryActive = false;
@@ -250,20 +235,21 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Movement")
 	bool bAllowMovementInput = true;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Camera")
+	bool bAllowCameraInput = true;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Movement")
+	bool bForceCrouch = false;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "HHU | General")
+	bool bCanUseHHU = true;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Interaction")
+	bool bCanInteract = true;
+
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HHU | General")
-	bool bCanUseHHU = true;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interaction")
-	bool bCanInteract = true;
-
-	/// TODO: Redo the currency system
-	/* Fish bones currency */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Fish Bones")
-	int32 FishBonesAmount;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Movement")
 	EPlayerMovementSet CurrentMovementSet = EPlayerMovementSet::NORMAL;
@@ -279,6 +265,14 @@ protected:
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+	void PlayerJump();
+
+	void PlayerStopJump();
+
+	void PlayerTurn(float _value);
+
+	void PlayerLookUp(float _value);
 
 	/**
 	 * Called via input to turn at a given rate.
@@ -358,50 +352,84 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable, Category = "HHU | General")
-	UInventoryComponent* GetInventoryComponent();
+	/**
+	 * Called to play the grab animation
+	 * @author Richard Wulansari
+	 */
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Player | Animation", meta = (DisplayName = "OnPlayGrabAnim"))
+	void Receive_PlayGrabAnim();
 
-	/** Set the target to interact for the player */
+	/**
+	 * Called to set the T pose state
+	 * @author Richard Wulansari
+	 * @param _bEnable
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Player | Animation")
+	void SetPlayerTPoseEable(bool _bEnable);
+
+	/**
+	 * Set the target to interact for the player
+	 * @author Richard Wulansari
+	 * @param _interactTargetComponent: The target component where the player will be interact with
+	 */
 	UFUNCTION()
 	void SetInteractionTarget(class UInteractableComponent* _interactTargetComponent);
 
-	/** Try to remove the interaction target if it exists */
-	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	/**
+	 * Try to remove the interaction target if it exists
+	 * @author Richard Wulansari
+	 * @param _interactTargetComponent: The interacting component will be removed
+	 * @note If the current interacting target component is not the same as the parameter, the current target will not be removed
+	 */
+	UFUNCTION()
 	void RemoveInteractionTarget(class UInteractableComponent* _interactTargetComponent);
-	
-	/** Resets the interaction action outside the class */
+
+	/**
+	 * Force the interaction to end from outside of player's control
+	 * @author Richard Wulansari
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void ResetInteractionAction();
 
 	/**
 	 * Set the value of current stamina
+	 * @author Richard Wulansari
 	 * @note This will not overflow the stamina
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void SetStamina(float _value);
 	
-
-	///TODO: Unclear function purpose, redo
 	/**
-	 * Called to stop all the movement that the player currently has
-	 * @param Option to block player movement input
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-	void BlockMovementAction(bool _bBlockMovementInput);
-
-	/** Allow player take movement control again */
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-	void UnblockMovementInput();
-
-	/**
-	 * Force player to exit spinting action regards to how the sprint component is doing
+	 * Called to set if player can control the character movemement related action or not
 	 * @author Richard Wulansari
-	 * @note Use with caution
+	 * @param _bEnable
+	 * @note This will reset the all current action
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	void ForceUnSprint();
+	void SetMovementActionEnable(bool _bEnable);
 
-	UFUNCTION(BlueprintCallable, Category = "Player | General")
+	/**
+	 * Called to set if player can control the camera rotation
+	 * @author Richard Wulansari
+	 * @param _bEnable
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void SetCameraInputEnable(bool _bEnable);
+
+	/**
+	 * Called to set if player is forced to crouch
+	 * @author Richard Wulansari
+	 * @param _bEnable
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void SetForceCrouchEnable(bool _bEnable);
+
+	/**
+	 * Sets the visibility of the player's Hud
+	 * @author Richard Wulansari
+	 * @param _bEnable
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Player | General", meta = (DisplayName = "SetPlayerHudEnable"))
 	void TogglePlayerHUD(bool _bEnable);
 
 	/**
@@ -416,7 +444,10 @@ public:
 	/** Check if player has tomato in his hand */
 	void CheckTomatoInHand();
 
-	/** Check if player is crouching */
+	/**
+	 * Check if the player is crouching
+	 * @return True if the player is crouching
+	 */
 	bool IsPlayerCrouched() const;
 
 	/** Getter */
@@ -432,6 +463,7 @@ public:
 	FORCEINLINE class AThrowableProjectileIndicator* GetProjectileIndicator() const {
 		return ThrowableProjectilIndicator;}
 	FORCEINLINE class USceneComponent* GetThrowableSpawnPoint() const { return ThrowableSpawnPoint; }
+	FORCEINLINE class UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 	FORCEINLINE class UBackPackComponent* GetBackPack() const { return BackPackComponent; }
 	FORCEINLINE FVector GetCurrentThrowingVelocity() const { return CurrentThrowableLaunchVelocity; }
 	FORCEINLINE float GetThrowingGravity() const { return ThrowableGravityOverwrite; }

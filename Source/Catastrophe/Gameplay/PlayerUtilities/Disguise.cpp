@@ -26,6 +26,13 @@ ADisguise::ADisguise()
 	RootComponent = DisguiseMesh;
 }
 
+void ADisguise::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearTimer(DisguiseTimerHandle);
+}
+
 // Called when the game starts or when spawned
 void ADisguise::BeginPlay()
 {
@@ -33,8 +40,6 @@ void ADisguise::BeginPlay()
 
 	// Getting the player and storing him as a variable
 	Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
-	// Getting the players original walk speed and storing it
-	PlayerMoveSpeed = Player->GetCharacterMovement()->MaxWalkSpeed;
 
 	// Attaching the disguise to the 
 	DisguiseMesh->AttachToComponent(Player->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -57,11 +62,11 @@ void ADisguise::UseDisguise()
 		Player->GetSprintMovementComponent()->bAllowsToSprint = false;
 		Player->GetSprintMovementComponent()->UnSprint();
 
-		// Change player walk speed to disguise walk speed
-		Player->GetCharacterMovement()->MaxWalkSpeed = DisguiseWalkSpeed;
+		// Force player to crouch in here
+		Player->SetForceCrouchEnable(true);
 
 		// Starts timer for how long disguise is active for
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADisguise::OnEndDisguise, SecondsOfUse, false);
+		GetWorld()->GetTimerManager().SetTimer(DisguiseTimerHandle, this, &ADisguise::OnEndDisguise, DisguiseTime, false);
 	}
 }
 
@@ -71,10 +76,9 @@ void ADisguise::OnEndDisguise()
 
 	// Make player visible to guards
 	Player->GetStimulusSourceComponent()->RegisterForSense(UAISense_Sight::StaticClass());
-	// Set the player walk speed to original speed
-	Player->GetCharacterMovement()->MaxWalkSpeed = PlayerMoveSpeed;
-	// Allow the player to be able to sprint again
 	Player->GetSprintMovementComponent()->bAllowsToSprint = true;
+	Player->SetForceCrouchEnable(false);
+
 	// Deleting the actor from the world
 	Destroy();
 }
@@ -84,7 +88,7 @@ float ADisguise::GetRemainingTime()
 	// Gets the remaining time from the timer
 	if (GetWorld())
 	{
-		return GetWorld()->GetTimerManager().GetTimerRemaining(TimerHandle);
+		return GetWorld()->GetTimerManager().GetTimerRemaining(DisguiseTimerHandle);
 	}
 	return 0;
 }

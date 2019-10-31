@@ -102,7 +102,7 @@ void AHidingUrn::JumpIn(class APlayerCharacter* _playerCharacter)
 
 	// Disable collision and movement
 	_playerCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	_playerCharacter->BlockMovementAction(true);
+	_playerCharacter->SetMovementActionEnable(false);
 	_playerCharacter->GetCharacterMovement()->MaxWalkSpeed = 0.0f;
 
 	// Hide the outline
@@ -118,8 +118,7 @@ void AHidingUrn::JumpIn(class APlayerCharacter* _playerCharacter)
 void AHidingUrn::JumpOut(class APlayerCharacter* _playerCharacter)
 {
 	// Restore the movement of the player
-	_playerCharacter->UnblockMovementInput();
-	_playerCharacter->BlockMovementAction(false);
+	_playerCharacter->SetMovementActionEnable(true);
 	_playerCharacter->GetCharacterMovement()->MaxWalkSpeed = TempPlayerInfo.PlayerMaxWalkSpeed;
 	_playerCharacter->SetActorLocation(TempPlayerInfo.PlayerLocation);
 	_playerCharacter->SetActorHiddenInGame(false);

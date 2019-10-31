@@ -55,7 +55,7 @@ void UInventoryComponent::PickupItem(TSubclassOf<class AItemSack> _newItemType)
 	{
 		if (ItemSacks[i]->IsA(_newItemType))
 		{
-			if (ItemSacks[i]->CanPickup)
+			if (ItemSacks[i]->bCanPickup)
 			{
 				ItemSacks[i]->AddItem();
 
@@ -75,7 +75,7 @@ void UInventoryComponent::PickupItems(TSubclassOf<class AItemSack> _newItemType,
 	{
 		if (ItemSacks[i]->IsA(_newItemType))
 		{
-			if (ItemSacks[i]->CanPickup)
+			if (ItemSacks[i]->bCanPickup)
 			{
 				ItemSacks[i]->AddItems(_amount);
 
@@ -125,57 +125,75 @@ class AItemSack* UInventoryComponent::GetItemSackOfType(TSubclassOf<class AItemS
 
 class AItemSack* UInventoryComponent::GetCurrentItemSack()
 {
-	if (CurrentSelection >= 0)
+	if (CurrentSelection >= 0 && ItemSacks.Num() > CurrentSelection)
 	{
-		if (ItemSacks.Num() > CurrentSelection)
-		{
-			return ItemSacks[CurrentSelection];
-		}
+		return ItemSacks[CurrentSelection];
 	}
+
 	CurrentSelection = 0;
 	return nullptr;
 }
 
 class AItemSack* UInventoryComponent::GetPreviousItemSack()
 {
-	if (CurrentSelection >= 0)
+	int previousItemSack = CurrentSelection;
+
+	if (ItemSacks.Num() > CurrentSelection && CurrentSelection >= 0)
 	{
-		if (ItemSacks.Num() > CurrentSelection && CurrentSelection >= 0)
+		for (int i = 0; i < ItemSacks.Num() - 1; ++i)
 		{
-			if (CurrentSelection == 0)
+			if (previousItemSack == 0)
 			{
-				return ItemSacks.Last();
+				previousItemSack = ItemSacks.Num() - 1;
 			}
 			else
 			{
-				return ItemSacks[CurrentSelection - 1];
+				previousItemSack--;
+			}
+
+			if (!ItemSacks[previousItemSack]->IsItemSackEmpty() && ItemSacks[previousItemSack] != GetNextItemSack())
+			{
+				return ItemSacks[previousItemSack];
 			}
 		}
 	}
-	CurrentSelection = 0;
+	else
+	{
+		CurrentSelection = 0;
+	}
 	return nullptr;
 }
 
 class AItemSack* UInventoryComponent::GetNextItemSack()
 {
-	if (CurrentSelection >= 0)
+	int nextItemSack = CurrentSelection;
+
+	if (ItemSacks.Num() > CurrentSelection && CurrentSelection >= 0)
 	{
-		if (ItemSacks.Num() > CurrentSelection)
+		for (int i = 0; i < ItemSacks.Num() - 1; ++i)
 		{
-			if (CurrentSelection == ItemSacks.Num() - 1)
+			if (nextItemSack == ItemSacks.Num() - 1)
 			{
 				if (ItemSacks.Num() > 0)
 				{
-					return ItemSacks[0];
+					nextItemSack = 0;
 				}
 			}
 			else
 			{
-				return ItemSacks[CurrentSelection + 1];
+				nextItemSack++;
+			}
+
+			if (!ItemSacks[nextItemSack]->IsItemSackEmpty())
+			{
+				return ItemSacks[nextItemSack];
 			}
 		}
 	}
-	CurrentSelection = 0;
+	else
+	{
+		CurrentSelection = 0;
+	}
 	return nullptr;
 }
 
@@ -226,7 +244,7 @@ void UInventoryComponent::UseItem(bool _bAiming)
 		if (ItemSacks[CurrentSelection] != NULL)
 		{
 			// Check if the player is aiming if aiming is needed
-			if (ItemSacks[CurrentSelection]->IsAimingNeeded && !_bAiming) return;
+			if (ItemSacks[CurrentSelection]->bAimingNeeded && !_bAiming) return;
 
 			ItemSacks[CurrentSelection]->UseItem();
 			

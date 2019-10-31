@@ -119,6 +119,12 @@ void ACatastropheMainGameMode::ResetCaveGameplay()
 	OnCaveGameplayReset.Broadcast();
 }
 
+void ACatastropheMainGameMode::SuccessCaveGameplay()
+{
+	Receive_OnCaveGameplaySuccess();
+	OnCaveGameplaySuccess.Broadcast();
+}
+
 void ACatastropheMainGameMode::OnGuardQteEventComplete(EQteEventState _eventState)
 {
 	if (_eventState == EQteEventState::Success)

@@ -49,11 +49,11 @@ void ACollectableItem::OnInteractSuccess(class APlayerCharacter* _playerCharacte
 	InteractableComponent->bCanInteract = false;
 
 	// Plays after effect and maybe delete actor
-	AfterCollectedEffect();
+	AfterCollectedEffect(_playerCharacter);
 	if (bDestroyImmediateAfterCollect) this->Destroy();
 }
 
-void ACollectableItem::AfterCollectedEffect_Implementation()
+void ACollectableItem::AfterCollectedEffect_Implementation(APlayerCharacter* _playerCharacter)
 {
-	/// Base class has no implementation
+	_playerCharacter->Receive_PlayGrabAnim();
 }

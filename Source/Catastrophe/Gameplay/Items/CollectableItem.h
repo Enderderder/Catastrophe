@@ -41,8 +41,11 @@ private:
 
 protected:
 
+	/**
+	 * 
+	 */
 	UFUNCTION(BlueprintNativeEvent, Category = "CollectableItem")
-	void AfterCollectedEffect();
-	virtual void AfterCollectedEffect_Implementation();
+	void AfterCollectedEffect(class APlayerCharacter* _playerCharacter);
+	virtual void AfterCollectedEffect_Implementation(class APlayerCharacter* _playerCharacter);
 
 };

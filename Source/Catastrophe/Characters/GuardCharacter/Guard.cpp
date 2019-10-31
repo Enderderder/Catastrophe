@@ -69,12 +69,13 @@ AGuard::AGuard()
 	CatchHitBox->OnComponentBeginOverlap.AddDynamic(this, &AGuard::OnCatchHitBoxOverlap);
 	CatchHitBox->SetupAttachment(GetMesh());
 
-	// TODO: Pls remove this
-	StupidFakeBsHearingSphere = CreateDefaultSubobject<USphereComponent>(TEXT("StupidFakeBsHearingSphere"));
-	StupidFakeBsHearingSphere->SetGenerateOverlapEvents(true);
-	StupidFakeBsHearingSphere->SetCollisionProfileName(TEXT("EnemyOverlap"));
-	StupidFakeBsHearingSphere->CanCharacterStepUpOn = ECB_No;
-	StupidFakeBsHearingSphere->SetupAttachment(GetMesh());
+	HearingTrigger = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HearingTrigger"));
+	HearingTrigger->SetGenerateOverlapEvents(true);
+	HearingTrigger->SetCollisionProfileName(TEXT("EnemyOverlap"));
+	HearingTrigger->CanCharacterStepUpOn = ECB_No;
+	HearingTrigger->SetVisibility(false);
+	HearingTrigger->SetHiddenInGame(true);
+	HearingTrigger->SetupAttachment(GetMesh());
 
 	AlertMarkMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("AlertMarkMesh"));
 	AlertMarkMesh->SetGenerateOverlapEvents(false);
@@ -95,7 +96,7 @@ AGuard::AGuard()
 	HeadLight->SetRelativeLocation(FVector(16.0f, 0.0f, 0.0f));
 	HeadLight->InnerConeAngle = 10.0f;
 	HeadLight->OuterConeAngle = 30.0f;
-	HeadLight->SetupAttachment(GetMesh(), TEXT("HeadSocket"));
+	HeadLight->SetupAttachment(GetMesh(), TEXT("FlashLightSocket"));
 }
 
 // Called when the game starts or when spawned
