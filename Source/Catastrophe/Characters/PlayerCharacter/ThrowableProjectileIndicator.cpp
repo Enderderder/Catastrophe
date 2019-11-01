@@ -17,6 +17,11 @@ AThrowableProjectileIndicator::AThrowableProjectileIndicator()
 
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
 	RootComponent = SplineComponent;
+
+	EndpointMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EndpointMesh"));
+	EndpointMesh->SetGenerateOverlapEvents(false);
+	EndpointMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	EndpointMesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
