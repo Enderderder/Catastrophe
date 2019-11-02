@@ -17,6 +17,11 @@ AThrowableProjectileIndicator::AThrowableProjectileIndicator()
 
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
 	RootComponent = SplineComponent;
+
+	EndpointMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EndpointMesh"));
+	EndpointMesh->SetGenerateOverlapEvents(false);
+	EndpointMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	EndpointMesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -49,7 +54,8 @@ void AThrowableProjectileIndicator::Tick(float DeltaTime)
 	if (SplineComponent->GetNumberOfSplinePoints() > 0 &&
 		bRenderingSpline)
 	{
-		float segmentLength = SplineComponent->GetSplineLength() / NumberOfMeshSegments;
+		float splineLength = SplineComponent->GetSplineLength();
+		float segmentLength = splineLength / NumberOfMeshSegments;
 		for (int32 i = 0; i < NumberOfMeshSegments; ++i)
 		{
 			FVector startPos = SplineComponent->GetLocationAtDistanceAlongSpline(segmentLength * i, ESplineCoordinateSpace::World);
@@ -59,6 +65,9 @@ void AThrowableProjectileIndicator::Tick(float DeltaTime)
 
 			SplineMeshes[i]->SetStartAndEnd(startPos, startTangent, endPos, endTangent);
 		}
+
+		FVector splineEnd = SplineComponent->GetLocationAtDistanceAlongSpline(splineLength, ESplineCoordinateSpace::World);
+		EndpointMesh->SetWorldLocation(splineEnd);
 	}
 }
 

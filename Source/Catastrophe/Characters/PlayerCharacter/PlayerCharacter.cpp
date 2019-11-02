@@ -226,7 +226,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		CurrentThrowableLaunchVelocity =
 			ThrowingStrength * FollowCamera->GetForwardVector().RotateAngleAxis(
 				ThrowingAngle, FollowCamera->GetRightVector());
-		float projectileRadius = 20.0f;
+		float projectileRadius = 10.0f;
 		TArray<AActor*> actorsToIgnore;
 		actorsToIgnore.Add(this);
 

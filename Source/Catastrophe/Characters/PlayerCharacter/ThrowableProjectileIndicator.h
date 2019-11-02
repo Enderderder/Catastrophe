@@ -16,6 +16,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ProjectileIndicator", meta = (AllowPrivateAccess = "true"))
 	class USplineComponent* SplineComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ProjectileIndicator", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* EndpointMesh;
+
 protected:
 
 	/** Number of segmnents to form the spline, more segment means smoother spline */
