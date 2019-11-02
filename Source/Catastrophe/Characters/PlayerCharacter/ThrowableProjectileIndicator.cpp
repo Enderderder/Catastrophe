@@ -54,7 +54,8 @@ void AThrowableProjectileIndicator::Tick(float DeltaTime)
 	if (SplineComponent->GetNumberOfSplinePoints() > 0 &&
 		bRenderingSpline)
 	{
-		float segmentLength = SplineComponent->GetSplineLength() / NumberOfMeshSegments;
+		float splineLength = SplineComponent->GetSplineLength();
+		float segmentLength = splineLength / NumberOfMeshSegments;
 		for (int32 i = 0; i < NumberOfMeshSegments; ++i)
 		{
 			FVector startPos = SplineComponent->GetLocationAtDistanceAlongSpline(segmentLength * i, ESplineCoordinateSpace::World);
@@ -64,6 +65,9 @@ void AThrowableProjectileIndicator::Tick(float DeltaTime)
 
 			SplineMeshes[i]->SetStartAndEnd(startPos, startTangent, endPos, endTangent);
 		}
+
+		FVector splineEnd = SplineComponent->GetLocationAtDistanceAlongSpline(splineLength, ESplineCoordinateSpace::World);
+		EndpointMesh->SetWorldLocation(splineEnd);
 	}
 }
 
