@@ -313,9 +313,10 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 
 void APlayerCharacter::Sprint()
 {
-	if (bAllowMovementInput
-		&& CurrentStamina >= TotalStamina // Only sprint player has full stamina
-		&& !bHHUSecondaryActive) // Cant sprint while aiming lol
+	if (bAllowMovementInput && 
+		CurrentStamina >= TotalStamina && // Only sprint player has full stamina
+		!bHHUSecondaryActive&& // Cant sprint while aiming lol
+		!GetCharacterMovement()->IsCrouching()) // Cant sprint while crouch
 	{
 		SprintMovementComponent->Sprint();
 	}
