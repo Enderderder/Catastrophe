@@ -392,6 +392,13 @@ public:
 	void ResetInteractionAction();
 
 	/**
+	 * Reset all stats and states of the player character
+	 * @author Richard Wulansari
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Player | General")
+	void ResetPlayerCharacter();
+
+	/**
 	 * Set the value of current stamina
 	 * @author Richard Wulansari
 	 * @note This will not overflow the stamina
@@ -438,7 +445,7 @@ public:
 	 * @author Richard Wulansari
 	 * @param _bEnable The on/off switch of the spotted particle system component
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	UFUNCTION(BlueprintCallable, Category = "Gameplay", meta = (DisplayName = "SetSpotAlertEnable"))
 	void ToggleSpottedAlert(bool _bEnable);
 
 	/** Check if player has tomato in his hand */

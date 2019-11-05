@@ -103,9 +103,11 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Guard | Animation")
 	class UGuardAnimInstance* GuardAnimInstance;
 
-	/**  */
-	UPROPERTY(BlueprintReadWrite, Category = "Guard | General")
+	UPROPERTY(BlueprintReadWrite, Category = "Guard | References")
 	class APlayerCharacter* PlayerRef;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Guard | References")
+	class ACatastropheMainGameMode* CatastropheGameMode;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Guard | General")
 	FTransform DefaultTransform;
@@ -188,6 +190,9 @@ protected:
 	virtual void OnStunEnd();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Guard | Behaviour | Stun", meta = (DisplayName = "OnStunEnd"))
 	void Receive_OnStunEnd();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Guard | General", meta = (DisplayName = "OnSendingPlayerToJail"))
+	void Receive_OnSendingPlayerToJail();
 
 	/** Called when the catch hit box overlap */
 	UFUNCTION()

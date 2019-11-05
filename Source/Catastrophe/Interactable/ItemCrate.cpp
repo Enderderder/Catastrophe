@@ -24,10 +24,10 @@ AItemCrate::AItemCrate()
 	ItemMesh->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
 	RootComponent = ItemMesh;
 
-	OutlineMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OutlineMesh"));
-	OutlineMesh->SetGenerateOverlapEvents(false);
-	OutlineMesh->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
-	OutlineMesh->SetupAttachment(ItemMesh);
+// 	OutlineMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OutlineMesh"));
+// 	OutlineMesh->SetGenerateOverlapEvents(false);
+// 	OutlineMesh->SetCollisionProfileName(UCollisionProfile::BlockAll_ProfileName);
+// 	OutlineMesh->SetupAttachment(ItemMesh);
 
 	TriggerVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerVolume"));
 	TriggerVolume->SetGenerateOverlapEvents(true);

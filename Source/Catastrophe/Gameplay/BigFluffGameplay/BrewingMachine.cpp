@@ -77,8 +77,6 @@ void ABrewingMachine::OnInteractSuccess(class APlayerCharacter* _playerCharacter
 				playerBackpack->RemoveItem(request.ItemClass, request.Amount);
 			}
 
-			CatastropheDebug::OnScreenDebugMsg(-1, 10.f, FColor::Green, TEXT("Machine Worked"));
-			
 			if (CatnipPickupClass &&
 				GetWorld())
 			{
@@ -93,11 +91,6 @@ void ABrewingMachine::OnInteractSuccess(class APlayerCharacter* _playerCharacter
 					GetWorld()->SpawnActor<ACatnipBallPickup>(
 						CatnipPickupClass, spawnTransform, spawnParam);*/
 			}
-		}
-		else
-		{
-			CatastropheDebug::OnScreenDebugMsg(-1, 10.f, FColor::Green, TEXT("NO U< YEET"));
-			/// Do whatever the machine things if player dont have enough material
 		}
 	}
 }

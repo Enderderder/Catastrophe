@@ -226,7 +226,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		CurrentThrowableLaunchVelocity =
 			ThrowingStrength * FollowCamera->GetForwardVector().RotateAngleAxis(
 				ThrowingAngle, FollowCamera->GetRightVector());
-		float projectileRadius = 20.0f;
+		float projectileRadius = 10.0f;
 		TArray<AActor*> actorsToIgnore;
 		actorsToIgnore.Add(this);
 
@@ -313,9 +313,10 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 
 void APlayerCharacter::Sprint()
 {
-	if (bAllowMovementInput
-		&& CurrentStamina >= TotalStamina // Only sprint player has full stamina
-		&& !bHHUSecondaryActive) // Cant sprint while aiming lol
+	if (bAllowMovementInput && 
+		CurrentStamina >= TotalStamina && // Only sprint player has full stamina
+		!bHHUSecondaryActive&& // Cant sprint while aiming lol
+		!GetCharacterMovement()->IsCrouching()) // Cant sprint while crouch
 	{
 		SprintMovementComponent->Sprint();
 	}
@@ -627,6 +628,20 @@ void APlayerCharacter::RemoveInteractionTarget(class UInteractableComponent* _in
 void APlayerCharacter::ResetInteractionAction()
 {
 	InteractEnd();
+}
+
+void APlayerCharacter::ResetPlayerCharacter()
+{
+	PlayerAnimInstance->ResetAnimationValues();
+	CurrentStamina = TotalStamina;
+	bInteracting = false;
+	ToggleSpottedAlert(false);
+
+	bAllowMovementInput = true;
+	bAllowCameraInput = true;
+	bForceCrouch = false;
+	bCanInteract = true;
+	bSprinting = false;
 }
 
 void APlayerCharacter::SetStamina(float _value)

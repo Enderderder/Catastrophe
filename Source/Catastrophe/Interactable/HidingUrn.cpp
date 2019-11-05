@@ -28,9 +28,9 @@ AHidingUrn::AHidingUrn()
 	UrnDestructableMesh->SetGenerateOverlapEvents(false);
 	RootComponent = UrnDestructableMesh;
 
-	UrnOutline = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UrnOutline"));
-	UrnOutline->SetGenerateOverlapEvents(false);
-	UrnOutline->SetupAttachment(RootComponent);
+// 	UrnOutline = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UrnOutline"));
+// 	UrnOutline->SetGenerateOverlapEvents(false);
+// 	UrnOutline->SetupAttachment(RootComponent);
 
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	TriggerBox->SetCollisionProfileName("Trigger");
@@ -106,7 +106,7 @@ void AHidingUrn::JumpIn(class APlayerCharacter* _playerCharacter)
 	_playerCharacter->GetCharacterMovement()->MaxWalkSpeed = 0.0f;
 
 	// Hide the outline
-	UrnOutline->SetVisibility(false);
+	//UrnOutline->SetVisibility(false);
 
 	// Re-register self as an interactable
 	_playerCharacter->SetInteractionTarget(InteractableComponent);
@@ -125,12 +125,12 @@ void AHidingUrn::JumpOut(class APlayerCharacter* _playerCharacter)
 	_playerCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	_playerCharacter->GetStimulusSourceComponent()->RegisterForSense(UAISense_Sight::StaticClass());
 
-	// Urn destruction
-	FVector destructionLocation = UrnDestructableMesh->GetComponentLocation();
-	UrnDestructableMesh->ApplyDamage(1.0f, destructionLocation, destructionLocation, 1.0f);
-
 	// Disable the collision of the block volume
 	BlockVolume->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// Urn destruction
+	FVector destructionLocation = UrnDestructableMesh->GetComponentLocation();
+	UrnDestructableMesh->ApplyDamage(2.0f, destructionLocation, FVector::UpVector, 1000.0f);
 
 	// Call the blueprint version 
 	Receive_JumpOut(_playerCharacter);
