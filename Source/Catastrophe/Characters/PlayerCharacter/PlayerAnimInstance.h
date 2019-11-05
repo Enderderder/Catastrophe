@@ -38,6 +38,9 @@ public:
 	bool bT = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
+	bool bStruggling = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
 	bool bDead = false;
 
 protected:

@@ -630,6 +630,20 @@ void APlayerCharacter::ResetInteractionAction()
 	InteractEnd();
 }
 
+void APlayerCharacter::ResetPlayerCharacter()
+{
+	PlayerAnimInstance->ResetAnimationValues();
+	CurrentStamina = TotalStamina;
+	bInteracting = false;
+	ToggleSpottedAlert(false);
+
+	bAllowMovementInput = true;
+	bAllowCameraInput = true;
+	bForceCrouch = false;
+	bCanInteract = true;
+	bSprinting = false;
+}
+
 void APlayerCharacter::SetStamina(float _value)
 {
 	CurrentStamina = FMath::Min(_value, TotalStamina);
