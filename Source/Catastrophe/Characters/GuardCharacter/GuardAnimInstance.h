@@ -25,6 +25,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GuardAnim")
 	bool bSleeping = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GuardAnim")
+	bool bHolding = false;
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GuardAnim")

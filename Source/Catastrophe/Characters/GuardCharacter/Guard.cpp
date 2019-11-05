@@ -102,11 +102,9 @@ AGuard::AGuard()
 // Called when the game starts or when spawned
 void AGuard::BeginPlay()
 {
-	Super::BeginPlay();
-
 	// Sets default values
 	DefaultTransform = GetActorTransform();
-	
+
 	// Sets the anim instance
 	GuardAnimInstance = Cast<UGuardAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!GuardAnimInstance)
@@ -119,11 +117,14 @@ void AGuard::BeginPlay()
 
 	if (ACatastropheMainGameMode* gamemode = ACatastropheMainGameMode::GetGameModeInst(this))
 	{
+		CatastropheGameMode = gamemode;
 		gamemode->OnPlayerAimingBegin.RemoveDynamic(this, &AGuard::OnPlayerAimingBegin);
 		gamemode->OnPlayerAimingBegin.AddDynamic(this, &AGuard::OnPlayerAimingBegin);
 		gamemode->OnPlayerAimingEnd.RemoveDynamic(this, &AGuard::OnPlayerAimingEnd);
 		gamemode->OnPlayerAimingEnd.AddDynamic(this, &AGuard::OnPlayerAimingEnd);
 	}
+
+	Super::BeginPlay();
 }
 
 // Called  when actor is detroyed

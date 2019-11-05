@@ -54,5 +54,6 @@ void UPlayerAnimInstance::ResetAnimationValues()
 	ForwardSpeed = 0.0f;
 	bAiming = false;
 	bT = false;
+	bStruggling = false;
 	bDead = false;
 }
