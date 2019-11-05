@@ -44,3 +44,15 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	}
 }
+
+void UPlayerAnimInstance::ResetAnimationValues()
+{
+	bCrouch = false;
+	bInAir = false;
+	Speed = 0.0f;
+	RightSpeed = 0.0f;
+	ForwardSpeed = 0.0f;
+	bAiming = false;
+	bT = false;
+	bDead = false;
+}
