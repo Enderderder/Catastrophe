@@ -82,6 +82,7 @@ void UInteractableComponent::OnTriggerEndWithPlayer(class UPrimitiveComponent* O
 				SetInteractionUiVisible(false);
 			}
 
+			bShowingUi = false;
 			PlayerRef->RemoveInteractionTarget(this);
 			OnPlayerExitInteractRange.Broadcast(PlayerRef);
 		}
