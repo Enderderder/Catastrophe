@@ -17,25 +17,28 @@ class CATASTROPHE_API UPlayerAnimInstance : public UAnimInstance
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
-	bool bCrouch;
+	bool bCrouch = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
-	bool bInAir;
+	bool bInAir = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
-	float Speed;
+	float Speed = 0.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
-	float RightSpeed;
+	float RightSpeed = 0.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
-	float ForwardSpeed;
+	float ForwardSpeed = 0.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
-	bool bAiming;
+	bool bAiming = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
 	bool bT = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerAnim")
+	bool bDead = false;
 
 protected:
 
@@ -51,6 +54,8 @@ public:
 	// Executed at tick
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	UFUNCTION(BlueprintCallable, Category = "PlayerAnim")
+	void ResetAnimationValues();
 
 	/** Custom Getter */
 	FORCEINLINE class APlayerCharacter* GetCustomPlayerCharacterOwner() const {

@@ -14,6 +14,7 @@
 #include "Gameplay/GameMode/CatastropheMainGameMode.h"
 #include "RespawnSystem/RespawnSubsystem.h"
 #include "Gameplay/CaveGameplay/CaterpillarCaveFollowPoint.h"
+#include "../PlayerCharacter/PlayerCharacter.h"
 
 #include "DebugUtility/CatastropheDebug.h"
 
@@ -37,10 +38,13 @@ ACaterpillar::ACaterpillar()
 // Called when the game starts or when spawned
 void ACaterpillar::BeginPlay()
 {
-	Super::BeginPlay();
-	
 	// Record the original transform
 	OriginalTransform = GetActorTransform();
+
+	CatastropheGameMode = Cast<ACatastropheMainGameMode>(
+		UGameplayStatics::GetGameMode(this));
+
+	Super::BeginPlay();
 
 	// Search for the cave follow locations and convert them into world location
 	TArray<AActor*> outActors;
@@ -70,12 +74,8 @@ void ACaterpillar::OnCathchPlayerTrigger(UPrimitiveComponent* OverlappedComponen
 	// Reset the cave gameplay as it caught the player
 	if (OtherActor->ActorHasTag("Player") && bChaseActive)
 	{
-		ACatastropheMainGameMode* gameMode = ACatastropheMainGameMode::GetGameModeInst(this);
-		if (gameMode)
-		{
-			bChaseActive = false;
-			gameMode->ResetCaveGameplay();
-		}
+		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(OtherActor);
+		Receive_OnCatchPlayer(playerCharacter);
 	}
 }
 

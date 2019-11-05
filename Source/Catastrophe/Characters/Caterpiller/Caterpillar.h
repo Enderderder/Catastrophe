@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Gameplay | Cave")
 	bool bChaseActive = false;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay | References")
+	class ACatastropheMainGameMode* CatastropheGameMode;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -53,6 +56,8 @@ protected:
 	UFUNCTION()
 	virtual void OnCathchPlayerTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay | Cave", meta = (DisplayName = "OnCatchPlayer"))
+	void Receive_OnCatchPlayer(class APlayerCharacter* _playerCharacter);
 
 public:	
 	// Called every frame

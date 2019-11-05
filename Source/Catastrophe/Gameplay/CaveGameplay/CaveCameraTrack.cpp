@@ -118,3 +118,8 @@ void ACaveCameraTrack::DeactivateCameraTrack()
 		PlayerCharacter->CurrentMovementSet = EPlayerMovementSet::NORMAL;
 }
 
+void ACaveCameraTrack::SetCameraTrackPause(bool _bPaused)
+{
+	bCameraFollowingTrack = _bPaused;
+}
+

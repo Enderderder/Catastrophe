@@ -54,11 +54,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	/** Camera track control */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
 	void ActivateCameraTrack();
-
 	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
 	void DeactivateCameraTrack();
+	UFUNCTION(BlueprintCallable, Category = "Gameplay | Cave")
+	void SetCameraTrackPause(bool _bPaused);
 
 	/** Getter */
 	FORCEINLINE bool IsCameraFollowingTrack() const { return bCameraFollowingTrack; }
