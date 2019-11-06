@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "DialogueWidget.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class CATASTROPHE_API UDialogueWidget : public UUserWidget
 {
 	GENERATED_BODY()

@@ -54,6 +54,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay | QTE_Bob")
 	TSubclassOf<class AQteBobLogicHolder> QteBobEventClass;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay | Dialogue")
+	TSubclassOf<class UDialogueWidget> DialogueWidgetClass;
+
 	/**
 	 * The currently running QTE event 
 	 * @note There should only be one QTE event running at a time
@@ -204,6 +207,10 @@ public:
 	static ACatastropheMainGameMode* GetGameModeInst(const UObject* _worldContextObject);
 
 
+	/** Getter */
+	FORCEINLINE TSubclassOf<class UDialogueWidget> GetDialogueWidgetClass() const {
+		return DialogueWidgetClass;
+	}
 
 
 // Console commands
