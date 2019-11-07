@@ -355,8 +355,9 @@ void AGuard::OnCatchHitBoxOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	if (OtherActor->ActorHasTag(TEXT("Player")))
 	{
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
-		if (player)
+		if (player && !player->bHasBeenCaught)
 		{
+			//player->bHasBeenCaught = true;
 			OnCatchPlayer(player);
 		}
 	}

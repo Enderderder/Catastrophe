@@ -7,6 +7,10 @@
 #include "Characters/PlayerCharacter/PlayerWidget.h"
 #include "Components/BoxComponent.h"
 #include "QuestSystem/QuestObjectiveComponent.h"
+#include "Gameplay/GameMode/CatastropheMainGameMode.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "DebugUtility/CatastropheDebug.h"
 
 // Sets default values for this component's properties
 UDialogueSystemComponent::UDialogueSystemComponent()
@@ -26,10 +30,14 @@ void UDialogueSystemComponent::BeginPlay()
 	CurrentConversationIndex = 0;
 	CurrentSentenceIndex = 0;
 
-	// Initializing dialogue widget
-	if (DialogueWidgetRef)
+	// Initialize dialogue widget
+	ACatastropheMainGameMode* gameMode =
+		Cast<ACatastropheMainGameMode>(UGameplayStatics::GetGameMode(this));
+	if (gameMode && gameMode->GetDialogueWidgetClass())
 	{
-		DialogueWidget = CreateWidget<UDialogueWidget>(GetWorld(), DialogueWidgetRef);
+		DialogueWidget = CreateWidget<UDialogueWidget>(GetWorld(), gameMode->GetDialogueWidgetClass());
+		if (!DialogueWidget)
+			CatastropheDebug::OnScreenErrorMsg(TEXT("Failed to initialize dialogue widget"));
 	}
 
 	// Getting the player character and storing it

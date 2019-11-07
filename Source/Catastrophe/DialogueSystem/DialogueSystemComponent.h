@@ -79,8 +79,8 @@ private:
 
 protected:
 	// The dialogue widget class type
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System")
-	TSubclassOf<class UUserWidget> DialogueWidgetRef;
+// 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System")
+// 	TSubclassOf<class UUserWidget> DialogueWidgetRef;
 
 	// Stores all the possible conversations which could be had
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dialogue System")

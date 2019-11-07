@@ -81,7 +81,7 @@ void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* 
 			CurrentGuardQteEvent->OnQteEventComplete.RemoveDynamic(this, &ACatastropheMainGameMode::OnGuardQteEventComplete);
 			CurrentGuardQteEvent->OnQteEventComplete.AddDynamic(this, &ACatastropheMainGameMode::OnGuardQteEventComplete);
 			
-			float qteRange = InitialGaurdQteRange / (float)(GuardQteSuccessCounter + 1);
+			float qteRange = InitialGaurdQteRange * (1.0f - ((float)FMath::Min(GuardQteSuccessCounter + 1, 9) * 0.1f));
 			CurrentGuardQteEvent->InitiateEventWithRange(qteRange);
 		}
 	}

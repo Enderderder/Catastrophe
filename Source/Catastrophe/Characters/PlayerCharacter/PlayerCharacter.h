@@ -254,6 +254,9 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Movement")
 	EPlayerMovementSet CurrentMovementSet = EPlayerMovementSet::NORMAL;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bHasBeenCaught = false;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
