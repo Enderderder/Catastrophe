@@ -242,6 +242,7 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 	{
 	case EGuardState::STATIONARY:
 		GuardController->ModifySightRange(PatrolSightRange, LosingSightRange);
+		HeadLight->SetLightColor(NormalHeadLightColor);
 		break;
 
 	case EGuardState::SLEEPING:
@@ -254,6 +255,7 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 
 	case EGuardState::WAKEUP_STAGEONE:
 		GuardController->ModifySightRange(PatrolSightRange, LosingSightRange);
+		HeadLight->SetLightColor(NormalHeadLightColor);
 		break;
 
 	case EGuardState::WAKEUP_STAGETWO:
