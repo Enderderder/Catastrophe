@@ -10,8 +10,6 @@
 
 void UPlayerAnimInstance::NativeBeginPlay()
 {
-	Super::NativeBeginPlay();
-	
 	// Store player character reference
 	CustomPlayerCharacter = Cast<APlayerCharacter>(GetOwningActor());
 	if (!CustomPlayerCharacter)
@@ -19,6 +17,9 @@ void UPlayerAnimInstance::NativeBeginPlay()
 		CatastropheDebug::OnScreenErrorMsg(TEXT("PlayerAnimInstance: CustomPlayerCharacter is null"));
 		UE_LOG(LogTemp, Warning, TEXT("PlayerAnimInstance: CustomPlayerCharacter is null"));
 	}
+
+	Super::NativeBeginPlay();
+	
 }
 
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)

@@ -253,12 +253,20 @@ public:
 	virtual void OnCatchPlayer_Implementation(APlayerCharacter* _player);
 
 	/**
-	 * Called the guard successfully caught a player
+	 * Called the guard successfully caught the player
 	 * @author Richard Wualansari
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Guard | General")
 	void OnCatchPlayerSuccess();
 	virtual void OnCatchPlayerSuccess_Implementation();
+
+	/**
+	 * Called the guard failed to catch the player
+	 * @author Richard Wulansari
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Guard | General")
+	void OnCatchPlayerFailed();
+	virtual void OnCatchPlayerFailed_Implementation();
 
 	/** Called to reset everything of the guard */
 	UFUNCTION(BlueprintCallable, Category = "Guard | General")

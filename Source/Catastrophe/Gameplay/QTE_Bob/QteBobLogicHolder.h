@@ -94,4 +94,10 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "QTE_Bob")
 	void InitiateEvent(float _range, float _duration);
+
+
+	/** Setter */
+	FORCEINLINE void SetTimeDilationDuringEvent(float _value) { TimeDilationDuringEvent = _value; }
+	/** Setter End */
+
 };

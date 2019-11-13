@@ -81,6 +81,8 @@ void ACatastropheMainGameMode::InitiateQteBobEvent_Implementation(class AGuard* 
 			CurrentGuardQteEvent->OnQteEventComplete.RemoveDynamic(this, &ACatastropheMainGameMode::OnGuardQteEventComplete);
 			CurrentGuardQteEvent->OnQteEventComplete.AddDynamic(this, &ACatastropheMainGameMode::OnGuardQteEventComplete);
 			
+			CurrentGuardQteEvent->SetTimeDilationDuringEvent(0.01f);
+
 			float qteRange = InitialGaurdQteRange * (1.0f - ((float)FMath::Min(GuardQteSuccessCounter + 1, 9) * 0.1f));
 			CurrentGuardQteEvent->InitiateEventWithRange(qteRange);
 		}
@@ -139,7 +141,7 @@ void ACatastropheMainGameMode::OnGuardQteEventComplete(EQteEventState _eventStat
 	else
 	{
 		const FString msg = "QteBobLogicHolder: Event completion happened at wrong event state";
-		CatastropheDebug::OnScreenErrorMsg(msg, 10.0f);
+		CatastropheDebug::OnScreenErrorMsg(msg, 5.0f);
 	}
 }
 
@@ -147,8 +149,8 @@ void ACatastropheMainGameMode::OnGuardQteSuccess()
 {
 	// Increase the success counter and stun the guard
 	GuardQteSuccessCounter++;
-	if (QteGuard)
-		QteGuard->SetGuardState(EGuardState::STUNED);
+	if (IsValid(QteGuard))
+		QteGuard->OnCatchPlayerFailed();
 }
 
 // Called when player failed to finished a guard QTE event
@@ -156,10 +158,8 @@ void ACatastropheMainGameMode::OnGuardQteFailed()
 {
 	// Reset the success counter and sends player to the jail
 	GuardQteSuccessCounter = 0;
-	if (QteGuard)
-	{
+	if (IsValid(QteGuard))
 		QteGuard->OnCatchPlayerSuccess();
-	}
 }
 
 ACatastropheMainGameMode* ACatastropheMainGameMode::GetGameModeInst(const UObject* _worldContextObject)
