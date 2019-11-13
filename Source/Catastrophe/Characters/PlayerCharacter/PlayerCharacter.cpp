@@ -601,6 +601,12 @@ void APlayerCharacter::HHUSecondaryActionEnd()
 	}
 }
 
+// Call to throw a smoke bomb onto the ground
+void APlayerCharacter::ThrowSmokeBomb()
+{
+	Receive_OnSmokeBomb();
+}
+
 // Set the player T pose state
 void APlayerCharacter::SetPlayerTPoseEable(bool _bEnable)
 {

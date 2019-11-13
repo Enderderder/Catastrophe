@@ -348,6 +348,13 @@ protected:
 	UFUNCTION()
 	void TimelineSetCameraZoomValue(float _alpha);
 
+	/**
+	 * Called when player throw a smoke bomb
+	 * @author Richard Wulansari
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Player | Animation", meta = (DisplayName = "OnPlayerSmokeBomb"))
+	void Receive_OnSmokeBomb();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -361,6 +368,13 @@ public:
 	 */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Player | Animation", meta = (DisplayName = "OnPlayGrabAnim"))
 	void Receive_PlayGrabAnim();
+
+	/**
+	 * Call to throw a smoke bomb onto the ground
+	 * @author Richard Wulansari
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Player | Animation")
+	void ThrowSmokeBomb();
 
 	/**
 	 * Called to set the T pose state

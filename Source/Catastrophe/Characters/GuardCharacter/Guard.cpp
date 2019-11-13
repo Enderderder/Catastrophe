@@ -67,7 +67,7 @@ AGuard::AGuard()
 	CatchHitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision); // No collision to begin with
 	CatchHitBox->CanCharacterStepUpOn = ECB_No;
 	CatchHitBox->OnComponentBeginOverlap.AddDynamic(this, &AGuard::OnCatchHitBoxOverlap);
-	CatchHitBox->SetupAttachment(GetMesh());
+	CatchHitBox->SetupAttachment(RootComponent);
 
 	HearingTrigger = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HearingTrigger"));
 	HearingTrigger->SetGenerateOverlapEvents(true);
@@ -242,6 +242,7 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 	{
 	case EGuardState::STATIONARY:
 		GuardController->ModifySightRange(PatrolSightRange, LosingSightRange);
+		HeadLight->SetLightColor(NormalHeadLightColor);
 		break;
 
 	case EGuardState::SLEEPING:
@@ -254,6 +255,7 @@ void AGuard::OnGuardStateChange_Implementation(EGuardState _oldState, EGuardStat
 
 	case EGuardState::WAKEUP_STAGEONE:
 		GuardController->ModifySightRange(PatrolSightRange, LosingSightRange);
+		HeadLight->SetLightColor(NormalHeadLightColor);
 		break;
 
 	case EGuardState::WAKEUP_STAGETWO:
@@ -384,8 +386,14 @@ void AGuard::OnCatchPlayer_Implementation(APlayerCharacter* _player)
 	/// Should be implement in derived class
 }
 
-// Called the guard successfully caught a player
+// Called the guard successfully caught the player
 void AGuard::OnCatchPlayerSuccess_Implementation()
+{
+
+}
+
+// Called the guard failed to catch the player
+void AGuard::OnCatchPlayerFailed_Implementation()
 {
 
 }

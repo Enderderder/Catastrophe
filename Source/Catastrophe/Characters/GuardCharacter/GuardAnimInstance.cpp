@@ -9,10 +9,10 @@
 
 void UGuardAnimInstance::NativeBeginPlay()
 {
-	Super::NativeBeginPlay();
-	
 	// Gets the reference to the guard character
 	OwnerGuardActor = Cast<AGuard>(TryGetPawnOwner());
+
+	Super::NativeBeginPlay();
 
 }
 
