@@ -81,6 +81,7 @@ void AGuardAiController::OnPossess(APawn* InPawn)
 	}
 	else
 	{
+		CatastropheDebug::OnScreenErrorMsg(TEXT("Guard controller is not controlling a guard"));
 		UE_LOG(LogTemp, Error, TEXT("Guard controller is not controlling a guard"));
 	}
 }
@@ -118,6 +119,18 @@ void AGuardAiController::PerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 
 void AGuardAiController::OnSightPerceptionUpdate(AActor* _actor, FAIStimulus _stimulus)
 {
+	if (_stimulus.WasSuccessfullySensed())
+	{
+		InVisionActors.AddUnique(_actor);
+	}
+	else if (InVisionActors.Contains(_actor))
+	{
+		InVisionActors.Remove(_actor);
+		LostVisionActors.AddUnique(_actor);
+	}
+
+	//PerceptionComponent->GetPerceivedActors()
+
 	// If updated actor is player
 	if (_actor->ActorHasTag(TEXT("Player")))
 	{

@@ -128,6 +128,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Guard | Stats | Perception")
 	float LosingSightRange = 500.0f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Guard | Stats | Chase")
+	float TimeToFullyAlert = 1.0f;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Guard | Stats | Stun")
 	float MaxStunTime = 5.0f;
 

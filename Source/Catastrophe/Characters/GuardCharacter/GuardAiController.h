@@ -35,6 +35,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GuardAi")
 	class UBehaviorTree* GuardBehaviourTree;
 
+private:
+
+	UPROPERTY(BlueprintReadOnly, Category = "GuardAi", meta = (AllowPrivateAccess = "true"))
+	TArray<AActor*> InVisionActors;
+
+	UPROPERTY(BlueprintReadOnly, Category = "GuardAi", meta = (AllowPrivateAccess = "true"))
+	TArray<AActor*> LostVisionActors;
 
 protected:
 	/** Called when the controller posses a character */
@@ -73,6 +80,8 @@ public:
 	/** Getter */
 	FORCEINLINE UAISenseConfig_Sight* GetSightDefaultConfig() const { return SightDefaultConfig; }
 	FORCEINLINE UAISenseConfig_Hearing* GetHearingDefaultConfig() const { return HearingDefaultConfig; }
+	FORCEINLINE TArray<AActor*> GetGainedVisionActors() const { return InVisionActors; }
+	FORCEINLINE TArray<AActor*> GetLostVisionActors() const { return LostVisionActors; }
 	/** Getter End */
 
 };
